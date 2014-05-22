@@ -1,0 +1,222 @@
+/*
+ * Copyright (C) 2010 Attribyte, LLC  All Rights Reserved.
+ * 
+ * This software is the confidential and proprietary information of Attribyte, LLC.
+ * ("Confidential Information").  You shall not
+ * disclose such Confidential Information and shall use it only in
+ * accordance with the terms of the license agreement you entered into
+ * with Attribyte, LLC
+ * 
+ * ATTRIBYTE, LLC MAKES NO REPRESENTATIONS OR WARRANTIES ABOUT THE SUITABILITY OF
+ * THE SOFTWARE, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE, OR NON-INFRINGEMENT. ATTRIBYTE, LLC SHALL NOT BE LIABLE FOR ANY DAMAGES
+ * SUFFERED BY LICENSEE AS A RESULT OF USING, MODIFYING OR DISTRIBUTING
+ * THIS SOFTWARE OR ITS DERIVATIVES.
+ */
+
+package org.attribyte.api.http.impl.servlet;
+
+import com.google.protobuf.ByteString;
+import org.attribyte.api.http.DeleteRequestBuilder;
+import org.attribyte.api.http.FormPostRequestBuilder;
+import org.attribyte.api.http.GetRequestBuilder;
+import org.attribyte.api.http.HeadRequestBuilder;
+import org.attribyte.api.http.Header;
+import org.attribyte.api.http.PostRequestBuilder;
+import org.attribyte.api.http.PutRequestBuilder;
+import org.attribyte.api.http.Request;
+import org.attribyte.api.http.Request.Method;
+import org.attribyte.api.http.Response;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Utilities to bridge servlet API to Attribyte API.
+ */
+public class Bridge {
+
+   /**
+    * Per the servlet API definition: returns the original request, excluding the query string.
+    * <p>
+    * <cite>
+    * Reconstructs the URL the client used to make the request.
+    * The returned URL contains a protocol, server name, port number, and server path,
+    * but it does not include query string parameters.
+    * </cite>
+    * </p>
+    * @return A <code>StringBuilder</code> containing the original URL, excluding the query string.
+    */
+   public static StringBuilder getRequestURL(final Request request) {
+
+      URI uri = request.getURI();
+
+      String scheme = uri.getScheme();
+      String authority = uri.getRawAuthority();
+      String path = uri.getRawPath();
+
+      StringBuilder buf = new StringBuilder();
+
+      if(scheme != null) {
+         buf.append(scheme);
+         buf.append("://");
+      }
+
+      if(authority != null) {
+         buf.append(authority);
+      }
+
+      if(path != null) {
+         buf.append(path);
+      }
+
+      return buf;
+   }
+
+   /**
+    * Per the servlet API definition: Returns the part of the request URL
+    * from the protocol name up to the query string in the first line of the HTTP request.
+    * <p>
+    * <cite>
+    * Returns the part of the request URL from the protocol name up to the query string in the first line of the HTTP request.
+    * The web container does not decode this String.
+    * </cite>
+    * </p>
+    * @return The URI.
+    */
+   public static String getRequestURI(final Request request) {
+      return request.getURI().getRawPath();
+   }
+
+   @SuppressWarnings("unchecked")
+   /**
+    * Creates a request from a servlet HTTP request.
+    * <p>
+    *   Sets an attribute, <code>remoteAddr</code> with the address reported
+    *   by the servlet API.
+    * </p>
+    * @param request The servlet request.
+    * @param maxBodyBytes The maximum number of bytes read. If < 1, the body is not read.
+    */
+   public static final Request fromServletRequest(HttpServletRequest request, int maxBodyBytes) throws IOException {
+
+      Map<String, Header> headers = new HashMap<String, Header>(8);
+      List<String> valueList = new ArrayList<String>(8);
+      Enumeration headerNames = request.getHeaderNames();
+      while(headerNames.hasMoreElements()) {
+         String name = (String)headerNames.nextElement();
+         Enumeration headerValues = request.getHeaders(name);
+         valueList.clear();
+         while(headerValues.hasMoreElements()) {
+            valueList.add((String)headerValues.nextElement());
+         }
+
+         if(valueList.size() == 1) {
+            headers.put(name, new Header(name, valueList.get(0)));
+         } else {
+            String[] values = new String[valueList.size()];
+            for(int i = 0; i < valueList.size(); i++) {
+               values[i] = valueList.get(i);
+            }
+            headers.put(name, new Header(name, values));
+         }
+      }
+
+      Map<String, Object> attributes = new HashMap<String, Object>(8);
+      attributes.put("remoteAddr", request.getRemoteAddr());
+
+
+      Method method = Method.fromString(request.getMethod());
+      switch(method) {
+         case GET:
+            GetRequestBuilder grb = new GetRequestBuilder(request.getRequestURL().toString());
+            grb.addHeaders(headers);
+            grb.addParameters(request.getParameterMap());
+            grb.addAttributes(attributes);
+            return grb.create();
+         case HEAD:
+            HeadRequestBuilder hrb = new HeadRequestBuilder(request.getRequestURL().toString());
+            hrb.addHeaders(headers);
+            hrb.addParameters(request.getParameterMap());
+            hrb.addAttributes(attributes);
+            return hrb.create();
+         case DELETE:
+            DeleteRequestBuilder drb = new DeleteRequestBuilder(request.getRequestURL().toString());
+            drb.addHeaders(headers);
+            drb.addParameters(request.getParameterMap());
+            drb.addAttributes(attributes);
+            return drb.create();
+      }
+
+      Map parameterMap = request.getParameterMap();
+      if(parameterMap != null && parameterMap.size() > 0) {
+         FormPostRequestBuilder prb = new FormPostRequestBuilder(request.getRequestURL().toString());
+         prb.addHeaders(headers);
+         prb.addParameters(request.getParameterMap());
+         prb.addAttributes(attributes);
+         return prb.create();
+      } else {
+         byte[] body = null;
+         if(maxBodyBytes > 0) {
+            InputStream is = request.getInputStream();
+            try {
+               body = Request.bodyFromInputStream(is, maxBodyBytes);
+            } finally {
+               is.close();
+            }
+         }
+
+         if(method == Method.POST) {
+            PostRequestBuilder prb = new PostRequestBuilder(request.getRequestURL().toString(), body);
+            prb.addHeaders(headers);
+            prb.addAttributes(attributes);
+            return prb.create();
+         } else {
+            PutRequestBuilder prb = new PutRequestBuilder(request.getRequestURL().toString(), body);
+            prb.addHeaders(headers);
+            prb.addAttributes(attributes);
+            return prb.create();
+         }
+      }
+   }
+
+   /**
+    * Sends an Attribyte response using a servlet response.
+    * @param response The Attribyte response.
+    * @param servletResponse The servlet response.
+    * @throws java.io.IOException on transmit error.
+    */
+   public static final void sendServletResponse(Response response, HttpServletResponse servletResponse) throws IOException {
+
+      servletResponse.setStatus(response.getStatusCode());
+      Collection<Header> headers = response.getHeaders();
+      for(Header header : headers) {
+         String[] values = header.getValues();
+         for(String value : values) {
+            servletResponse.setHeader(header.getName(), value);
+         }
+      }
+
+      ByteString bodyString = response.getBody();
+
+      if(bodyString != null) {
+         BufferedOutputStream baos = new BufferedOutputStream(servletResponse.getOutputStream());
+         try {
+            baos.write(bodyString.toByteArray());
+         } finally {
+            baos.close();
+         }
+      }
+   }
+}
