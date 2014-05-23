@@ -11,6 +11,11 @@ import java.util.Properties;
 public class ClientOptions {
 
    /**
+    * Indicates that implementation defaults should be used.
+    */
+   public static final ClientOptions IMPLEMENTATION_DEFAULT = new ClientOptions();
+
+   /**
     * The user agent ('Attribyte/1.0').
     */
    public final String userAgent;
@@ -192,6 +197,21 @@ public class ClientOptions {
       this.requestBufferSize = requestBufferSize;
       this.responseBufferSize = responseBufferSize;
       this.props = props;
+   }
+
+   private ClientOptions() {
+      this.userAgent = null;
+      this.connectionTimeoutMillis = 0;
+      this.requestTimeoutMillis = 0;
+      this.socketTimeoutMillis = 0;
+      this.proxyHost = null;
+      this.proxyPort = 0;
+      this.followRedirects = false;
+      this.maxConnectionsPerDestination = 0;
+      this.maxConnectionsTotal = 0;
+      this.requestBufferSize = 0;
+      this.responseBufferSize = 0;
+      this.props = null;
    }
 
    public static class Builder {

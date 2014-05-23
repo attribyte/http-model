@@ -36,25 +36,30 @@ public class NingClient implements AsyncClient {
    //https://github.com/AsyncHttpClient/async-http-client/blob/master/api/src/main/java/org/asynchttpclient/AsyncHttpClientConfig.java
 
    private void initFromOptions(ClientOptions options) {
-      AsyncHttpClientConfig.Builder config = new AsyncHttpClientConfig.Builder();
-      config.setUserAgent(options.userAgent);
-      if(options.proxyHost != null) {
-         config.setProxyServer(new ProxyServer(options.proxyHost, options.proxyPort));
+
+      if(options != ClientOptions.IMPLEMENTATION_DEFAULT) {
+         AsyncHttpClientConfig.Builder config = new AsyncHttpClientConfig.Builder();
+         config.setUserAgent(options.userAgent);
+         if(options.proxyHost != null) {
+            config.setProxyServer(new ProxyServer(options.proxyHost, options.proxyPort));
+         }
+         config.setConnectionTimeoutInMs(options.connectionTimeoutMillis);
+         config.setRequestTimeoutInMs(options.requestTimeoutMillis);
+         config.setFollowRedirects(options.followRedirects);
+         config.setMaximumConnectionsPerHost(options.maxConnectionsPerDestination);
+         config.setMaximumConnectionsTotal(options.maxConnectionsTotal);
+         config.setFollowRedirects(RequestOptions.DEFAULT_FOLLOW_REDIRECTS);
+         config.setAllowPoolingConnection(options.getBooleanProperty("allowPoolingConnection", true));
+         config.setIOThreadMultiplier(options.getIntProperty("ioThreadMultiplier", 2));
+         config.setIdleConnectionInPoolTimeoutInMs(options.getTimeProperty("idleConnectionInPoolTimeout", 60 * 1000));
+         config.setIdleConnectionTimeoutInMs(options.getTimeProperty("idleConnectionTimeout", 60 * 1000));
+         config.setMaxConnectionLifeTimeInMs(options.getTimeProperty("maxConnectionLife", -1));
+         config.setCompressionEnabled(options.getBooleanProperty("compressionEnabled", false));
+         config.setRequestCompressionLevel(options.getIntProperty("requestCompressionLevel", 1));
+         this.httpClient = new AsyncHttpClient(config.build());
+      } else {
+         this.httpClient = new AsyncHttpClient(new AsyncHttpClientConfig.Builder().build());
       }
-      config.setConnectionTimeoutInMs(options.connectionTimeoutMillis);
-      config.setRequestTimeoutInMs(options.requestTimeoutMillis);
-      config.setFollowRedirects(options.followRedirects);
-      config.setMaximumConnectionsPerHost(options.maxConnectionsPerDestination);
-      config.setMaximumConnectionsTotal(options.maxConnectionsTotal);
-      config.setFollowRedirects(RequestOptions.DEFAULT_FOLLOW_REDIRECTS);
-      config.setAllowPoolingConnection(options.getBooleanProperty("allowPoolingConnection", true));
-      config.setIOThreadMultiplier(options.getIntProperty("ioThreadMultiplier", 2));
-      config.setIdleConnectionInPoolTimeoutInMs(options.getTimeProperty("idleConnectionInPoolTimeout", 60 * 1000));
-      config.setIdleConnectionTimeoutInMs(options.getTimeProperty("idleConnectionTimeout", 60 * 1000));
-      config.setMaxConnectionLifeTimeInMs(options.getTimeProperty("maxConnectionLife", -1));
-      config.setCompressionEnabled(options.getBooleanProperty("compressionEnabled", false));
-      config.setRequestCompressionLevel(options.getIntProperty("requestCompressionLevel", 1));
-      this.httpClient = new AsyncHttpClient(config.build());
    }
 
    /**

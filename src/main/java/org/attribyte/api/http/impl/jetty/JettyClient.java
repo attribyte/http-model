@@ -45,57 +45,47 @@ public class JettyClient implements AsyncClient {
     * Creates a client with specified options.
     * @param options The options.
     */
-   public JettyClient(final ClientOptions options) {
+   public JettyClient(final ClientOptions options) throws InitializationException {
       initFromOptions(options);
    }
 
 
-   private void initFromOptions(final ClientOptions options) {
-      SslContextFactory sslContextFactory = new SslContextFactory();
-      this.httpClient = new HttpClient(sslContextFactory);
-      this.httpClient.setFollowRedirects(options.followRedirects);
-      this.httpClient.setConnectTimeout(options.connectionTimeoutMillis);
-      this.httpClient.setMaxConnectionsPerDestination(options.maxConnectionsPerDestination);
-      this.httpClient.setCookieStore(new HttpCookieStore.Empty());
-      if(options.proxyHost != null) {
-         this.httpClient.setProxyConfiguration(new ProxyConfiguration(options.proxyHost, options.proxyPort));
+   private void initFromOptions(final ClientOptions options) throws InitializationException {
+
+      if(options != ClientOptions.IMPLEMENTATION_DEFAULT) {
+         SslContextFactory sslContextFactory = new SslContextFactory();
+         this.httpClient = new HttpClient(sslContextFactory);
+         this.httpClient.setFollowRedirects(options.followRedirects);
+         this.httpClient.setConnectTimeout(options.connectionTimeoutMillis);
+         this.httpClient.setMaxConnectionsPerDestination(options.maxConnectionsPerDestination);
+         this.httpClient.setCookieStore(new HttpCookieStore.Empty());
+         if(options.proxyHost != null) {
+            this.httpClient.setProxyConfiguration(new ProxyConfiguration(options.proxyHost, options.proxyPort));
+         }
+         this.httpClient.setUserAgentField(new HttpField(HttpHeader.USER_AGENT, options.userAgent));
+         this.httpClient.setRequestBufferSize(options.requestBufferSize);
+         this.httpClient.setResponseBufferSize(options.responseBufferSize);
+         this.httpClient.setIdleTimeout(options.getIntProperty("idleTimeout", 0));
+         this.httpClient.setAddressResolutionTimeout(options.getIntProperty("addressResolutionTimeout", 15000));
+         this.httpClient.setMaxRedirects(options.getIntProperty("maxRedirects", 8));
+         this.httpClient.setMaxRequestsQueuedPerDestination(options.getIntProperty("maxRequestsQueuedPerDestination", 1024));
+         this.httpClient.setDispatchIO(options.getBooleanProperty("dispatchIO", true));
+      } else {
+         SslContextFactory sslContextFactory = new SslContextFactory();
+         this.httpClient = new HttpClient(sslContextFactory);
       }
-      this.httpClient.setUserAgentField(new HttpField(HttpHeader.USER_AGENT, options.userAgent));
-      this.httpClient.setRequestBufferSize(options.requestBufferSize);
-      this.httpClient.setResponseBufferSize(options.responseBufferSize);
-      this.httpClient.setIdleTimeout(options.getIntProperty("idleTimeout", 0));
-      this.httpClient.setAddressResolutionTimeout(options.getIntProperty("addressResolutionTimeout", 15000));
-      this.httpClient.setMaxRedirects(options.getIntProperty("maxRedirects", 8));
-      this.httpClient.setMaxRequestsQueuedPerDestination(options.getIntProperty("maxRequestsQueuedPerDestination", 1024));
-      this.httpClient.setDispatchIO(options.getBooleanProperty("dispatchIO", true));
 
-      /*
-      private volatile int maxConnectionsPerDestination = 64;
-      private volatile int maxRequestsQueuedPerDestination = 1024;
-      private volatile int requestBufferSize = 4096;
-      private volatile int responseBufferSize = 16384;
-      private volatile int maxRedirects = 8;
-      private volatile SocketAddress bindAddress;
-      private volatile long connectTimeout = 15000;
-      private volatile long addressResolutionTimeout = 15000;
-      private volatile long idleTimeout;
-      private volatile boolean tcpNoDelay = true;
-      private volatile boolean dispatchIO = true;
-      private volatile boolean strictEventOrdering = false;
-      private volatile boolean removeIdleDestinations = false;
-      */
-
+      try {
+         this.httpClient.start();
+      } catch(Exception e) {
+         throw new InitializationException("Problem starting client", e);
+      }
    }
 
    public synchronized void init(String prefix, Properties props, Logger logger) throws InitializationException {
 
       if(isInit.compareAndSet(false, true)) {
          initFromOptions(new ClientOptions(prefix, props));
-         try {
-            this.httpClient.start();
-         } catch(Exception e) {
-            throw new InitializationException("Problem starting client", e);
-         }
       }
    }
 

@@ -128,15 +128,17 @@ public class Commons3Client implements org.attribyte.api.http.Client {
 
    private HttpConnectionManagerParams fromOptions(ClientOptions options) {
       HttpConnectionManagerParams connectionParams = new HttpConnectionManagerParams();
-      connectionParams.setConnectionTimeout(options.connectionTimeoutMillis);
-      connectionParams.setSoTimeout(options.socketTimeoutMillis);
-      connectionParams.setDefaultMaxConnectionsPerHost(options.maxConnectionsPerDestination);
-      connectionParams.setMaxTotalConnections(options.maxConnectionsTotal);
-      connectionParams.setSendBufferSize(options.requestBufferSize);
-      connectionParams.setReceiveBufferSize(options.responseBufferSize);
-      //connectionParams.setLinger();
-      //connectionParams.setStaleCheckingEnabled();
-      //connectionParams.setTcpNoDelay();
+      if(options != ClientOptions.IMPLEMENTATION_DEFAULT) {
+         connectionParams.setConnectionTimeout(options.connectionTimeoutMillis);
+         connectionParams.setSoTimeout(options.socketTimeoutMillis);
+         connectionParams.setDefaultMaxConnectionsPerHost(options.maxConnectionsPerDestination);
+         connectionParams.setMaxTotalConnections(options.maxConnectionsTotal);
+         connectionParams.setSendBufferSize(options.requestBufferSize);
+         connectionParams.setReceiveBufferSize(options.responseBufferSize);
+         //connectionParams.setLinger();
+         //connectionParams.setStaleCheckingEnabled();
+         //connectionParams.setTcpNoDelay();
+      }
       return connectionParams;
    }
 

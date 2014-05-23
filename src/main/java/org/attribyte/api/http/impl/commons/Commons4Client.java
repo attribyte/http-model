@@ -65,35 +65,42 @@ public class Commons4Client implements org.attribyte.api.http.Client {
    }
 
    private void initFromOptions(final ClientOptions options) {
-      HttpClientBuilder builder = HttpClients.custom();
-      builder.setMaxConnTotal(options.maxConnectionsTotal);
-      builder.setMaxConnPerRoute(options.maxConnectionsPerDestination);
-      builder.setUserAgent(options.userAgent);
-      if(options.proxyHost != null) {
-         builder.setProxy(new HttpHost(options.proxyHost, options.proxyPort));
+
+      if(options != ClientOptions.IMPLEMENTATION_DEFAULT) {
+
+         HttpClientBuilder builder = HttpClients.custom();
+         builder.setMaxConnTotal(options.maxConnectionsTotal);
+         builder.setMaxConnPerRoute(options.maxConnectionsPerDestination);
+         builder.setUserAgent(options.userAgent);
+         if(options.proxyHost != null) {
+            builder.setProxy(new HttpHost(options.proxyHost, options.proxyPort));
+         }
+
+         this.defaultRequestConfig =
+                 RequestConfig.custom()
+                         .setConnectTimeout(options.connectionTimeoutMillis)
+                         .setConnectionRequestTimeout(options.requestTimeoutMillis)
+                         .setRedirectsEnabled(RequestOptions.DEFAULT_FOLLOW_REDIRECTS)
+                         .setMaxRedirects(RequestOptions.DEFAULT_FOLLOW_REDIRECTS ? 5 : 0)
+                         .setAuthenticationEnabled(false)
+                         .setCircularRedirectsAllowed(false)
+                         .setSocketTimeout(options.socketTimeoutMillis)
+                         .build();
+         builder.setDefaultRequestConfig(defaultRequestConfig);
+
+
+         ConnectionConfig connectionConfig =
+                 ConnectionConfig.custom()
+                         .setBufferSize(options.requestBufferSize > options.responseBufferSize ?
+                                 options.requestBufferSize : options.responseBufferSize)
+                         .build();
+         builder.setDefaultConnectionConfig(connectionConfig);
+
+         this.httpClient = builder.build();
+      } else {
+         this.defaultRequestConfig = RequestConfig.DEFAULT;
+         this.httpClient = HttpClients.createDefault();
       }
-
-      this.defaultRequestConfig =
-              RequestConfig.custom()
-                      .setConnectTimeout(options.connectionTimeoutMillis)
-                      .setConnectionRequestTimeout(options.requestTimeoutMillis)
-                      .setRedirectsEnabled(RequestOptions.DEFAULT_FOLLOW_REDIRECTS)
-                      .setMaxRedirects(RequestOptions.DEFAULT_FOLLOW_REDIRECTS ? 5 : 0)
-                      .setAuthenticationEnabled(false)
-                      .setCircularRedirectsAllowed(false)
-                      .setSocketTimeout(options.socketTimeoutMillis)
-                      .build();
-      builder.setDefaultRequestConfig(defaultRequestConfig);
-
-
-      ConnectionConfig connectionConfig =
-              ConnectionConfig.custom()
-                      .setBufferSize(options.requestBufferSize > options.responseBufferSize ?
-                              options.requestBufferSize : options.responseBufferSize)
-                      .build();
-      builder.setDefaultConnectionConfig(connectionConfig);
-
-      this.httpClient = builder.build();
    }
 
    /**
