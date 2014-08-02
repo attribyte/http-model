@@ -6,106 +6,148 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.google.protobuf.ByteString;
-import org.attribyte.api.ConsoleLogger;
 import org.attribyte.api.http.Client;
+import org.attribyte.api.http.ClientOptions;
 import org.attribyte.api.http.GetRequestBuilder;
 import org.attribyte.api.http.PostRequestBuilder;
 import org.attribyte.api.http.Request;
 import org.attribyte.api.http.Response;
+import org.attribyte.api.http.impl.commons.Commons3Client;
+import org.attribyte.api.http.impl.commons.Commons4Client;
+import org.attribyte.api.http.impl.jetty.JettyClient;
+import org.attribyte.api.http.impl.ning.NingClient;
 import org.attribyte.util.InitUtil;
 
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Properties;
 
 public class PerfTest {
 
    public static void main(String[] args) throws Exception {
-      Properties props = new Properties();
-      args = InitUtil.fromCommandLine(args, props);
-      InitUtil init = new InitUtil("", props, false);
-      Client client = (Client)init.initClass("client", Client.class);
-      client.init("", props, new ConsoleLogger());
 
-      String url = init.getProperty("url", null);
-      if(url == null) {
-         System.err.println("A 'url' must be specified");
-         return;
-      }
+      Client client = null;
 
-      int numThreads = init.getIntProperty("numThreads", 1);
-      int warmupSeconds = init.getIntProperty("warmupSeconds", 10);
-      int testSeconds = init.getIntProperty("testSeconds", 20);
-      String postBodyFile = init.getProperty("postBodyFile", null);
-      byte[] postBody = null;
-      if(postBodyFile != null) {
-         postBody = Files.toByteArray(new File(postBodyFile));
-      }
+      try {
 
-      Request request = postBody == null ? new GetRequestBuilder(url).create() :
-              new PostRequestBuilder(url, postBody).create();
+         Properties props = new Properties();
+         args = InitUtil.fromCommandLine(args, props);
+         InitUtil init = new InitUtil("", props, false);
 
-      List<TestRunner> runners = Lists.newArrayListWithCapacity(numThreads);
-      for(int i = 0; i < numThreads; i++) {
-         runners.add(new TestRunner(client, request, null)); //TODO
-      }
+         String clientName = init.getProperty("client", "");
+         if(clientName.equalsIgnoreCase("jetty")) {
+            client = new JettyClient(ClientOptions.IMPLEMENTATION_DEFAULT);
+         } else if(clientName.equalsIgnoreCase("ning")) {
+            client = new NingClient(ClientOptions.IMPLEMENTATION_DEFAULT);
+         } else if(clientName.equalsIgnoreCase("commons3")) {
+            client = new Commons3Client(ClientOptions.IMPLEMENTATION_DEFAULT);
+         } else if(clientName.equalsIgnoreCase("commons4")) {
+            client = new Commons4Client(ClientOptions.IMPLEMENTATION_DEFAULT);
+         } else {
+            System.err.println("A 'client' must be specified");
+            return;
+         }
 
-      for(TestRunner runner : runners) {
-         Thread thread = new Thread(runner);
-         thread.setDaemon(true);
-         thread.start();
-      }
+         System.out.println("Client: " + client.getClass().getName());
 
-      long stopTime = System.currentTimeMillis() + warmupSeconds * 1000L;
-      while(System.currentTimeMillis() < stopTime) {
-         Thread.sleep(10L);
-      }
+         String url = init.getProperty("url", null);
+         if(url == null) {
+            System.err.println("A 'url' must be specified");
+            return;
+         }
 
-      System.out.println("Starting warm-up...");
+         System.out.println("URL: " + url);
 
-      for(TestRunner runner : runners) {
-         runner.running = false;
-         while(runner.elapsedTime == 0L) {
+         System.out.println(props.getProperty("numThreads"));
+
+         int numThreads = init.getIntProperty("numThreads", 1);
+
+         System.out.println("Number of Threads: " + numThreads);
+
+         int warmupSeconds = init.getIntProperty("warmupSeconds", 10);
+
+         System.out.println("Warmup seconds: " + warmupSeconds);
+
+         int testSeconds = init.getIntProperty("testSeconds", 20);
+
+         System.out.println("Test seconds: " + testSeconds);
+
+         String postBodyFile = init.getProperty("postBodyFile", null);
+         byte[] postBody = null;
+         if(postBodyFile != null) {
+            postBody = Files.toByteArray(new File(postBodyFile));
+         }
+
+         Request request = postBody == null ? new GetRequestBuilder(url).create() :
+                 new PostRequestBuilder(url, postBody).create();
+
+         List<TestRunner> runners = Lists.newArrayListWithCapacity(numThreads);
+         for(int i = 0; i < numThreads; i++) {
+            runners.add(new TestRunner(client, request, null)); //TODO
+         }
+
+         System.out.println("Starting warm-up...");
+
+         for(TestRunner runner : runners) {
+            Thread thread = new Thread(runner);
+            thread.setDaemon(true);
+            thread.start();
+         }
+
+         long stopTime = System.currentTimeMillis() + warmupSeconds * 1000L;
+         while(System.currentTimeMillis() < stopTime) {
             Thread.sleep(10L);
          }
-         runner.reset();
-      }
 
-      System.out.println("Starting test...");
+         for(TestRunner runner : runners) {
+            runner.running = false;
+            while(runner.elapsedTime == 0L) {
+               Thread.sleep(10L);
+            }
+            runner.reset();
+         }
 
-      for(TestRunner runner : runners) {
-         Thread thread = new Thread(runner);
-         thread.setDaemon(true);
-         thread.start();
-      }
+         System.out.println("Starting test...");
 
-      stopTime = System.currentTimeMillis() + testSeconds * 1000L;
-      while(System.currentTimeMillis() < stopTime) {
-         Thread.sleep(10L);
-      }
+         for(TestRunner runner : runners) {
+            Thread thread = new Thread(runner);
+            thread.setDaemon(true);
+            thread.start();
+         }
 
-      System.out.println("Test complete!");
-
-      int requestCount = 0;
-      int errorCount = 0;
-      long totalTime = 0L;
-
-      for(TestRunner runner : runners) {
-         runner.running = false;
-         while(runner.elapsedTime == 0L) {
+         stopTime = System.currentTimeMillis() + testSeconds * 1000L;
+         while(System.currentTimeMillis() < stopTime) {
             Thread.sleep(10L);
          }
-         requestCount += runner.count;
-         errorCount += runner.errorCount;
-         totalTime += runner.elapsedTime;
+
+         System.out.println("Test complete!");
+
+         int requestCount = 0;
+         int errorCount = 0;
+         long totalTime = 0L;
+
+         for(TestRunner runner : runners) {
+            runner.running = false;
+            while(runner.elapsedTime == 0L) {
+               Thread.sleep(10L);
+            }
+            requestCount += runner.count;
+            errorCount += runner.errorCount;
+            totalTime += runner.elapsedTime;
+         }
+
+         double avgTimeSeconds = (double)totalTime / (double)numThreads / 1000.0;
+         double rate = (double)requestCount / avgTimeSeconds;
+         NumberFormat formatter = NumberFormat.getNumberInstance();
+         formatter.setMaximumFractionDigits(3);
+         formatter.setMinimumFractionDigits(3);
+
+         System.out.println("Executed " + requestCount + " requests with " + errorCount + " failures (" + formatter.format(rate) + "/s)");
+      } finally {
+         if(client != null) client.shutdown();
       }
-
-      double avgTimeSeconds = (double)totalTime / (double)numThreads / 1000.0;
-      double rate = (double)requestCount / avgTimeSeconds;
-
-      System.out.println("Executed " + requestCount + " requests with " + errorCount + " failures (" + rate + "/s)");
    }
-
 
    private static final class TestRunner implements Runnable {
 

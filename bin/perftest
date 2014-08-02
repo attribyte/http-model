@@ -1,0 +1,19 @@
+export JAVA_EXE="/usr/local/jdk/bin/java"
+export INSTALL_DIR=`dirname $0`
+export LIB_DIR="$INSTALL_DIR/../lib"
+export EXTLIB_DIR="$INSTALL_DIR/../dist/extlib"
+
+CLASSPATH="$INSTALL_DIR/../dist/lib/attribyte-http.0.5.0.jar"
+
+for jar in `ls $EXTLIB_DIR/*.jar`;
+do
+        CLASSPATH=$CLASSPATH:$jar
+done
+
+for jar in `ls $LIB_DIR/*.jar`;
+do
+        CLASSPATH=$CLASSPATH:$jar
+done
+
+export CLASSPATH
+$JAVA_EXE org.attribyte.api.http.impl.test.PerfTest $1 $2 $3 $4 $5 $6

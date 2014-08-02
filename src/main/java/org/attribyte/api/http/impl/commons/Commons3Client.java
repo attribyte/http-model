@@ -150,18 +150,14 @@ public class Commons3Client implements org.attribyte.api.http.Client {
 
    @Override
    public Response send(Request request, RequestOptions options) throws IOException {
-      return send(request, options.followRedirects, options.maxResponseBytes);
-   }
-
-   public Response send(Request request, boolean followRedirects, int maxResponseBytes) throws IOException {
 
       HttpMethod method = null;
 
       switch(request.getMethod()) {
          case GET:
             method = new GetMethod(request.getURI().toString());
-            if(followRedirects) {
-               method.setFollowRedirects(followRedirects);
+            if(options.followRedirects) {
+               method.setFollowRedirects(options.followRedirects);
             }
             break;
          case DELETE:
@@ -169,8 +165,8 @@ public class Commons3Client implements org.attribyte.api.http.Client {
             break;
          case HEAD:
             method = new HeadMethod(request.getURI().toString());
-            if(followRedirects) {
-               method.setFollowRedirects(followRedirects);
+            if(options.followRedirects) {
+               method.setFollowRedirects(options.followRedirects);
             }
             break;
          case POST:
@@ -198,7 +194,7 @@ public class Commons3Client implements org.attribyte.api.http.Client {
             break;
       }
 
-      if(!StringUtil.hasContent(request.getHeaderValue("User-Agent"))) {
+      if(userAgent != null && !StringUtil.hasContent(request.getHeaderValue("User-Agent"))) {
          method.setRequestHeader("User-Agent", userAgent);
       }
 
@@ -217,7 +213,7 @@ public class Commons3Client implements org.attribyte.api.http.Client {
          responseCode = httpClient.executeMethod(method);
          is = method.getResponseBodyAsStream();
          if(is != null) {
-            byte[] body = Request.bodyFromInputStream(is, maxResponseBytes);
+            byte[] body = Request.bodyFromInputStream(is, options.maxResponseBytes);
             ResponseBuilder builder = new ResponseBuilder();
             builder.setStatusCode(responseCode);
             builder.addHeaders(getMap(method.getResponseHeaders()));
