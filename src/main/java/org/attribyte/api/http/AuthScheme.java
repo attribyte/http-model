@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2010,2014 Attribyte, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,7 +15,7 @@
 
 package org.attribyte.api.http;
 
-import org.attribyte.util.StringUtil;
+import com.google.common.base.Strings;
 
 /**
  * Defines a HTTP authentication scheme.
@@ -24,18 +24,21 @@ public abstract class AuthScheme {
 
    /**
     * Creates an authentication scheme.
+    * <p>
+    *    Must not contain the quote character.
+    * </p>
     * @param scheme The scheme name.
     * @param realm The realm.
+    * @throws java.lang.UnsupportedOperationException if the realm contains the quote character.
     */
    protected AuthScheme(final String scheme, final String realm) {
-      this.scheme = scheme.intern();
-      this.realm = realm;
-      int h = 17;
-      h = 31 * h + scheme.hashCode();
-      if(realm != null) {
-         h = 31 * h + realm.hashCode();
+      if(realm.contains("\"")) {
+         throw new UnsupportedOperationException("The 'realm' must not contain the quote character");
       }
-      this.hashCode = h;
+
+      this.scheme = scheme.intern();
+      this.realm = Strings.nullToEmpty(realm);
+      this.authenticateResponseHeader = this.scheme + " realm=\"" + this.realm + "\"";
    }
 
    /**
@@ -50,11 +53,12 @@ public abstract class AuthScheme {
     * @param request The request to which credentials are added.
     * @param userId An id that uniquely identifies the user (e.g. 'username').
     * @param secret The authentication secret for the username.
+    * @return The request with authentication credentials added.
     */
    public abstract Request addAuth(Request request, String userId, String secret) throws java.security.GeneralSecurityException;
 
    /**
-    * Gets the user id from the request.
+    * Gets the user id from the request, if possible.
     * @param request The request.
     * @return The user id, or <code>null</code> if none.
     */
@@ -77,17 +81,21 @@ public abstract class AuthScheme {
     * @param message A message returned with the response. If <code>null</code>, a standard message is returned.
     * @return The response.
     */
-   public Response getUnauthorizedResponse(String message) {
-      StringBuilder buf = new StringBuilder();
-      buf.append(scheme);
-      if(realm != null) {
-         buf.append(" realm=").append(realm);
-      }
-
-      Response response = new ResponseBuilder(Response.Code.UNAUTHORIZED, message == null ? "Authorization Required" : message).create();
-      response.setHeader("WWW-Authenticate", buf.toString());
+   public Response getUnauthorizedResponse(final String message) {
+      Response response = new ResponseBuilder(Response.Code.UNAUTHORIZED, message == null ? DEFAULT_UNAUTHORIZED_MESSAGE : message).create();
+      response.setHeader(AUTHENTICATE_RESPONSE_HEADER, authenticateResponseHeader);
       return response;
    }
+
+   /**
+    * The default message sent when unauthorized ('Authorization Required').
+    */
+   public static final String DEFAULT_UNAUTHORIZED_MESSAGE = "Authorization Required";
+
+   /**
+    * The authenticate response header name ('WWW-Authenticate').
+    */
+   public static final String AUTHENTICATE_RESPONSE_HEADER = "WWW-Authenticate";
 
    /**
     * Gets the scheme.
@@ -105,18 +113,26 @@ public abstract class AuthScheme {
       return realm;
    }
 
-   @Override
-   public int hashCode() {
-      return hashCode;
+   /**
+    * Gets the value for the <code>WWW-Authenticate</code> header.
+    * @return The header value.
+    */
+   public String getAuthenticateResponseHeader() {
+      return authenticateResponseHeader;
    }
 
    @Override
-   public boolean equals(Object o) {
+   public int hashCode() {
+      return authenticateResponseHeader.hashCode();
+   }
+
+   @Override
+   public boolean equals(final Object o) {
       if(o == this) {
          return true;
       } else if(o instanceof AuthScheme) {
          AuthScheme other = (AuthScheme)o;
-         return StringUtil.equals(scheme, other.scheme) && StringUtil.equals(realm, other.realm);
+         return authenticateResponseHeader.equals(other.authenticateResponseHeader);
       } else {
          return false;
       }
@@ -124,6 +140,6 @@ public abstract class AuthScheme {
 
    private final String scheme;
    private final String realm;
-   private final int hashCode;
+   private final String authenticateResponseHeader;
 }
 
