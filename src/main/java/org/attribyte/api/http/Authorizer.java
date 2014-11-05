@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2010, 2014 Attribyte, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -20,10 +20,6 @@ import org.attribyte.api.DatastoreException;
 /**
  * Examines request headers, parameters or content
  * to determine if a request is authorized.
- * <p>
- * Implementations access external storage (like a database) for password or
- * other secret information used to determine if a request is authorized.
- * </p>
  */
 public interface Authorizer {
 
@@ -32,6 +28,7 @@ public interface Authorizer {
     * @param auth The authentication scheme.
     * @param request The HTTP request.
     * @return The HTTP "Unauthorized" (or some other) response to be returned to the client if the request is not authorized. Otherwise, <code>null</code>.
+    * @throws org.attribyte.api.DatastoreException on error retrieving security credentials.
     */
    public Response isAuthorized(AuthScheme auth, Request request) throws DatastoreException;
 }
