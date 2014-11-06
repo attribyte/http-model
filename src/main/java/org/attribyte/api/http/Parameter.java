@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2010,2014 Attribyte, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,21 +15,142 @@
 
 package org.attribyte.api.http;
 
-import java.util.Collections;
-import java.util.HashMap;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
- * A HTTP request parameter.
+ * A HTTP request (query string) parameter.
  */
-public final class Parameter extends ImmutableNamedValues {
-
-   private static final Parameter NULL_INSTANCE = new Parameter(null, (String[])null);
+public final class Parameter {
 
    /**
-    * A <code>NameComparator</code> instance. Safe for use by many threads.
+    * Compare parameters by name. Safe for use by many threads.
     */
-   public static final NameComparator nameComparator = new NameComparator();
+   public static final Comparator<Parameter> nameComparator = new Comparator<Parameter>() {
+      @Override
+      public int compare(final Parameter p1, final Parameter p2) {
+         return p1.name.compareTo(p2.name);
+      }
+   };
+
+   /**
+    * Creates a parameter.
+    * @param name The parameter name.
+    * @param value The parameter value.
+    */
+   public Parameter(String name, String value) {
+      this.name = name;
+      this.values = Strings.isNullOrEmpty(value) ? ImmutableList.<String>of() : ImmutableList.of(value);
+   }
+
+   /**
+    * Creates a multi-valued parameter.
+    * @param name The parameter name.
+    * @param values The parameter values.
+    */
+   public Parameter(String name, String[] values) {
+      this.name = name;
+      this.values = NamedValues.copyValues(values);
+   }
+
+   /**
+    * Creates a multi-valued parameter from a collection of values.
+    * @param name The parameter name.
+    * @param values The parameter values.
+    */
+   public Parameter(final String name, final Collection<String> values) {
+      this.name = name;
+      this.values = NamedValues.copyValues(values);
+   }
+
+   /**
+    * Returns a copy of this parameter with the new value added.
+    * @param value The added value.
+    * @return The new parameter.
+    */
+   public Parameter addValue(String value) {
+      return new Parameter(name, ImmutableList.<String>builder().addAll(values).add(value).build());
+   }
+
+   /**
+    * Gets the name.
+    * @return The name.
+    */
+   public String getName() {
+      return name;
+   }
+
+   /**
+    * Gets the first value.
+    * <p>
+    * Never returns null. If the parameter has no value(s), an
+    * empty string is returned.
+    * </p>
+    */
+   public String getValue() {
+      return values.isEmpty() ? "" : values.get(0);
+   }
+
+   /**
+    * Gets all the values.
+    * @return The values.
+    */
+   public String[] getValues() {
+      return values.toArray(new String[values.size()]);
+   }
+
+   /**
+    * Gets an immutable list of values.
+    * @return The values.
+    */
+   public ImmutableList<String> getValueList() {
+      return values;
+   }
+
+   @Override
+   public String toString() {
+      return NamedValues.toString(name, values);
+   }
+
+   /**
+    * The parameter name.
+    */
+   public final String name;
+
+   /**
+    * An immutable list of parameter values.
+    */
+   public final ImmutableList<String> values;
+
+   /**
+    * Creates a mutable map of parameters.
+    * @param inputParameters The generic map.
+    * @return The mutable map.
+    */
+   static final Map<String, Parameter> createMap(final Map inputParameters) {
+      return createMap(inputParameters, Maps.<String, Parameter>newHashMapWithExpectedSize(inputParameters.size()));
+   }
+
+   /**
+    * Creates an immutable map of parameters.
+    * @param inputParameters The generic map.
+    * @return The immutable map.
+    */
+   static final ImmutableMap<String, Parameter> createImmutableMap(final Map inputParameters) {
+      if(inputParameters == null) {
+         return ImmutableMap.of();
+      }
+
+      return ImmutableMap.copyOf(createMap(inputParameters));
+   }
 
    @SuppressWarnings("unchecked")
    /**
@@ -39,55 +160,32 @@ public final class Parameter extends ImmutableNamedValues {
     *   value is none of these, <code>toString</code> is used to generate a single value.
     * </p>
     */
-   static final Map<String, Parameter> createMap(Map inputParameters) {
+   static final Map<String, Parameter> createMap(final Map inputParameters, final Map<String, Parameter> outputMap) {
 
-      if(inputParameters == null) {
-         return Collections.emptyMap();
-      } else {
-         HashMap<String, Parameter> parameters = new HashMap<String, Parameter>();
-         NULL_INSTANCE.copyMap(inputParameters, parameters, true); //Intern keys
-         return parameters;
+      if(inputParameters == null) return Maps.newHashMap();
+
+      for(final Map.Entry curr : (Iterable<Map.Entry>)inputParameters.entrySet()) {
+         Object key = curr.getKey();
+         String keyStr = key.toString();
+         Object value = curr.getValue();
+         if(value instanceof Parameter) {
+            outputMap.put(keyStr, (Parameter)value);
+         } else if(value instanceof Collection) {
+            Collection c = (Collection)value;
+            List<String> values = Lists.newArrayListWithExpectedSize(c.size());
+            for(Object o : c) {
+               if(o != null) {
+                  values.add(o.toString());
+               }
+            }
+            outputMap.put(keyStr, new Parameter(keyStr, values));
+         } else if(value instanceof String[]) {
+            outputMap.put(keyStr, new Parameter(keyStr, (String[])value));
+         } else {
+            outputMap.put(keyStr, new Parameter(keyStr, value != null ? value.toString() : null));
+         }
       }
-   }
 
-   /**
-    * Creates a parameter.
-    * @param name The parameter name.
-    * @param value The parameter value.
-    */
-   public Parameter(String name, String value) {
-      super(name, value);
-   }
-
-   /**
-    * Creates a multi-valued parameter.
-    * @param name The parameter name.
-    * @param values The parameter values.
-    */
-   public Parameter(String name, String[] values) {
-      super(name, values);
-   }
-
-   /**
-    * Returns a copy of this parameter with the new value added.
-    * @param value The added value.
-    * @return The new parameter.
-    */
-   public Parameter addValue(String value) {
-      String[] newValues = new String[values.length + 1];
-      System.arraycopy(values, 0, newValues, 0, values.length);
-      newValues[values.length] = value;
-      return new Parameter(name, newValues);
-   }
-
-   @Override
-   protected Parameter create(String name, String[] values) {
-      return new Parameter(name, values);
-   }
-
-   @Override
-   protected Parameter create(String name, String value) {
-      return new Parameter(name, value);
+      return outputMap;
    }
 }
-
