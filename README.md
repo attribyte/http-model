@@ -15,10 +15,10 @@ are available:
 
 ##Dependencies
 
+* [Attribyte shared-base](https://github.com/attribyte/shared-base)
 * [commons-codec](http://commons.apache.org/proper/commons-codec/)
 * [Google Guava](https://code.google.com/p/guava-libraries/)
-* Various client implementations. TODO: Allow selective inclusion of these.
-* TODO: An Attribyte common library is included with no source. In-progress.
+* Various client implementations. TODO: Allow selective inclusion/exclusion of these.
  
 ##License
 
