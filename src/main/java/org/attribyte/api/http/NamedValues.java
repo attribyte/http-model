@@ -29,7 +29,7 @@ public class NamedValues {
     * @param values The input values.
     * @return The internal values.
     */
-   static final ImmutableList<String> copyValues(String[] values) {
+   static final ImmutableList<String> copyValues(final String[] values) {
       if(values == null || values.length == 0) {
          return ImmutableList.of();
       } else {
@@ -49,7 +49,7 @@ public class NamedValues {
     * @param values The input values.
     * @return The internal values.
     */
-   static final ImmutableList<String> copyValues(Collection<String> values) {
+   static final ImmutableList<String> copyValues(final Collection<String> values) {
       if(values == null) {
          return ImmutableList.of();
       } else {
