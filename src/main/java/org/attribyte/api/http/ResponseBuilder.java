@@ -121,7 +121,7 @@ public class ResponseBuilder {
     * @return The response.
     */
    public Response create() {
-      return bodySource == null ? new CompletedResponse(statusCode, headers, body, attributes) :
+      return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes) :
               new StreamedResponse(statusCode, headers, bodySource, attributes);
    }
 

@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * A response that holds the complete response in-memory.
  */
-public class CompletedResponse extends Response {
+public class BodyResponse extends Response {
 
    /**
     * Creates a response.
@@ -30,8 +30,8 @@ public class CompletedResponse extends Response {
     * @param headers The response headers.
     * @param body The response body.
     */
-   CompletedResponse(final int statusCode, final Map<?, ?> headers,
-                     final ByteString body, final Map<String, Object> attributes) {
+   BodyResponse(final int statusCode, final Map<?, ?> headers,
+                final ByteString body, final Map<String, Object> attributes) {
       super(statusCode, headers, attributes);
       this.body = body;
    }
