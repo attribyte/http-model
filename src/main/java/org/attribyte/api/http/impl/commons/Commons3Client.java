@@ -15,6 +15,7 @@
 
 package org.attribyte.api.http.impl.commons;
 
+import com.google.common.base.Strings;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -37,7 +38,6 @@ import org.attribyte.api.http.Request;
 import org.attribyte.api.http.RequestOptions;
 import org.attribyte.api.http.Response;
 import org.attribyte.api.http.ResponseBuilder;
-import org.attribyte.util.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -194,7 +194,7 @@ public class Commons3Client implements org.attribyte.api.http.Client {
             break;
       }
 
-      if(userAgent != null && !StringUtil.hasContent(request.getHeaderValue("User-Agent"))) {
+      if(userAgent != null && Strings.isNullOrEmpty(request.getHeaderValue("User-Agent"))) {
          method.setRequestHeader("User-Agent", userAgent);
       }
 
