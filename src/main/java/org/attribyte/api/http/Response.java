@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2010,2014 Attribyte, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -16,12 +16,15 @@
 package org.attribyte.api.http;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.google.protobuf.ByteString;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
@@ -31,7 +34,7 @@ import java.util.Map;
 public class Response {
 
    /**
-    * HTTP response codes.
+    * Common HTTP response codes.
     */
    public static class Code {
       /**
@@ -93,24 +96,23 @@ public class Response {
     * Creates a response.
     * @param statusCode The HTTP response status code.
     * @param headers The response headers.
-    * @param body The response body.
     */
-   Response(final int statusCode, final Map<?, ?> headers, final byte[] body) {
+   public Response(final int statusCode, final Map<?, ?> headers) {
       this.statusCode = statusCode;
-      this.headers = Header.createMap(headers);
-      this.body = body != null ? ByteString.copyFrom(body) : null;
+      this.headers = Header.createImmutableMap(headers);
+      this.attributes = ImmutableMap.of();
    }
 
    /**
-    * Creates a response.
+    * Creates a response with attributes.
     * @param statusCode The HTTP response status code.
     * @param headers The response headers.
-    * @param body The response body.
+    * @param attributes The attributes.
     */
-   Response(final int statusCode, final Map<?, ?> headers, final ByteString body) {
+   public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes) {
       this.statusCode = statusCode;
-      this.headers = Header.createMap(headers);
-      this.body = body;
+      this.headers = Header.createImmutableMap(headers);
+      this.attributes = attributes != null ? ImmutableMap.<String, Object>copyOf(attributes) : ImmutableMap.<String, Object>of();
    }
 
    /**
@@ -128,21 +130,10 @@ public class Response {
     * with the body content, but independent position, limit and mark.
     * </p>
     * @return The response body, or <code>null</code> if none.
+    * @throws IOException if the body is streamed and an input error occurs.
     */
-   public ByteString getBody() {
-      return body;
-   }
-
-   /**
-    * Sets a header, replacing any existing value.
-    * @param name The header name.
-    * @param value The header value.
-    */
-   public void setHeader(String name, String value) {
-      if(headers == EMPTY_HEADERS) {
-         headers = Maps.newHashMapWithExpectedSize(16);
-      }
-      headers.put(name.toLowerCase(), new Header(name, value));
+   public ByteString getBody() throws IOException {
+      return null;
    }
 
    /**
@@ -166,11 +157,23 @@ public class Response {
    }
 
    /**
+    * Gets an immutable list of values for a header.
+    * @param name The header name.
+    * @return The values or <code>null</code> if none.
+    */
+   public ImmutableList<String> getHeaderValueList(String name) {
+      Header h = headers.get(name);
+      if(h != null) return h.getValueList();
+      h = headers.get(name.toLowerCase());
+      return h == null ? ImmutableList.<String>of() : h.getValueList();
+   }
+
+   /**
     * Gets the value of the <code>Content-Type</code> header.
     * @return The content type, or <code>null</code> if none.
     */
    public String getContentType() {
-      return getHeaderValue("Content-Type");
+      return getHeaderValue(Header.CONTENT_TYPE);
    }
 
    /**
@@ -194,12 +197,14 @@ public class Response {
          return defaultCharset;
       }
 
-      int index = contentType.indexOf("charset=");
-      if(index != -1) {
-         return contentType.substring(index + 8);
-      } else {
-         return defaultCharset;
+      List<Parameter> parameters = Header.parseParameters(contentType);
+      for(Parameter parameter : parameters) {
+         if(parameter.name.equalsIgnoreCase("charset")) {
+            return parameter.getValue();
+         }
       }
+
+      return defaultCharset;
    }
 
    /**
@@ -210,19 +215,7 @@ public class Response {
       return headers == EMPTY_HEADERS ? EMPTY_HEADERS.values() : Collections.unmodifiableCollection(headers.values());
    }
 
-   private static final Map<String, Header> EMPTY_HEADERS = ImmutableMap.of();
-
-   /**
-    * Sets an attribute.
-    * @param name The attribute name.
-    * @param value The attribute value.
-    */
-   public void setAttribute(final String name, final Object value) {
-      if(attributes == null) {
-         attributes = Maps.newHashMapWithExpectedSize(8);
-      }
-      attributes.put(name, value);
-   }
+   private static final ImmutableMap<String, Header> EMPTY_HEADERS = ImmutableMap.of();
 
    /**
     * Gets an attribute.
@@ -249,7 +242,7 @@ public class Response {
             } else if(values.length == 1) {
                buf.append(header.getName()).append(":").append(values[0]);
             } else {
-               buf.append(header.getName()).append(":").append(values.toString());
+               buf.append(header.getName()).append(":").append(Arrays.toString(values));
             }
             buf.append(newline);
          }
@@ -271,21 +264,37 @@ public class Response {
       buf.append(newline);
       buf.append("Body: ").append(newline);
 
-      if(body != null) {
-         try {
-            String bodyStr = body.toString(Charsets.UTF_8.name());
-            buf.append(bodyStr);
-         } catch(java.io.UnsupportedEncodingException uee) {
-            buf.append("[Encoding Unsupported]");
+      try {
+         ByteString body = getBody();
+         if(body != null) {
+            buf.append(new String(body.toByteArray(), Charsets.UTF_8));
          }
+      } catch(IOException ioe) {
+         ioe.printStackTrace();
       }
 
       return buf.toString();
    }
 
-   private final int statusCode;
-   private Map<String, Header> headers = EMPTY_HEADERS;
-   private Map<String, Object> attributes;
-   private final ByteString body;
+   /**
+    * The status code.
+    */
+   public final int statusCode;
+
+   /**
+    * An immutable map of headers.
+    * <p>
+    * The keys in this map are <em>lower-case</em>.
+    * </p>
+    */
+   public final ImmutableMap<String, Header> headers;
+
+   /**
+    * An immutable map of attributes.
+    * <p>
+    * Beware: The values may not be immutable.
+    * </p>
+    */
+   public final Map<String, Object> attributes;
 }
 
