@@ -82,9 +82,9 @@ public abstract class AuthScheme {
     * @return The response.
     */
    public Response getUnauthorizedResponse(final String message) {
-      Response response = new ResponseBuilder(Response.Code.UNAUTHORIZED, message == null ? DEFAULT_UNAUTHORIZED_MESSAGE : message).create();
-      response.setHeader(AUTHENTICATE_RESPONSE_HEADER, authenticateResponseHeader);
-      return response;
+      return new ResponseBuilder(Response.Code.UNAUTHORIZED, message == null ? DEFAULT_UNAUTHORIZED_MESSAGE : message)
+              .addHeader(AUTHENTICATE_RESPONSE_HEADER, authenticateResponseHeader)
+              .create();
    }
 
    /**
