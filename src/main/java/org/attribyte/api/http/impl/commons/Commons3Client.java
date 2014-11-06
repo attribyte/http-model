@@ -156,18 +156,14 @@ public class Commons3Client implements org.attribyte.api.http.Client {
       switch(request.getMethod()) {
          case GET:
             method = new GetMethod(request.getURI().toString());
-            if(options.followRedirects) {
-               method.setFollowRedirects(options.followRedirects);
-            }
+            method.setFollowRedirects(options.followRedirects);
             break;
          case DELETE:
             method = new DeleteMethod(request.getURI().toString());
             break;
          case HEAD:
             method = new HeadMethod(request.getURI().toString());
-            if(options.followRedirects) {
-               method.setFollowRedirects(options.followRedirects);
-            }
+            method.setFollowRedirects(options.followRedirects);
             break;
          case POST:
             method = new PostMethod(request.getURI().toString());
