@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2010,2014 Attribyte, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -26,7 +26,6 @@ import java.util.Map;
  */
 public abstract class RequestBuilderWithParameters extends RequestBuilder {
 
-
    /**
     * Creates a request builder with URI parsed from a string.
     * @param uri The URI string to be parsed.
@@ -42,7 +41,6 @@ public abstract class RequestBuilderWithParameters extends RequestBuilder {
     * Creates a request builder.
     * @param uri The URI.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
-    * @throws InvalidURIException if URI is invalid.
     */
    protected RequestBuilderWithParameters(final URI uri, final boolean caseSensitiveParameters) {
       super(uri);
@@ -54,7 +52,7 @@ public abstract class RequestBuilderWithParameters extends RequestBuilder {
     * @param name The parameter name.
     * @param value The parameter value.
     */
-   public void addParameter(String name, String value) {
+   public void addParameter(final String name, final String value) {
 
       String lcName = caseSensitiveParameters ? name.toLowerCase() : name;
       Parameter currParameter = parameters.get(lcName);
@@ -70,7 +68,7 @@ public abstract class RequestBuilderWithParameters extends RequestBuilder {
     * @param name The parameter name.
     * @param values The parameter values.
     */
-   public void setParameter(String name, String[] values) {
+   public void setParameter(final String name, final String[] values) {
       String lcName = caseSensitiveParameters ? name.toLowerCase() : name;
       parameters.put(lcName, new Parameter(name, values)); //TODO - Think about behavior
    }
