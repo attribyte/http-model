@@ -1,6 +1,6 @@
 ##About
 
-An HTTP model that presents an immutable interface and allows different client implementations/models to be easily swapped.
+An HTTP model that presents an immutable interface and allows client implementations/models to be easily swapped.
 
 ##Building
 
