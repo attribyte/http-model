@@ -16,7 +16,12 @@
 package org.attribyte.api.http;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
 import org.attribyte.api.DataLimitException;
@@ -38,7 +43,7 @@ import java.util.StringTokenizer;
 
 
 /**
- * An HTTP request.
+ * An immutable HTTP request.
  */
 public final class Request {
 
@@ -91,7 +96,7 @@ public final class Request {
    }
 
    /**
-    * Creates a request.
+    * Creates a request with the body specified as a byte array.
     * @param method The method.
     * @param uri The URI.
     * @param headers The HTTP headers.
@@ -103,10 +108,10 @@ public final class Request {
            final byte[] body, final Map<String, Object> attributes) {
       this.method = method;
       this.uri = uri;
-      this.headers = Header.createMap(headers);
-      this.parameters = Parameter.createMap(parameters);
+      this.headers = Header.createImmutableMap(headers);
+      this.parameters = Parameter.createImmutableMap(parameters);
       this.body = body != null ? ByteString.copyFrom(body) : null;
-      this.attributes = attributes;
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
    }
 
    /**
@@ -122,10 +127,10 @@ public final class Request {
            final ByteString body, final Map<String, Object> attributes) {
       this.method = method;
       this.uri = uri;
-      this.headers = Header.createMap(headers);
-      this.parameters = Parameter.createMap(parameters);
+      this.headers = Header.createImmutableMap(headers);
+      this.parameters = Parameter.createImmutableMap(parameters);
       this.body = body;
-      this.attributes = attributes;
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
    }
 
    /**
@@ -152,7 +157,6 @@ public final class Request {
       return uri.getRawQuery();
    }
 
-
    /**
     * Gets the path component of the request URI.
     * <p>
@@ -175,7 +179,7 @@ public final class Request {
     * @return The path.
     * @throws InvalidURIException if URI is invalid.
     */
-   public static final String getRequestPath(String uri) throws InvalidURIException {
+   public static final String getRequestPath(final String uri) throws InvalidURIException {
       try {
          String path = new URI(uri).getPath();
          return path != null ? path : "/";
@@ -192,7 +196,7 @@ public final class Request {
     * @param uri The URI.
     * @return The host URL.
     */
-   public static final String getHostURL(String uri) throws InvalidURIException {
+   public static final String getHostURL(final String uri) throws InvalidURIException {
 
       try {
          URI _uri = new URI(uri);
@@ -225,7 +229,7 @@ public final class Request {
     * @param name The header name.
     * @return The value or <code>null</code> if none.
     */
-   public String getHeaderValue(String name) {
+   public String getHeaderValue(final String name) {
       Header h = headers.get(name);
       if(h != null) return h.getValue();
       h = headers.get(name.toLowerCase());
@@ -237,7 +241,7 @@ public final class Request {
     * @param name The header name.
     * @return The values or <code>null</code> if none.
     */
-   public String[] getHeaderValues(String name) {
+   public String[] getHeaderValues(final String name) {
       Header h = headers.get(name);
       if(h != null) return h.getValues();
       h = headers.get(name.toLowerCase());
@@ -245,11 +249,23 @@ public final class Request {
    }
 
    /**
+    * Gets an immutable list of values for a header.
+    * @param name The header name.
+    * @return The values or <code>null</code> if none.
+    */
+   public ImmutableList<String> getHeaderValueList(final String name) {
+      Header h = headers.get(name);
+      if(h != null) return h.getValueList();
+      h = headers.get(name.toLowerCase());
+      return h == null ? ImmutableList.<String>of() : h.getValueList();
+   }
+
+   /**
     * Gets a header.
     * @param name The header name.
     * @return The header or <code>null</code> if none.
     */
-   public Header getHeader(String name) {
+   public Header getHeader(final String name) {
       Header h = headers.get(name);
       if(h != null) return h;
       return headers.get(name.toLowerCase());
@@ -260,7 +276,7 @@ public final class Request {
     * @param name The parameter name.
     * @return The value or <code>null</code> if none.
     */
-   public String getParameterValue(String name) {
+   public String getParameterValue(final String name) {
       Parameter p = parameters.get(name);
       return p == null ? null : p.getValue();
    }
@@ -270,9 +286,19 @@ public final class Request {
     * @param name The parameter name.
     * @return The values or <code>null</code> if none.
     */
-   public String[] getParameterValues(String name) {
+   public String[] getParameterValues(final String name) {
       Parameter p = parameters.get(name);
       return p == null ? null : p.getValues();
+   }
+
+   /**
+    * Gets an immutable list of values for a parameter.
+    * @param name The parameter name.
+    * @return The immutable list of values.
+    */
+   public ImmutableList<String> getParameterValueList(final String name) {
+      Parameter p = parameters.get(name);
+      return p == null ? ImmutableList.<String>of() : p.getValueList();
    }
 
    /**
@@ -280,7 +306,7 @@ public final class Request {
     * @return An unmodifiable collection of headers.
     */
    public Collection<Header> getHeaders() {
-      return Collections.unmodifiableCollection(headers.values());
+      return headers.values();
    }
 
    /**
@@ -288,7 +314,7 @@ public final class Request {
     * @return An unmodifiable collection of parameters.
     */
    public Collection<Parameter> getParameters() {
-      return Collections.unmodifiableCollection(parameters.values());
+      return parameters.values();
    }
 
    /**
@@ -304,17 +330,18 @@ public final class Request {
     * @return The content type, or <code>null</code> if none.
     */
    public String getContentType() {
-      return getHeaderValue("Content-Type");
+      return getHeaderValue(Header.CONTENT_TYPE);
    }
 
    /**
-    * Gets the charset specified with the request's <code>Content-Type</code> header, if any.
+    * Gets the charset specified with the request <code>Content-Type</code> header, if any.
     * @param defaultCharset The default charset to return if none is specified in the header.
     * @return The charset or the default charset.
     */
    public String getCharset(String defaultCharset) {
       return getCharset(getContentType(), defaultCharset);
    }
+
 
    /**
     * Gets the charset from a <code>Content-Type</code> header.
@@ -327,12 +354,14 @@ public final class Request {
          return defaultCharset;
       }
 
-      int index = contentType.indexOf("charset=");
-      if(index != -1) {
-         return contentType.substring(index + 8);
-      } else {
-         return defaultCharset;
+      List<Parameter> parameters = Header.parseParameters(contentType);
+      for(Parameter parameter : parameters) {
+         if(parameter.name.equalsIgnoreCase("charset")) {
+            return parameter.getValue();
+         }
       }
+
+      return defaultCharset;
    }
 
    /**
@@ -360,7 +389,7 @@ public final class Request {
    }
 
    /**
-    * The name of the attribute holding the remote address.
+    * The name of an attribute that <em>may</em> hold the remote address.
     */
    public static final String REMOTE_ADDR = "remoteAddr";
 
@@ -378,7 +407,7 @@ public final class Request {
     */
    public String getServerName() {
       String host = getHeaderValue("Host");
-      if(!StringUtil.hasContent(host)) {
+      if(Strings.isNullOrEmpty(host)) {
          return null;
       } else {
          int index = host.indexOf(':');
@@ -524,7 +553,7 @@ public final class Request {
             queryString = queryString.substring(1);
       }
 
-      Map<String, Parameter> parameterMap = new HashMap<String, Parameter>(8);
+      Map<String, Parameter> parameterMap = Maps.newHashMapWithExpectedSize(8);
 
       StringTokenizer tok = new StringTokenizer(queryString, "&");
       while(tok.hasMoreTokens()) {
@@ -607,15 +636,39 @@ public final class Request {
             buf.append("[Encoding Unsupported]");
          }
       }
-
       return buf.toString();
    }
 
-   final Method method;
-   final URI uri;
-   final Map<String, Header> headers;
-   final Map<String, Parameter> parameters;
-   final Map<String, Object> attributes;
-   final ByteString body;
-}
+   /**
+    * The request method.
+    */
+   public final Method method;
 
+   /**
+    * The request URI.
+    */
+   public final URI uri;
+
+   /**
+    * An immutable map of headers.
+    * <p>
+    * Note that keys are lower-case.
+    * </p>
+    */
+   public final ImmutableMap<String, Header> headers;
+
+   /**
+    * An immutable map of parameters.
+    */
+   public final ImmutableMap<String, Parameter> parameters;
+
+   /**
+    * An immutable map of attributes.
+    */
+   public final ImmutableMap<String, Object> attributes;
+
+   /**
+    * The request body. May be null.
+    */
+   public final ByteString body;
+}
