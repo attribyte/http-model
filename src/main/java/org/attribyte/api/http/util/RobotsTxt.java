@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Attribyte, LLC  All Rights Reserved.
+ * Copyright (C) 2008,2014 Attribyte, LLC  All Rights Reserved.
  * 
  * This software is the confidential and proprietary information of Attribyte, LLC.
  * ("Confidential Information").  You shall not
@@ -106,6 +106,7 @@ public class RobotsTxt {
       //Internal-use only...
    }
 
+   @SuppressWarnings("unchecked")
    /**
     * Parse robots.txt from a character stream.
     * @param r A reader from which the <code>robots.txt</code> is read.
