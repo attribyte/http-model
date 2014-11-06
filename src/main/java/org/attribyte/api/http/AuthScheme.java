@@ -138,8 +138,8 @@ public abstract class AuthScheme {
       }
    }
 
-   private final String scheme;
-   private final String realm;
-   private final String authenticateResponseHeader;
+   public final String scheme;
+   public final String realm;
+   public final String authenticateResponseHeader;
 }
 
