@@ -21,7 +21,7 @@ import org.attribyte.api.InvalidURIException;
 import java.net.URI;
 
 /**
- * Builds HTTP <code>POST</code> requests.
+ * Builds immutable HTTP <code>POST</code> requests.
  */
 public class PostRequestBuilder extends RequestBuilder {
 

@@ -20,7 +20,7 @@ import org.attribyte.api.InvalidURIException;
 import java.net.URI;
 
 /**
- * Builds HTTP <code>GET</code> requests.
+ * Builds immutable HTTP <code>GET</code> requests.
  */
 public class GetRequestBuilder extends RequestBuilderWithParameters {
 

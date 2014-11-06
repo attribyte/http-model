@@ -20,7 +20,7 @@ import org.attribyte.api.InvalidURIException;
 import java.net.URI;
 
 /**
- * Builds HTTP <code>DELETE</code> requests.
+ * Builds immutable HTTP <code>DELETE</code> requests.
  */
 public class DeleteRequestBuilder extends RequestBuilderWithParameters {
 
@@ -42,7 +42,6 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
     * Creates a <code>DELETE</code> request builder.
     * @param uri The URI.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
-    * @throws InvalidURIException if URI is invalid.
     */
    public DeleteRequestBuilder(final URI uri, final boolean caseSensitiveParameters) {
       super(uri, caseSensitiveParameters);
@@ -74,7 +73,6 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
     * Case is preserved for parameter names.
     * </p>
     * @param uri The URI.
-    * @throws InvalidURIException if URI is invalid.
     */
    public DeleteRequestBuilder(final URI uri) {
       super(uri, true);

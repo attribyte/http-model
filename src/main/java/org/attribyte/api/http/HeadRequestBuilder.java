@@ -20,7 +20,7 @@ import org.attribyte.api.InvalidURIException;
 import java.net.URI;
 
 /**
- * Builds HTTP <code>HEAD</code> requests.
+ * Builds immutable HTTP <code>HEAD</code> requests.
  */
 public class HeadRequestBuilder extends RequestBuilderWithParameters {
 
@@ -42,7 +42,6 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
     * Creates a <code>HEAD</code> request builder.
     * @param uri The URI.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
-    * @throws InvalidURIException if URI is invalid.
     */
    public HeadRequestBuilder(final URI uri, final boolean caseSensitiveParameters) {
       super(uri, caseSensitiveParameters);
@@ -74,7 +73,6 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
     * Case is preserved for parameter names.
     * </p>
     * @param uri The URI.
-    * @throws InvalidURIException if URI is invalid.
     */
    public HeadRequestBuilder(final URI uri) {
       super(uri, true);

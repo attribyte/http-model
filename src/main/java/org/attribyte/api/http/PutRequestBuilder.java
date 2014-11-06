@@ -21,7 +21,7 @@ import org.attribyte.api.InvalidURIException;
 import java.net.URI;
 
 /**
- * Builds HTTP <code>PUT</code> requests.
+ * Builds immutable HTTP <code>PUT</code> requests.
  */
 public class PutRequestBuilder extends RequestBuilder {
 
