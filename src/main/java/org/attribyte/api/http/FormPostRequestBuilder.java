@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2010,2014 Attribyte, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -20,7 +20,7 @@ import org.attribyte.api.InvalidURIException;
 import java.net.URI;
 
 /**
- * Builds HTTP <code>POST</code> requests with body specified as <code>application/x-www-form-urlencoded</code> parameters.
+ * Builds immutable HTTP <code>POST</code> requests with body specified as <code>application/x-www-form-urlencoded</code> parameters.
  */
 public class FormPostRequestBuilder extends RequestBuilderWithParameters {
 
