@@ -16,6 +16,7 @@
 package org.attribyte.api.http.impl;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
@@ -78,7 +79,7 @@ public class BasicAuthScheme extends AuthScheme {
    @Override
    public String getUserId(final Request request) throws GeneralSecurityException {
       String authorization = request.getHeaderValue(AUTH_HEADER);
-      if(!StringUtil.hasContent(authorization)) {
+      if(Strings.isNullOrEmpty(authorization)) {
          return null;
       }
 
@@ -101,7 +102,7 @@ public class BasicAuthScheme extends AuthScheme {
    public Response authenticate(Request request, String userId, String secret) throws GeneralSecurityException {
 
       String authorization = request.getHeaderValue(AUTH_HEADER);
-      if(!StringUtil.hasContent(authorization)) {
+      if(Strings.isNullOrEmpty(authorization)) {
          return UNAUTHORIZED_RESPONSE;
       }
 
