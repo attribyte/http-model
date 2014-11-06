@@ -23,8 +23,6 @@ import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 
@@ -112,7 +110,7 @@ public class Response {
    public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes) {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
-      this.attributes = attributes != null ? ImmutableMap.<String, Object>copyOf(attributes) : ImmutableMap.<String, Object>of();
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
    }
 
    /**
@@ -183,39 +181,16 @@ public class Response {
     * @return The charset.
     */
    public String getCharset(String defaultCharset) {
-      return getCharset(getContentType(), defaultCharset);
-   }
-
-   /**
-    * Gets the charset from a content type header.
-    * @param contentType The content type header value.
-    * @param defaultCharset The default charset to return if none is specified.
-    * @return The charset.
-    */
-   public static String getCharset(final String contentType, final String defaultCharset) {
-      if(contentType == null) {
-         return defaultCharset;
-      }
-
-      List<Parameter> parameters = Header.parseParameters(contentType);
-      for(Parameter parameter : parameters) {
-         if(parameter.name.equalsIgnoreCase("charset")) {
-            return parameter.getValue();
-         }
-      }
-
-      return defaultCharset;
+      return Header.getCharset(getContentType(), defaultCharset);
    }
 
    /**
     * Gets all headers.
-    * @return An unmodifiable collection of headers.
+    * @return An immutable collection of headers.
     */
    public Collection<Header> getHeaders() {
-      return headers == EMPTY_HEADERS ? EMPTY_HEADERS.values() : Collections.unmodifiableCollection(headers.values());
+      return headers.values();
    }
-
-   private static final ImmutableMap<String, Header> EMPTY_HEADERS = ImmutableMap.of();
 
    /**
     * Gets an attribute.

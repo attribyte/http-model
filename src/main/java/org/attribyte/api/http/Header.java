@@ -153,6 +153,27 @@ public final class Header {
    }
 
    /**
+    * Gets the charset from a content type header.
+    * @param contentType The content type header value.
+    * @param defaultCharset The default charset to return if none is specified.
+    * @return The charset.
+    */
+   public static String getCharset(final String contentType, final String defaultCharset) {
+      if(contentType == null) {
+         return defaultCharset;
+      }
+
+      List<Parameter> parameters = Header.parseParameters(contentType);
+      for(Parameter parameter : parameters) {
+         if(parameter.name.equalsIgnoreCase("charset")) {
+            return parameter.getValue();
+         }
+      }
+
+      return defaultCharset;
+   }
+
+   /**
     * Splits parameters in header values.
     */
    private static Splitter.MapSplitter parameterSplitter =

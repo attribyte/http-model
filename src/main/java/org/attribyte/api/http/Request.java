@@ -16,17 +16,14 @@
 package org.attribyte.api.http;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
 import org.attribyte.api.DataLimitException;
 import org.attribyte.api.InvalidURIException;
-import org.attribyte.util.StringUtil;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -339,29 +336,7 @@ public final class Request {
     * @return The charset or the default charset.
     */
    public String getCharset(String defaultCharset) {
-      return getCharset(getContentType(), defaultCharset);
-   }
-
-
-   /**
-    * Gets the charset from a <code>Content-Type</code> header.
-    * @param contentType The content type header value.
-    * @param defaultCharset The default charset to return if none is specified in the header.
-    * @return The charset, or the default charset.
-    */
-   public static String getCharset(String contentType, String defaultCharset) {
-      if(contentType == null) {
-         return defaultCharset;
-      }
-
-      List<Parameter> parameters = Header.parseParameters(contentType);
-      for(Parameter parameter : parameters) {
-         if(parameter.name.equalsIgnoreCase("charset")) {
-            return parameter.getValue();
-         }
-      }
-
-      return defaultCharset;
+      return Header.getCharset(getContentType(), defaultCharset);
    }
 
    /**
