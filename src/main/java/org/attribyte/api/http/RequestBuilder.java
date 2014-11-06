@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2010, 2014 Attribyte, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,14 +15,13 @@
 
 package org.attribyte.api.http;
 
+import com.google.common.collect.Maps;
 import org.attribyte.api.InvalidURIException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * Builds HTTP requests.
@@ -62,7 +61,7 @@ public abstract class RequestBuilder {
     * @param value The header value.
     * @return A self-reference.
     */
-   public RequestBuilder addHeader(String name, String value) {
+   public RequestBuilder addHeader(final String name, final String value) {
       String lcName = name.toLowerCase();
       Header currHeader = headers.get(lcName);
       if(currHeader == null) {
@@ -78,10 +77,10 @@ public abstract class RequestBuilder {
     * @param headers The headers to add.
     * @return A self-reference.
     */
-   public RequestBuilder addHeaders(Collection<Header> headers) {
+   public RequestBuilder addHeaders(final Collection<Header> headers) {
       if(headers != null) {
          for(Header header : headers) {
-            this.headers.put(header.getName(), header);
+            this.headers.put(header.getName().toLowerCase(), header);
          }
       }
       return this;
@@ -92,7 +91,7 @@ public abstract class RequestBuilder {
     * @param headerMap The map of headers.
     * @return A self-reference.
     */
-   public RequestBuilder addHeaders(Map<?, ?> headerMap) {
+   public RequestBuilder addHeaders(final Map<?, ?> headerMap) {
       if(headerMap != null) {
          this.headers.putAll(Header.createMap(headerMap));
       }
@@ -105,7 +104,7 @@ public abstract class RequestBuilder {
     * @param object The attribute value.
     * @return A self-reference.
     */
-   public RequestBuilder addAttribute(String name, Object object) {
+   public RequestBuilder addAttribute(final String name, final Object object) {
       attributes.put(name, object);
       return this;
    }
@@ -115,15 +114,15 @@ public abstract class RequestBuilder {
     * @param attributes The map of attributes.
     * @return A self-reference.
     */
-   public RequestBuilder addAttributes(Map<String, Object> attributes) {
+   public RequestBuilder addAttributes(final Map<String, Object> attributes) {
       if(attributes != null) {
          this.attributes.putAll(attributes);
       }
       return this;
    }
 
-   final Map<String, Header> headers = new HashMap<String, Header>();
-   final Map<String, Object> attributes = new HashMap<String, Object>();
+   final Map<String, Header> headers = Maps.newHashMapWithExpectedSize(8);
+   final Map<String, Object> attributes = Maps.newHashMapWithExpectedSize(2);
    final URI uri;
 }
 
