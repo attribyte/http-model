@@ -84,7 +84,7 @@ public final class Header {
     * @param value The added value.
     * @return The new header.
     */
-   public Header addValue(String value) {
+   public Header addValue(final String value) {
       return new Header(name, ImmutableList.<String>builder().addAll(values).add(value).build());
    }
 
