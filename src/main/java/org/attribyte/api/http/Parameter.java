@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A HTTP request (query string) parameter.
+ * An immutable HTTP request (query string) parameter.
  */
 public final class Parameter {
 
@@ -46,7 +46,7 @@ public final class Parameter {
     * @param name The parameter name.
     * @param value The parameter value.
     */
-   public Parameter(String name, String value) {
+   public Parameter(final String name, final String value) {
       this.name = name;
       this.values = Strings.isNullOrEmpty(value) ? ImmutableList.<String>of() : ImmutableList.of(value);
    }
@@ -56,7 +56,7 @@ public final class Parameter {
     * @param name The parameter name.
     * @param values The parameter values.
     */
-   public Parameter(String name, String[] values) {
+   public Parameter(final String name, final String[] values) {
       this.name = name;
       this.values = NamedValues.copyValues(values);
    }
@@ -76,7 +76,7 @@ public final class Parameter {
     * @param value The added value.
     * @return The new parameter.
     */
-   public Parameter addValue(String value) {
+   public Parameter addValue(final String value) {
       return new Parameter(name, ImmutableList.<String>builder().addAll(values).add(value).build());
    }
 
