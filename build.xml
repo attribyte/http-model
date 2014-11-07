@@ -57,9 +57,8 @@
                 use="true"
                 windowtitle="org.attribyte"
                 >
-            <fileset dir="src" defaultexcludes="yes">
-                <include name="**/*.java"/>
-                <exclude name="org/attribyte/api/http/**/*.java"/>
+            <fileset dir="src/main/java" defaultexcludes="yes">
+            <include name="**/*.java"/>
             </fileset>
         </javadoc>
     </target>
