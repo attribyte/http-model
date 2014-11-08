@@ -22,7 +22,7 @@ are available:
 
 ##Documentation
 
-* [Javadoc](http://www.attribyte.org/projects/http-model/javadoc/index.html)
+* [Javadoc](https://www.attribyte.org/projects/http-model/javadoc/index.html)
  
 ##License
 
