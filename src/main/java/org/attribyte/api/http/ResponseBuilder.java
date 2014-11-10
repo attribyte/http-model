@@ -50,7 +50,7 @@ public class ResponseBuilder {
     */
    public ResponseBuilder(final int statusCode, final byte[] body) {
       this.statusCode = statusCode;
-      this.body = ByteString.copyFrom(body);
+      this.body = body != null ? ByteString.copyFrom(body) : null;
    }
 
    /**
@@ -60,7 +60,7 @@ public class ResponseBuilder {
     */
    public ResponseBuilder(final int statusCode, final String body) {
       this.statusCode = statusCode;
-      this.body = ByteString.copyFrom(body.getBytes(Charsets.UTF_8));
+      this.body = body != null ? ByteString.copyFrom(body.getBytes(Charsets.UTF_8)) : null;
    }
 
    /**
@@ -89,7 +89,7 @@ public class ResponseBuilder {
     * @return A self-reference.
     */
    public ResponseBuilder setBody(final byte[] body) {
-      this.body = ByteString.copyFrom(body);
+      this.body = body != null ? ByteString.copyFrom(body) : null;
       return this;
    }
 
@@ -102,7 +102,7 @@ public class ResponseBuilder {
     * @return A self-reference.
     */
    public ResponseBuilder setBody(final String body) {
-      this.body = ByteString.copyFrom(body.getBytes(Charsets.UTF_8));
+      this.body = body != null ? ByteString.copyFrom(body.getBytes(Charsets.UTF_8)) : null;
       return this;
    }
 
