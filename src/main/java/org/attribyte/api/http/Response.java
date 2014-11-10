@@ -270,6 +270,6 @@ public class Response {
     * Beware: The values may not be immutable.
     * </p>
     */
-   public final Map<String, Object> attributes;
+   public final ImmutableMap<String, Object> attributes;
 }
 
