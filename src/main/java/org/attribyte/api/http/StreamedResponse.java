@@ -41,7 +41,7 @@ public class StreamedResponse extends Response {
 
    @Override
    public ByteString getBody() throws IOException {
-      return ByteString.copyFrom(body.read());
+      return body != null ? ByteString.copyFrom(body.read()) : null;
    }
 
    /**
