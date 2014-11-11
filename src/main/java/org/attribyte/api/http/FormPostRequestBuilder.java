@@ -82,7 +82,7 @@ public class FormPostRequestBuilder extends RequestBuilderWithParameters {
     * <p>
     * The <code>toString</code> method will be called on map keys
     * to generate parameter names. Map values may be <code>String</code>,
-    * <code>String[]</code>, <code>Collection&lt;String></code>.
+    * <code>String[]</code>, <code>Collection&lt;String&gt;</code>.
     * </p>
     * @param parameters The map of parameters.
     */
