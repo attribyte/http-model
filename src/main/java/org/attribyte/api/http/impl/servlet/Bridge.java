@@ -17,6 +17,10 @@
 
 package org.attribyte.api.http.impl.servlet;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
 import org.attribyte.api.http.DeleteRequestBuilder;
 import org.attribyte.api.http.FormPostRequestBuilder;
@@ -109,10 +113,10 @@ public class Bridge {
     * @param request The servlet request.
     * @param maxBodyBytes The maximum number of bytes read. If < 1, the body is not read.
     */
-   public static final Request fromServletRequest(HttpServletRequest request, int maxBodyBytes) throws IOException {
+   public static final Request fromServletRequest(final HttpServletRequest request, final int maxBodyBytes) throws IOException {
 
-      Map<String, Header> headers = new HashMap<String, Header>(8);
-      List<String> valueList = new ArrayList<String>(8);
+      Map<String, Header> headers = Maps.newHashMapWithExpectedSize(8);
+      List<String> valueList = Lists.newArrayListWithExpectedSize(2);
       Enumeration headerNames = request.getHeaderNames();
       while(headerNames.hasMoreElements()) {
          String name = (String)headerNames.nextElement();
@@ -125,46 +129,44 @@ public class Bridge {
          if(valueList.size() == 1) {
             headers.put(name, new Header(name, valueList.get(0)));
          } else {
-            String[] values = new String[valueList.size()];
-            for(int i = 0; i < valueList.size(); i++) {
-               values[i] = valueList.get(i);
-            }
-            headers.put(name, new Header(name, values));
+            headers.put(name, new Header(name, valueList.toArray(new String[valueList.size()])));
          }
       }
 
-      Map<String, Object> attributes = new HashMap<String, Object>(8);
-      attributes.put("remoteAddr", request.getRemoteAddr());
+      final String queryString = request.getQueryString();
 
+      final String requestURL = Strings.isNullOrEmpty(queryString) ?
+              request.getRequestURL().toString() : request.getRequestURL().append('?').append(queryString).toString();
+
+      final Map parameterMap = request.getParameterMap();
 
       Method method = Method.fromString(request.getMethod());
       switch(method) {
-         case GET:
-            GetRequestBuilder grb = new GetRequestBuilder(request.getRequestURL().toString());
+         case GET: {
+            GetRequestBuilder grb = new GetRequestBuilder(requestURL, parameterMap);
             grb.addHeaders(headers);
-            grb.addParameters(request.getParameterMap());
-            grb.addAttributes(attributes);
+            grb.addAttribute("remoteAddr", request.getRemoteAddr());
             return grb.create();
-         case HEAD:
-            HeadRequestBuilder hrb = new HeadRequestBuilder(request.getRequestURL().toString());
+         }
+         case HEAD: {
+            HeadRequestBuilder hrb = new HeadRequestBuilder(requestURL, parameterMap);
             hrb.addHeaders(headers);
-            hrb.addParameters(request.getParameterMap());
-            hrb.addAttributes(attributes);
+            hrb.addAttribute("remoteAddr", request.getRemoteAddr());
             return hrb.create();
-         case DELETE:
-            DeleteRequestBuilder drb = new DeleteRequestBuilder(request.getRequestURL().toString());
+         }
+         case DELETE: {
+            DeleteRequestBuilder drb = new DeleteRequestBuilder(requestURL, request.getParameterMap());
             drb.addHeaders(headers);
-            drb.addParameters(request.getParameterMap());
-            drb.addAttributes(attributes);
+            drb.addAttribute("remoteAddr", request.getRemoteAddr());
             return drb.create();
+         }
       }
 
-      Map parameterMap = request.getParameterMap();
       if(parameterMap != null && parameterMap.size() > 0) {
-         FormPostRequestBuilder prb = new FormPostRequestBuilder(request.getRequestURL().toString());
+         FormPostRequestBuilder prb = new FormPostRequestBuilder(requestURL);
          prb.addHeaders(headers);
          prb.addParameters(request.getParameterMap());
-         prb.addAttributes(attributes);
+         prb.addAttribute("remoteAddr", request.getRemoteAddr());
          return prb.create();
       } else {
          byte[] body = null;
@@ -175,17 +177,19 @@ public class Bridge {
             } finally {
                is.close();
             }
+         } else {
+            ByteStreams.toByteArray(request.getInputStream()); //Read, but ignore the body...
          }
 
          if(method == Method.POST) {
-            PostRequestBuilder prb = new PostRequestBuilder(request.getRequestURL().toString(), body);
+            PostRequestBuilder prb = new PostRequestBuilder(requestURL, body);
             prb.addHeaders(headers);
-            prb.addAttributes(attributes);
+            prb.addAttribute("remoteAddr", request.getRemoteAddr());
             return prb.create();
          } else {
-            PutRequestBuilder prb = new PutRequestBuilder(request.getRequestURL().toString(), body);
+            PutRequestBuilder prb = new PutRequestBuilder(requestURL, body);
             prb.addHeaders(headers);
-            prb.addAttributes(attributes);
+            prb.addAttribute("remoteAddr", request.getRemoteAddr());
             return prb.create();
          }
       }
