@@ -18,11 +18,24 @@ package org.attribyte.api.http;
 import org.attribyte.api.InvalidURIException;
 
 import java.net.URI;
+import java.util.Map;
 
 /**
  * Builds immutable HTTP <code>DELETE</code> requests.
  */
 public class DeleteRequestBuilder extends RequestBuilderWithParameters {
+
+   /**
+    * Creates a <code>DELETE</code> request builder with URI parsed from a string and
+    * pre-parsed parameters.
+    * The URI parameters are not parsed, nor checked against the specified parameters.
+    * @param uri The URI string to be parsed.
+    * @param parameters A generic map of parameters.
+    * @throws InvalidURIException if URI is invalid.
+    */
+   public DeleteRequestBuilder(final String uri, final Map parameters) throws InvalidURIException {
+      super(uri, parameters);
+   }
 
    /**
     * Creates a <code>DELETE</code> request builder with URI parsed from a string.
@@ -84,7 +97,7 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
 
    @Override
    public Request create() {
-      return new Request(Request.Method.DELETE, uri, headers, parameters, (byte[])null, attributes);
+      return new Request(Request.Method.DELETE, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes);
    }
 }
 

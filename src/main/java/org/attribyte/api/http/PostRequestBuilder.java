@@ -69,7 +69,7 @@ public class PostRequestBuilder extends RequestBuilder {
 
    @Override
    public Request create() {
-      return new Request(Request.Method.POST, uri, headers, null, body, attributes);
+      return new Request(Request.Method.POST, uri, headers, null, false, body, attributes);
    }
 
    private final ByteString body;

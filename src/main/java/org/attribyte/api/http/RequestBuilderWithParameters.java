@@ -22,9 +22,23 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * Builds HTTP requests that allow parameters (<code>GET, HEAD, DELETE</code>).
+ * Builds HTTP requests that allow parameters.
  */
 public abstract class RequestBuilderWithParameters extends RequestBuilder {
+
+   /**
+    * Creates a request builder with URI parsed from a string and
+    * a generic map of parameters (maybe...from a servlet request).
+    * The URI parameters are not parsed, nor checked against the specified parameters.
+    * @param uri The URI string to be parsed.
+    * @param parameters The parameters.
+    * @throws InvalidURIException if URI is invalid.
+    */
+   protected RequestBuilderWithParameters(final String uri, final Map parameters) throws InvalidURIException {
+      super(uri);
+      this.caseSensitiveParameters = false;
+      this.parameters = Parameter.createMap(parameters);
+   }
 
    /**
     * Creates a request builder with URI parsed from a string.
@@ -35,6 +49,8 @@ public abstract class RequestBuilderWithParameters extends RequestBuilder {
    protected RequestBuilderWithParameters(final String uri, final boolean caseSensitiveParameters) throws InvalidURIException {
       super(uri);
       this.caseSensitiveParameters = caseSensitiveParameters;
+      this.parameters = Maps.newHashMapWithExpectedSize(8);
+
    }
 
    /**
@@ -45,51 +61,10 @@ public abstract class RequestBuilderWithParameters extends RequestBuilder {
    protected RequestBuilderWithParameters(final URI uri, final boolean caseSensitiveParameters) {
       super(uri);
       this.caseSensitiveParameters = caseSensitiveParameters;
+      this.parameters = Maps.newHashMapWithExpectedSize(8);
    }
 
-   /**
-    * Adds a parameter to the request to be built.
-    * @param name The parameter name.
-    * @param value The parameter value.
-    */
-   public void addParameter(final String name, final String value) {
-
-      String lcName = caseSensitiveParameters ? name.toLowerCase() : name;
-      Parameter currParameter = parameters.get(lcName);
-      if(currParameter == null) {
-         parameters.put(lcName, new Parameter(name, value));
-      } else {
-         parameters.put(lcName, currParameter.addValue(value));
-      }
-   }
-
-   /**
-    * Adds a parameter to the request to be built.
-    * @param name The parameter name.
-    * @param values The parameter values.
-    */
-   public void setParameter(final String name, final String[] values) {
-      String lcName = caseSensitiveParameters ? name.toLowerCase() : name;
-      parameters.put(lcName, new Parameter(name, values)); //TODO - Think about behavior
-   }
-
-   /**
-    * Adds a map of parameters to the request to be built.
-    * <p>
-    * The <code>toString</code> method will be called on map keys
-    * to generate parameter names. Map values may be <code>String</code>,
-    * <code>String[]</code>, <code>Collection&lt;String></code>.
-    * </p>
-    * @param parameters The map of parameters.
-    */
-   public void addParameters(final Map<?, ?> parameters) {
-      if(parameters != null) {
-         this.parameters.putAll(Parameter.createMap(parameters));
-      }
-   }
-
-   final Map<String, Parameter> parameters = Maps.newHashMapWithExpectedSize(8);
+   final Map<String, Parameter> parameters;
    final boolean caseSensitiveParameters;
-
 }
 

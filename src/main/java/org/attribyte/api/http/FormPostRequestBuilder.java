@@ -18,9 +18,13 @@ package org.attribyte.api.http;
 import org.attribyte.api.InvalidURIException;
 
 import java.net.URI;
+import java.util.Map;
 
 /**
  * Builds immutable HTTP <code>POST</code> requests with body specified as <code>application/x-www-form-urlencoded</code> parameters.
+ * <p>
+ * Parameters in the URI are <em>not</em>
+ * </p>
  */
 public class FormPostRequestBuilder extends RequestBuilderWithParameters {
 
@@ -43,7 +47,49 @@ public class FormPostRequestBuilder extends RequestBuilderWithParameters {
 
    @Override
    public Request create() {
-      return new Request(Request.Method.POST, uri, headers, parameters, (byte[])null, attributes);
+      return new Request(Request.Method.POST, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes);
+   }
+
+
+   /**
+    * Adds a parameter to the request to be built.
+    * @param name The parameter name.
+    * @param value The parameter value.
+    */
+   public void addParameter(final String name, final String value) {
+
+      String lcName = caseSensitiveParameters ? name.toLowerCase() : name;
+      Parameter currParameter = parameters.get(lcName);
+      if(currParameter == null) {
+         parameters.put(lcName, new Parameter(name, value));
+      } else {
+         parameters.put(lcName, currParameter.addValue(value));
+      }
+   }
+
+   /**
+    * Adds a parameter to the request to be built.
+    * @param name The parameter name.
+    * @param values The parameter values.
+    */
+   public void setParameter(final String name, final String[] values) {
+      String lcName = caseSensitiveParameters ? name.toLowerCase() : name;
+      parameters.put(lcName, new Parameter(name, values)); //TODO - Think about behavior
+   }
+
+   /**
+    * Adds a map of parameters to the request to be built.
+    * <p>
+    * The <code>toString</code> method will be called on map keys
+    * to generate parameter names. Map values may be <code>String</code>,
+    * <code>String[]</code>, <code>Collection&lt;String></code>.
+    * </p>
+    * @param parameters The map of parameters.
+    */
+   public void addParameters(final Map<?, ?> parameters) {
+      if(parameters != null) {
+         this.parameters.putAll(Parameter.createMap(parameters));
+      }
    }
 }
 
