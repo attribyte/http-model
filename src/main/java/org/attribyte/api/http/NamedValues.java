@@ -21,6 +21,9 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 
+/**
+ * Utilities for headers and parameters.
+ */
 public class NamedValues {
 
    /**
