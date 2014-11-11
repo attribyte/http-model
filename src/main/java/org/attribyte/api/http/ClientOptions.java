@@ -229,6 +229,9 @@ public class ClientOptions {
       this.props = null;
    }
 
+   /**
+    * Builds immutable instances of client options.
+    */
    public static class Builder {
 
       public String getUserAgent() {
