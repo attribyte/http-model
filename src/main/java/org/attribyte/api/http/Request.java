@@ -98,15 +98,17 @@ public final class Request {
     * @param uri The URI.
     * @param headers The HTTP headers.
     * @param parameters The request parameters.
+    * @param caseSensitiveParameters Are parameters case-sensitive?
     * @param body The body. May be null.
     * @param attributes Additional attributes.
     */
    Request(final Method method, final URI uri, Map<String, Header> headers, Map<String, Parameter> parameters,
-           final byte[] body, final Map<String, Object> attributes) {
+           final boolean caseSensitiveParameters, final byte[] body, final Map<String, Object> attributes) {
       this.method = method;
       this.uri = uri;
       this.headers = Header.createImmutableMap(headers);
       this.parameters = Parameter.createImmutableMap(parameters);
+      this.caseSensitiveParameters = caseSensitiveParameters;
       this.body = body != null ? ByteString.copyFrom(body) : null;
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
    }
@@ -117,15 +119,17 @@ public final class Request {
     * @param uri The URI.
     * @param headers The HTTP headers.
     * @param parameters The request parameters.
+    * @param caseSensitiveParameters Are parameters case-sensitive?
     * @param body The body. May be null.
     * @param attributes Additional attributes.
     */
    Request(final Method method, final URI uri, Map<String, Header> headers, Map<String, Parameter> parameters,
-           final ByteString body, final Map<String, Object> attributes) {
+           final boolean caseSensitiveParameters, final ByteString body, final Map<String, Object> attributes) {
       this.method = method;
       this.uri = uri;
       this.headers = Header.createImmutableMap(headers);
       this.parameters = Parameter.createImmutableMap(parameters);
+      this.caseSensitiveParameters = caseSensitiveParameters;
       this.body = body;
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
    }
@@ -274,7 +278,7 @@ public final class Request {
     * @return The value or <code>null</code> if none.
     */
    public String getParameterValue(final String name) {
-      Parameter p = parameters.get(name);
+      Parameter p = parameters.get(caseSensitiveParameters ? name : name.toLowerCase());
       return p == null ? null : p.getValue();
    }
 
@@ -284,7 +288,7 @@ public final class Request {
     * @return The values or <code>null</code> if none.
     */
    public String[] getParameterValues(final String name) {
-      Parameter p = parameters.get(name);
+      Parameter p = parameters.get(caseSensitiveParameters ? name : name.toLowerCase());
       return p == null ? null : p.getValues();
    }
 
@@ -294,7 +298,7 @@ public final class Request {
     * @return The immutable list of values.
     */
    public ImmutableList<String> getParameterValueList(final String name) {
-      Parameter p = parameters.get(name);
+      Parameter p = parameters.get(caseSensitiveParameters ? name : name.toLowerCase());
       return p == null ? ImmutableList.<String>of() : p.getValueList();
    }
 
@@ -446,7 +450,7 @@ public final class Request {
    }
 
    /**
-    * Adds headers to this request's existing headers, replacing any that are duplicated.
+    * Adds headers to the existing headers, replacing any that are duplicated.
     * @param headers The headers to add.
     * @return The request with additional headers added.
     */
@@ -455,7 +459,7 @@ public final class Request {
       for(Header header : headers) {
          newHeaders.put(header.getName(), header);
       }
-      return new Request(this.method, this.uri, newHeaders, this.parameters, this.body, this.attributes);
+      return new Request(this.method, this.uri, newHeaders, this.parameters, this.caseSensitiveParameters, this.body, this.attributes);
    }
 
    /**
@@ -543,15 +547,13 @@ public final class Request {
             value = nv.substring(index + 1);
          }
 
-         if(!caseSensitiveNames) {
-            name = name.toLowerCase();
-         }
+         final String key = caseSensitiveNames ? name : name.toLowerCase();
 
-         Parameter currParam = parameterMap.get(name);
+         Parameter currParam = parameterMap.get(key);
          if(currParam == null) {
-            parameterMap.put(name, new Parameter(name, value));
+            parameterMap.put(key, new Parameter(name, value));
          } else {
-            parameterMap.put(name, currParam.addValue(value));
+            parameterMap.put(key, currParam.addValue(value));
          }
       }
 
@@ -627,13 +629,17 @@ public final class Request {
    /**
     * An immutable map of headers.
     * <p>
-    * Note that keys are lower-case.
+    *    Keys are lower-cased.
     * </p>
     */
    public final ImmutableMap<String, Header> headers;
 
    /**
     * An immutable map of parameters.
+    * <p>
+    *    If <code>caseSensitiveParameters == false</code>,
+    *    map keys are lower-cased.
+    * </p>
     */
    public final ImmutableMap<String, Parameter> parameters;
 
@@ -646,4 +652,9 @@ public final class Request {
     * The request body. May be null.
     */
    public final ByteString body;
+
+   /**
+    * If the request has parameters, are they case-sensitive?
+    */
+   public final boolean caseSensitiveParameters;
 }
