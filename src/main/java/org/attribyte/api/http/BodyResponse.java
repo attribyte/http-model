@@ -20,7 +20,7 @@ import com.google.protobuf.ByteString;
 import java.util.Map;
 
 /**
- * A response that holds the complete response in-memory.
+ * A response that holds the full response body in-memory.
  */
 public class BodyResponse extends Response {
 
