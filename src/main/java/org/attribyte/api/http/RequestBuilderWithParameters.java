@@ -27,7 +27,7 @@ import java.util.Map;
 public abstract class RequestBuilderWithParameters extends RequestBuilder {
 
    /**
-    * Creates a request builder with URI parsed from a string and
+    * Creates a request builder with a parsed URI and
     * a generic map of parameters (maybe...from a servlet request).
     * The URI parameters are not parsed, nor checked against the specified parameters.
     * @param uri The URI string to be parsed.
@@ -41,7 +41,7 @@ public abstract class RequestBuilderWithParameters extends RequestBuilder {
    }
 
    /**
-    * Creates a request builder with URI parsed from a string.
+    * Creates a request builder with a parsed URI.
     * @param uri The URI string to be parsed.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
     * @throws InvalidURIException if URI is invalid.
@@ -54,7 +54,7 @@ public abstract class RequestBuilderWithParameters extends RequestBuilder {
    }
 
    /**
-    * Creates a request builder.
+    * Creates a request builder with parameter case-sensitivity specified.
     * @param uri The URI.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
     */

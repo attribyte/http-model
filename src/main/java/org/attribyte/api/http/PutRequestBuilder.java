@@ -26,7 +26,7 @@ import java.net.URI;
 public class PutRequestBuilder extends RequestBuilder {
 
    /**
-    * Creates a <code>PUT</code> request builder.
+    * Creates a <code>PUT</code> request builder with a parsed URI.
     * @param uri The URI string to be parsed.
     * @param body The request body.
     * @throws InvalidURIException if URI is invalid.
@@ -47,7 +47,8 @@ public class PutRequestBuilder extends RequestBuilder {
    }
 
    /**
-    * Creates a <code>PUT</code> request builder.
+    * Creates a <code>PUT</code> request builder with a parsed URI
+    * and the body specified as a <code>ByteString</code>.
     * @param uri The URI string to be parsed.
     * @param body The request body.
     * @throws InvalidURIException if URI is invalid.
@@ -58,7 +59,8 @@ public class PutRequestBuilder extends RequestBuilder {
    }
 
    /**
-    * Creates a <code>PUT</code> request builder.
+    * Creates a <code>PUT</code> request builder
+    * and the body specified as a <code>ByteString</code>.
     * @param uri The URI.
     * @param body The request body.
     */

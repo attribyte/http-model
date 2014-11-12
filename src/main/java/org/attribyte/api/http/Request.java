@@ -143,7 +143,7 @@ public final class Request {
    }
 
    /**
-    * Gets the query string, with decoding.
+    * Gets the decoded query string.
     * @return The decoded query string or <code>null</code> if none.
     */
    public String getQueryString() {
@@ -151,7 +151,7 @@ public final class Request {
    }
 
    /**
-    * Gets the query string, without decoding.
+    * Gets the raw query string, without decoding.
     * @return The query string or <code>null</code> if none.
     */
    public String getRawQueryString() {

@@ -50,13 +50,13 @@ public abstract class RequestBuilder {
    }
 
    /**
-    * Creates the request after all headers, parameters and attributes are added.
+    * Creates the immutable request after all headers, parameters and attributes are added.
     * @return The request.
     */
    public abstract Request create();
 
    /**
-    * Adds a header for the request to be built.
+    * Adds a header.
     * @param name The header name.
     * @param value The header value.
     * @return A self-reference.
@@ -73,7 +73,7 @@ public abstract class RequestBuilder {
    }
 
    /**
-    * Adds a collection of headers for the request to be built.
+    * Adds a collection of headers.
     * @param headers The headers to add.
     * @return A self-reference.
     */
@@ -87,7 +87,7 @@ public abstract class RequestBuilder {
    }
 
    /**
-    * Adds a map of headers for the request.
+    * Adds a map of headers.
     * @param headerMap The map of headers.
     * @return A self-reference.
     */
@@ -99,7 +99,7 @@ public abstract class RequestBuilder {
    }
 
    /**
-    * Adds an attribute to the request to be built.
+    * Adds an attribute.
     * @param name The attribute name.
     * @param object The attribute value.
     * @return A self-reference.
@@ -110,7 +110,7 @@ public abstract class RequestBuilder {
    }
 
    /**
-    * Adds a map of attributes for the request.
+    * Adds a map of attributes.
     * @param attributes The map of attributes.
     * @return A self-reference.
     */

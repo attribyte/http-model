@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Builds immutable HTTP <code>POST</code> requests with body specified as <code>application/x-www-form-urlencoded</code> parameters.
  * <p>
- * Parameters in the URI are <em>not</em>
+ * Parameters in the URI are <em>not</em> parsed.
  * </p>
  */
 public class FormPostRequestBuilder extends RequestBuilderWithParameters {
@@ -52,7 +52,7 @@ public class FormPostRequestBuilder extends RequestBuilderWithParameters {
 
 
    /**
-    * Adds a parameter to the request to be built.
+    * Adds a parameter.
     * @param name The parameter name.
     * @param value The parameter value.
     */
@@ -68,7 +68,7 @@ public class FormPostRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Adds a parameter to the request to be built.
+    * Adds a multi-valued parameter.
     * @param name The parameter name.
     * @param values The parameter values.
     */
@@ -78,7 +78,7 @@ public class FormPostRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Adds a map of parameters to the request to be built.
+    * Adds a map of parameters.
     * <p>
     * The <code>toString</code> method will be called on map keys
     * to generate parameter names. Map values may be <code>String</code>,

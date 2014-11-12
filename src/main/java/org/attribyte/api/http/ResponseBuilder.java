@@ -64,7 +64,7 @@ public class ResponseBuilder {
    }
 
    /**
-    * Creates a response builder with a response code and body as a source.
+    * Creates a response builder with a response code and body as a <code>ByteSource</code>.
     * @param statusCode The response code.
     * @param bodySource The response body source.
     */
@@ -95,9 +95,6 @@ public class ResponseBuilder {
 
    /**
     * Sets the response body as a string.
-    * <p>
-    * Converts to <code>UTF-8</code>
-    * </p>
     * @param body The body.
     * @return A self-reference.
     */
@@ -107,7 +104,7 @@ public class ResponseBuilder {
    }
 
    /**
-    * Sets a byte source for the response body.
+    * Sets a <code>ByteSource</code> for the response body.
     * @param body The body byte source.
     * @return A self-reference.
     */
@@ -117,7 +114,7 @@ public class ResponseBuilder {
    }
 
    /**
-    * Creates the immutable response.
+    * Creates an immutable response.
     * @return The response.
     */
    public Response create() {

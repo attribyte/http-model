@@ -27,7 +27,7 @@ import java.util.Map;
 
 
 /**
- * An HTTP response.
+ * An immutable HTTP response.
  */
 public class Response {
 
@@ -122,11 +122,7 @@ public class Response {
    }
 
    /**
-    * Gets the response body.
-    * <p>
-    * The <code>ByteString</code> returned is a read-only buffer
-    * with the body content, but independent position, limit and mark.
-    * </p>
+    * Gets the response body as an immutable <code>ByteString</code>.
     * @return The response body, or <code>null</code> if none.
     * @throws IOException if the body is streamed and an input error occurs.
     */

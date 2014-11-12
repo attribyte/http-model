@@ -38,7 +38,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a <code>HEAD</code> request builder with URI parsed from a string.
+    * Creates a <code>HEAD</code> request builder with URI parsed from a string with parameter case-sensitivity specified.
     * @param uri The URI string to be parsed.
     * @param caseSensitiveParameters Should case be preserved URI parameter names?
     * @throws InvalidURIException if URI is invalid.
@@ -52,7 +52,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a <code>HEAD</code> request builder.
+    * Creates a <code>HEAD</code> request builder with parameter case-sensitivity specified.
     * @param uri The URI.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
     */
