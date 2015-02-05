@@ -26,7 +26,7 @@ import org.attribyte.api.http.Parameter;
 import org.attribyte.api.http.RequestOptions;
 import org.attribyte.api.http.ResponseBuilder;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.api.ProxyConfiguration;
+import org.eclipse.jetty.client.ProxyConfiguration;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
@@ -38,6 +38,7 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.util.HttpCookieStore;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.client.HttpProxy;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -75,7 +76,8 @@ public class JettyClient implements AsyncClient {
          this.httpClient.setMaxConnectionsPerDestination(options.maxConnectionsPerDestination);
          this.httpClient.setCookieStore(new HttpCookieStore.Empty());
          if(options.proxyHost != null) {
-            this.httpClient.setProxyConfiguration(new ProxyConfiguration(options.proxyHost, options.proxyPort));
+            ProxyConfiguration proxyConfig = httpClient.getProxyConfiguration();
+            proxyConfig.getProxies().add(new HttpProxy(options.proxyHost, options.proxyPort));
          }
          this.httpClient.setUserAgentField(new HttpField(HttpHeader.USER_AGENT, options.userAgent));
          this.httpClient.setRequestBufferSize(options.requestBufferSize);
