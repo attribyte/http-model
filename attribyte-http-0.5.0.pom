@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.attribyte</groupId>
-    <artifactId>acp</artifactId>
-    <version>0.6.0</version>
+    <artifactId>attribyte-http</artifactId>
+    <version>0.5.0</version>
     <packaging>jar</packaging>
-    <name>Attribyte JDBC Connection Pool</name>
+    <name>Attribyte HTTP model</name>
     <description>
-        A JDBC connection pool designed to support the high throughput, concurrency, tuning,
-        monitoring and reporting typically required to support production application servers.
+        An HTTP model that presents an immutable interface and provides several common
+        client implementations/models that can easily be swapped.
     </description>
-    <url>https://www.attribyte.org/oss#acp</url>
+    <url>https://www.attribyte.org/oss#http-model</url>
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -28,9 +28,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:attribyte/acp.git</connection>
-        <developerConnection>scm:git:git@github.com:attribyte/acp.git</developerConnection>
-        <url>git@github.com:attribyte/acp.git</url>
+        <connection>scm:git:git@github.com:attribyte/http-model.git</connection>
+        <developerConnection>scm:git:git@github.com:attribyte/http-model.git</developerConnection>
+        <url>git@github.com:attribyte/http-model.git</url>
     </scm>
     <dependencies>
         <dependency>
