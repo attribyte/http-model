@@ -1,9 +1,10 @@
 #!/bin/sh
-cp attribyte-http-0.5.0.pom dist/lib
+VERSION="0.5.1"
+cp attribyte-http-0.5.pom dist/lib/attribyte-http-${VERSION}.pom
 cd dist/lib
-gpg -ab attribyte-http-0.5.0.pom
-gpg -ab attribyte-http-0.5.0.jar
-gpg -ab attribyte-http-0.5.0-sources.jar
-gpg -ab attribyte-http-0.5.0-javadoc.jar
+gpg -ab attribyte-http-${VERSION}.pom
+gpg -ab attribyte-http-${VERSION}.jar
+gpg -ab attribyte-http-${VERSION}-sources.jar
+gpg -ab attribyte-http-${VERSION}-javadoc.jar
 jar -cvf ../bundle.jar *
 
