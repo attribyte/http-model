@@ -128,7 +128,7 @@ public class ResponseBuilder {
     */
    public StreamedResponse createStreamed() {
       final ByteSource bodySource =
-              this.bodySource != null ? this.bodySource : body != null ? ByteStreams.asByteSource(body.toByteArray()) : null;
+              this.bodySource != null ? this.bodySource : body != null ? ByteSource.wrap(body.toByteArray()) : null;
       return new StreamedResponse(statusCode, headers, bodySource, attributes);
    }
 
