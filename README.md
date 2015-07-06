@@ -2,11 +2,7 @@
 
 An HTTP model that presents an immutable interface and allows client implementations/models to be easily swapped.
 
-##Maven Artifact
-
-[Maven](http://mvnrepository.com/artifact/org.attribyte/attribyte-http/0.5.1)
-
-##Building from Source
+##Build
 
 The build uses [Apache Ant](http://ant.apache.org/) and
 [Apache Ivy](https://ant.apache.org/ivy/) to resolve dependencies. The following ant tasks
