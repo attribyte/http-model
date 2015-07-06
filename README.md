@@ -12,8 +12,9 @@ are available:
 * dist - Resolves dependencies, compiles the source, and creates a jar in dist/lib. This is the default task.
 * full-dist - Resolves dependencies, compiles the source, creates a jar in dist/lib, and copies dependencies to dist/extlib
 * clean - Removes all build files and jars.
-
+ 
 ##Dependencies
+[Maven](http://mvnrepository.com/artifact/org.attribyte/attribyte-http/0.5.1)
 
 * [Attribyte shared-base](https://github.com/attribyte/shared-base)
 * [Apache commons-codec](http://commons.apache.org/proper/commons-codec/)
