@@ -207,14 +207,7 @@ public class Response {
       buf.append("Headers: ").append(newline);
       if(headers != null) {
          for(Header header : headers.values()) {
-            String[] values = header.getValues();
-            if(values == null) {
-               buf.append(header.getName());
-            } else if(values.length == 1) {
-               buf.append(header.getName()).append(":").append(values[0]);
-            } else {
-               buf.append(header.getName()).append(":").append(Arrays.toString(values));
-            }
+            buf.append(header.getName()).append(": ").append(NamedValues.valueJoiner.join(header.getValueList()));
             buf.append(newline);
          }
       } else {
@@ -225,7 +218,7 @@ public class Response {
       buf.append("Attributes: ").append(newline);
       if(attributes != null) {
          for(Map.Entry<String, Object> entry : attributes.entrySet()) {
-            buf.append(entry.getKey()).append(":").append(entry.getValue().toString());
+            buf.append(entry.getKey()).append(": ").append(entry.getValue().toString());
             buf.append(newline);
          }
       } else {
