@@ -2,7 +2,7 @@
 
 An HTTP model that presents an immutable interface and allows client implementations/models to be easily swapped.
 
-##Building
+##Build
 
 The build uses [Apache Ant](http://ant.apache.org/) and
 [Apache Ivy](https://ant.apache.org/ivy/) to resolve dependencies. The following ant tasks
@@ -12,8 +12,9 @@ are available:
 * dist - Resolves dependencies, compiles the source, and creates a jar in dist/lib. This is the default task.
 * full-dist - Resolves dependencies, compiles the source, creates a jar in dist/lib, and copies dependencies to dist/extlib
 * clean - Removes all build files and jars.
-
+ 
 ##Dependencies
+
 
 * [Attribyte shared-base](https://github.com/attribyte/shared-base)
 * [Apache commons-codec](http://commons.apache.org/proper/commons-codec/)
