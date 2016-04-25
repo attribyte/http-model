@@ -19,6 +19,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
@@ -30,10 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -47,7 +46,7 @@ public final class Request {
    /**
     * The HTTP methods.
     */
-   public static enum Method {
+   public enum Method {
 
       /**
        * The HTTP <code>HEAD</code> method.
@@ -408,7 +407,7 @@ public final class Request {
       if(path.length() < 2) {
          return Collections.emptyList();
       } else {
-         List<String> components = new ArrayList<String>(8);
+         List<String> components = Lists.newArrayListWithExpectedSize(8);
          StringTokenizer tok = new StringTokenizer(path, "/");
          if(tok.hasMoreTokens()) {
             tok.nextToken(); //Skip the leading '/'
@@ -438,7 +437,7 @@ public final class Request {
       }
 
       requestPath = requestPath.substring(1); //Remove leading '/'
-      List<String> components = new ArrayList<String>(8);
+      List<String> components = Lists.newArrayListWithExpectedSize(8);
       StringTokenizer tok = new StringTokenizer(requestPath, "/");
       while(tok.hasMoreTokens()) {
          String currComponent = tok.nextToken().trim();
@@ -455,7 +454,7 @@ public final class Request {
     * @return The request with additional headers added.
     */
    public Request addHeaders(Collection<Header> headers) {
-      Map<String, Header> newHeaders = this.headers == null ? new HashMap<String, Header>() : new HashMap<String, Header>(this.headers);
+      Map<String, Header> newHeaders = this.headers == null ? Maps.newHashMapWithExpectedSize(8) : Maps.newHashMap(this.headers);
       for(Header header : headers) {
          newHeaders.put(header.getName(), header);
       }
