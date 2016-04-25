@@ -18,6 +18,7 @@
 package org.attribyte.api.http.util;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharStreams;
@@ -160,7 +161,7 @@ public class RobotsTxt {
             }
             if(currRecordLists != null) { //Agent must have appeared first
                if(currRecordLists[DISALLOW] == null) {
-                  currRecordLists[DISALLOW] = new ArrayList<String>(8);
+                  currRecordLists[DISALLOW] = Lists.newArrayListWithExpectedSize(8);
                }
                currRecordLists[DISALLOW].add(path);
             }
@@ -173,7 +174,7 @@ public class RobotsTxt {
             }
             if(currRecordLists != null) {
                if(currRecordLists[ALLOW] == null) {
-                  currRecordLists[ALLOW] = new ArrayList<String>(8);
+                  currRecordLists[ALLOW] = Lists.newArrayListWithExpectedSize(8);
                }
 
                currRecordLists[ALLOW].add(path);
