@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Attribyte, LLC  All Rights Reserved.
+ * Copyright (C) 2010, 2016 Attribyte, LLC  All Rights Reserved.
  * 
  * This software is the confidential and proprietary information of Attribyte, LLC.
  * ("Confidential Information").  You shall not
@@ -169,11 +169,8 @@ public class Bridge {
       } else {
          byte[] body = null;
          if(maxBodyBytes > 0) {
-            InputStream is = request.getInputStream();
-            try {
+            try(InputStream is = request.getInputStream()) {
                body = Request.bodyFromInputStream(is, maxBodyBytes);
-            } finally {
-               is.close();
             }
          } else {
             ByteStreams.toByteArray(request.getInputStream()); //Read, but ignore the body...
@@ -213,11 +210,8 @@ public class Bridge {
       ByteString bodyString = response.getBody();
 
       if(bodyString != null) {
-         BufferedOutputStream baos = new BufferedOutputStream(servletResponse.getOutputStream());
-         try {
+         try(BufferedOutputStream baos = new BufferedOutputStream(servletResponse.getOutputStream())) {
             baos.write(bodyString.toByteArray());
-         } finally {
-            baos.close();
          }
       }
    }
