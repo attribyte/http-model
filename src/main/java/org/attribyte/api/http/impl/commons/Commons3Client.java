@@ -16,6 +16,8 @@
 package org.attribyte.api.http.impl.commons;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -41,10 +43,8 @@ import org.attribyte.api.http.ResponseBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -240,7 +240,7 @@ public class Commons3Client implements org.attribyte.api.http.Client {
          return Collections.emptyMap();
       }
 
-      Map<String, Object> parameterMap = new HashMap<String, Object>();
+      Map<String, Object> parameterMap = Maps.newHashMapWithExpectedSize(8);
       for(NameValuePair pair : pairs) {
          Object o = parameterMap.get(pair.getName());
          if(o == null) {
@@ -249,7 +249,7 @@ public class Commons3Client implements org.attribyte.api.http.Client {
             if(o instanceof List) {
                ((List<String>)o).add(pair.getValue());
             } else {
-               List<String> vlist = new ArrayList<String>(2);
+               List<String> vlist = Lists.newArrayListWithExpectedSize(2);
                vlist.add(pair.getValue());
                parameterMap.put(pair.getName(), vlist);
             }
