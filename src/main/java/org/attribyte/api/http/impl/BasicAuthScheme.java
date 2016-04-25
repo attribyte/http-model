@@ -25,7 +25,6 @@ import org.attribyte.api.http.AuthScheme;
 import org.attribyte.api.http.Header;
 import org.attribyte.api.http.Request;
 import org.attribyte.api.http.Response;
-import org.attribyte.util.StringUtil;
 
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -63,7 +62,7 @@ public class BasicAuthScheme extends AuthScheme {
 
    @Override
    public Request addAuth(final Request request, final String id, final String secret) throws GeneralSecurityException {
-      return request.addHeaders(buildAuthHeaders(request, id, secret));
+      return request.addHeaders(buildAuthHeaders(id, secret));
    }
 
    @Override
@@ -150,11 +149,10 @@ public class BasicAuthScheme extends AuthScheme {
 
    /**
     * Create the base 64 encoding 'Authorization' header.
-    * @param request The original request.
     * @param username The username.
     * @param password The password.
     */
-   private static List<Header> buildAuthHeaders(Request request, String username, String password) {
+   private static List<Header> buildAuthHeaders(String username, String password) {
       Header header = new Header(AUTH_HEADER, buildAuthHeaderValue(username, password));
       return Collections.singletonList(header);
    }
