@@ -121,11 +121,10 @@ public class NingClient implements AsyncClient {
    public org.attribyte.api.http.Response send(org.attribyte.api.http.Request request, RequestOptions options) throws IOException {
       try {
          return asyncSend(request, options).get(options.timeoutSeconds, TimeUnit.SECONDS);
-      } catch(TimeoutException te) {
-         throw new IOException(te);
-      } catch(ExecutionException ee) {
-         throw new IOException(ee);
+      } catch(TimeoutException | ExecutionException e) {
+         throw new IOException(e);
       } catch(InterruptedException ie) {
+         Thread.currentThread().interrupt();
          throw new IOException(ie);
       }
    }
