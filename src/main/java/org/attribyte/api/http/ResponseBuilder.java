@@ -18,7 +18,6 @@ package org.attribyte.api.http;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
 
 import java.util.Collection;
