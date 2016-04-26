@@ -7,7 +7,7 @@
     </configurations>
     <dependencies>
         <dependency org="org.attribyte" name="attribyte-shared-base" rev="1.0" conf="compile->default"/>
-        <dependency org="com.google.guava" name="guava" rev="[15.0,)" conf="compile->default"/>
+        <dependency org="com.google.guava" name="guava" rev="[18.0,)" conf="compile->default"/>
         <dependency org="com.google.protobuf" name="protobuf-java" rev="2.4.1" conf="compile->default"/>
         <dependency org="commons-codec" name="commons-codec" rev="1.4" conf="compile->default"/>
         <dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1" conf="compile->default"/>
@@ -15,7 +15,7 @@
         <!-- Built-in client implementations -->
 
         <dependency org="commons-httpclient" name="commons-httpclient" rev="3.1" conf="compile->default"/>
-        <dependency org="org.eclipse.jetty" name="jetty-client" rev="9.2.7.v20150116" conf="compile->default"/>
+        <dependency org="org.eclipse.jetty" name="jetty-client" rev="9.3.8.v20160314" conf="compile->default"/>
         <dependency org="com.ning" name="async-http-client" rev="1.8.15" conf="compile->default"/>
         <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.6" conf="compile->default"/>
     </dependencies>
