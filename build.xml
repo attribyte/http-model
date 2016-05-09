@@ -83,7 +83,7 @@
         </javadoc>
     </target>
 
-    <target name="mvn-dist" depends="dist">
+    <target name="mvn-dist" depends="dist,cleandoc,javadoc">
         <javadoc
                 access="public"
                 destdir="${dist}/doc/javadoc"
