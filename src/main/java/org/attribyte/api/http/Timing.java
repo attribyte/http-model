@@ -15,6 +15,10 @@
 
 package org.attribyte.api.http;
 
+import com.google.common.base.MoreObjects;
+
+import java.util.concurrent.TimeUnit;
+
 /**
  * Transaction timing.
  */
@@ -41,11 +45,77 @@ public class Timing {
       this.timeToCompleteResponse = timeToCompleteResponse;
    }
 
+   /**
+    * Gets the time to request start.
+    * @param timeUnit The desired time unit.
+    * @return The time in the requested units.
+    */
+   public long timeToRequestStart(final TimeUnit timeUnit) {
+      return timeUnit.convert(timeToRequestStart, TimeUnit.NANOSECONDS);
+   }
+
+   /**
+    * Gets the time to request complete.
+    * @param timeUnit The desired time unit.
+    * @return The time in the requested units.
+    */
+   public long timeToRequestComplete(final TimeUnit timeUnit) {
+      return timeUnit.convert(timeToRequestComplete, TimeUnit.NANOSECONDS);
+   }
+
+   /**
+    * Gets the time to response status.
+    * @param timeUnit The desired time unit.
+    * @return The time in the requested units.
+    */
+   public long timeToResponseStatus(final TimeUnit timeUnit) {
+      return timeUnit.convert(timeToResponseStatus, TimeUnit.NANOSECONDS);
+   }
+
+   /**
+    * Gets the time to the first response header.
+    * @param timeUnit The desired time unit.
+    * @return The time in the requested units.
+    */
+   public long timeToFirstResponseHeader(final TimeUnit timeUnit) {
+      return timeUnit.convert(timeToFirstResponseHeader, TimeUnit.NANOSECONDS);
+   }
+
+   /**
+    * Gets the time to the first response content.
+    * @param timeUnit The desired time unit.
+    * @return The time in the requested units.
+    */
+   public long timeToFirstResponseContent(final TimeUnit timeUnit) {
+      return timeUnit.convert(timeToFirstResponseContent, TimeUnit.NANOSECONDS);
+   }
+
+   /**
+    * Gets the time to response complete.
+    * @param timeUnit The desired time unit.
+    * @return The time in the requested units.
+    */
+   public long timeToCompleteResponse(final TimeUnit timeUnit) {
+      return timeUnit.convert(timeToCompleteResponse, TimeUnit.NANOSECONDS);
+   }
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this)
+              .add("timeToRequestStart", timeToRequestStart(TimeUnit.MICROSECONDS))
+              .add("timeToRequestComplete", timeToRequestComplete(TimeUnit.MICROSECONDS))
+              .add("timeToResponseStatus", timeToResponseStatus(TimeUnit.MICROSECONDS))
+              .add("timeToFirstResponseHeader", timeToFirstResponseHeader(TimeUnit.MICROSECONDS))
+              .add("timeToFirstResponseContent", timeToFirstResponseContent(TimeUnit.MICROSECONDS))
+              .add("timeToCompleteResponse", timeToCompleteResponse(TimeUnit.MICROSECONDS))
+              .add("units", "microsecond")
+              .toString();
+   }
+
    private final long timeToRequestStart;
    private final long timeToRequestComplete;
    private final long timeToResponseStatus;
    private final long timeToFirstResponseHeader;
    private final long timeToFirstResponseContent;
    private final long timeToCompleteResponse;
-
 }

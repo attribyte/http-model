@@ -23,6 +23,7 @@ import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -260,6 +261,12 @@ public class Response {
          }
       } catch(IOException ioe) {
          ioe.printStackTrace();
+      }
+
+      if(timing != null) {
+         buf.append(newline);
+         buf.append(newline);
+         buf.append(timing.toString());
       }
 
       return buf.toString();

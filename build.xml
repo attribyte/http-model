@@ -48,7 +48,7 @@
         </javac>
     </target>
 
-    <target name="dist" depends="compile" description="Creates the distribution">
+    <target name="dist" depends="compile, compile-test" description="Creates the distribution">
         <jar jarfile="${jar}" basedir="${build}"/>
     </target>
 
