@@ -9,7 +9,7 @@
 
     <property name="groupId" value="org.attribyte" />
     <property name="artifactId" value="attribyte-http" />
-    <property name="version" value="0.5.2" />
+    <property name="version" value="0.5.3" />
 
     <property name="jar" value="${dist}/lib/${artifactId}-${version}.jar" />
     <property name="javadoc-jar" value="${dist}/lib/${artifactId}-${version}-javadoc.jar" />

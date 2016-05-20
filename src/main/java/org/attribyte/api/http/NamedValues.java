@@ -28,7 +28,7 @@ public class NamedValues {
 
    /**
     * Copies values from an array to an immutable list.
-    * Empty or <code>null</code> values are ignored.
+    * Empty or {@code null} values are ignored.
     * @param values The input values.
     * @return The internal values.
     */
@@ -48,7 +48,7 @@ public class NamedValues {
 
    /**
     * Copies values from a collection to an immutable list.
-    * Empty or <code>null</code> values are ignored.
+    * Empty or {@code null} values are ignored.
     * @param values The input values.
     * @return The internal values.
     */

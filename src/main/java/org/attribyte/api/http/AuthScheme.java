@@ -60,7 +60,7 @@ public abstract class AuthScheme {
    /**
     * Gets the user id from the request, if possible.
     * @param request The request.
-    * @return The user id, or <code>null</code> if none.
+    * @return The user id, or {@code null} if none.
     */
    public abstract String getUserId(Request request) throws java.security.GeneralSecurityException;
 
@@ -69,7 +69,7 @@ public abstract class AuthScheme {
     * @param request The request.
     * @param userId The user id for the secret.
     * @param secret The secret data.
-    * @return The HTTP "Unauthorized" response if request is not authorized, otherwise <code>null</code>.
+    * @return The HTTP "Unauthorized" response if request is not authorized, otherwise {@code null}.
     */
    public abstract Response authenticate(Request request, String userId, String secret) throws java.security.GeneralSecurityException;
 
@@ -78,7 +78,7 @@ public abstract class AuthScheme {
     * <p>
     * By default, returns the standard HTTP challenge response.
     * </p>
-    * @param message A message returned with the response. If <code>null</code>, a standard message is returned.
+    * @param message A message returned with the response. If {@code null}, a standard message is returned.
     * @return The response.
     */
    public Response getUnauthorizedResponse(final String message) {
@@ -114,7 +114,7 @@ public abstract class AuthScheme {
    }
 
    /**
-    * Gets the value for the <code>WWW-Authenticate</code> header.
+    * Gets the value for the {@code WWW-Authenticate} header.
     * @return The header value.
     */
    public String getAuthenticateResponseHeader() {

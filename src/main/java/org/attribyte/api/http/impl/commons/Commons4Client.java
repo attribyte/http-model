@@ -121,7 +121,7 @@ public class Commons4Client implements org.attribyte.api.http.Client {
     *   <dl>
     *     <dt><b>User-Agent</b></dt>
     *     <dd>The default User-Agent string sent with requests. Added only if
-    *     request has no <code>User-Agent</code> header.</dd>
+    *     request has no {@code User-Agent} header.</dd>
     *     <dt><b>connectionTimeoutMillis</b></dt>
     *     <dd>The HTTP connection timeout in milliseconds.</dd>
     *     <dt><b>socketTimeoutMillis</b></dt>
@@ -129,7 +129,7 @@ public class Commons4Client implements org.attribyte.api.http.Client {
     *     <dt>proxyHost</dt>
     *     <dd>The HTTP proxy host. If specified, all client requests will use this proxy.</dd>
     *     <dt>proxyPort</dt>
-    *     <dd>The HTTP proxy port. Required when <code>proxyHost</code> is specified</dd>
+    *     <dd>The HTTP proxy port. Required when {@code proxyHost} is specified</dd>
     *   </dl>
     * </p>
     * @param prefix The prefix for all properties (e.g. 'client.').

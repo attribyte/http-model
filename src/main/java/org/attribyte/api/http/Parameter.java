@@ -156,8 +156,8 @@ public final class Parameter {
    /**
     * Creates a map of parameters from a generic map.
     * <p>
-    *   Map values may be <code>Parameter</code>, <code>String[]</code>, or a <code>Collection</code> If
-    *   value is none of these, <code>toString</code> is used to generate a single value.
+    *   Map values may be {@code Parameter}, {@code String[]}, or a {@code Collection} If
+    *   value is none of these, {@code toString} is used to generate a single value.
     * </p>
     */
    static final Map<String, Parameter> createMap(final Map inputParameters, final Map<String, Parameter> outputMap) {

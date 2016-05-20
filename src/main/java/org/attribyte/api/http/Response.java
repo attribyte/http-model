@@ -98,6 +98,7 @@ public class Response {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
       this.attributes = ImmutableMap.of();
+      this.timing = null;
    }
 
    /**
@@ -110,7 +111,23 @@ public class Response {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
+      this.timing = null;
    }
+
+   /**
+    * Creates a response with attributes.
+    * @param statusCode The HTTP response status code.
+    * @param headers The response headers.
+    * @param attributes The attributes.
+    */
+   public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes,
+                   final Timing timing) {
+      this.statusCode = statusCode;
+      this.headers = Header.createImmutableMap(headers);
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
+      this.timing = timing;
+   }
+
 
    /**
     * Gets the HTTP response code.
@@ -121,8 +138,8 @@ public class Response {
    }
 
    /**
-    * Gets the response body as an immutable <code>ByteString</code>.
-    * @return The response body, or <code>null</code> if none.
+    * Gets the response body as an immutable {@code ByteString}.
+    * @return The response body, or {@code null} if none.
     * @throws IOException if the body is streamed and an input error occurs.
     */
    public ByteString getBody() throws IOException {
@@ -132,7 +149,7 @@ public class Response {
    /**
     * Gets the first header value.
     * @param name The header name.
-    * @return The value or <code>null</code> if none.
+    * @return The value or {@code null} if none.
     */
    public String getHeaderValue(String name) {
       Header h = headers.get(name.toLowerCase());
@@ -142,7 +159,7 @@ public class Response {
    /**
     * Gets all values for a header.
     * @param name The header name.
-    * @return The values or <code>null</code> if none.
+    * @return The values or {@code null} if none.
     */
    public String[] getHeaderValues(String name) {
       Header h = headers.get(name.toLowerCase());
@@ -152,7 +169,7 @@ public class Response {
    /**
     * Gets an immutable list of values for a header.
     * @param name The header name.
-    * @return The values or <code>null</code> if none.
+    * @return The values or {@code null} if none.
     */
    public ImmutableList<String> getHeaderValueList(String name) {
       Header h = headers.get(name);
@@ -162,8 +179,8 @@ public class Response {
    }
 
    /**
-    * Gets the value of the <code>Content-Type</code> header.
-    * @return The content type, or <code>null</code> if none.
+    * Gets the value of the {@code Content-Type} header.
+    * @return The content type, or {@code null} if none.
     */
    public String getContentType() {
       return getHeaderValue(Header.CONTENT_TYPE);
@@ -190,10 +207,19 @@ public class Response {
    /**
     * Gets an attribute.
     * @param name The attribute name.
-    * @return The attribute or <code>null</code> if none set.
+    * @return The attribute or {@code null} if none set.
     */
    public Object getAttribute(final String name) {
       return attributes == null ? null : attributes.get(name);
+   }
+
+
+   /**
+    * Gets the request/response timing, if available.
+    * @return The timing or {@code null} if none set.
+    */
+   public Timing getTiming() {
+      return timing;
    }
 
    @Override
@@ -259,5 +285,11 @@ public class Response {
     * </p>
     */
    public final ImmutableMap<String, Object> attributes;
+
+
+   /**
+    * Request/response timing.
+    */
+   public final Timing timing;
 }
 

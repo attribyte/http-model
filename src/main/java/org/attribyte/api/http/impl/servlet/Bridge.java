@@ -58,7 +58,7 @@ public class Bridge {
     * but it does not include query string parameters.
     * </cite>
     * </p>
-    * @return A <code>StringBuilder</code> containing the original URL, excluding the query string.
+    * @return A {@code StringBuilder} containing the original URL, excluding the query string.
     */
    public static StringBuilder getRequestURL(final Request request) {
 
@@ -105,7 +105,7 @@ public class Bridge {
    /**
     * Creates a request from a servlet HTTP request.
     * <p>
-    *   Sets an attribute, <code>remoteAddr</code> with the address reported
+    *   Sets an attribute, {@code remoteAddr} with the address reported
     *   by the servlet API.
     * </p>
     * @param request The servlet request.

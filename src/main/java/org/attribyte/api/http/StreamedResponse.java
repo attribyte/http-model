@@ -46,7 +46,7 @@ public class StreamedResponse extends Response {
 
    /**
     * Gets a source for the body.
-    * @return The body, or <code>null</code> if none.
+    * @return The body, or {@code null} if none.
     */
    public ByteSource getBodySource() {
       return body;

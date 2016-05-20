@@ -1,5 +1,5 @@
 #!/bin/sh
-VERSION="0.5.2"
+VERSION="0.5.3"
 cp attribyte-http-0.5.pom dist/lib/attribyte-http-${VERSION}.pom
 cd dist/lib
 gpg -ab attribyte-http-${VERSION}.pom

@@ -21,12 +21,12 @@ import org.attribyte.api.InvalidURIException;
 import java.net.URI;
 
 /**
- * Builds immutable HTTP <code>PUT</code> requests.
+ * Builds immutable HTTP {@code PUT} requests.
  */
 public class PutRequestBuilder extends RequestBuilder {
 
    /**
-    * Creates a <code>PUT</code> request builder with a parsed URI.
+    * Creates a {@code PUT} request builder with a parsed URI.
     * @param uri The URI string to be parsed.
     * @param body The request body.
     * @throws InvalidURIException if URI is invalid.
@@ -37,7 +37,7 @@ public class PutRequestBuilder extends RequestBuilder {
    }
 
    /**
-    * Creates a <code>PUT</code> request builder.
+    * Creates a {@code PUT} request builder.
     * @param uri The URI.
     * @param body The request body.
     */
@@ -47,8 +47,8 @@ public class PutRequestBuilder extends RequestBuilder {
    }
 
    /**
-    * Creates a <code>PUT</code> request builder with a parsed URI
-    * and the body specified as a <code>ByteString</code>.
+    * Creates a {@code PUT} request builder with a parsed URI
+    * and the body specified as a {@code ByteString}.
     * @param uri The URI string to be parsed.
     * @param body The request body.
     * @throws InvalidURIException if URI is invalid.
@@ -59,8 +59,8 @@ public class PutRequestBuilder extends RequestBuilder {
    }
 
    /**
-    * Creates a <code>PUT</code> request builder
-    * and the body specified as a <code>ByteString</code>.
+    * Creates a {@code PUT} request builder
+    * and the body specified as a {@code ByteString}.
     * @param uri The URI.
     * @param body The request body.
     */

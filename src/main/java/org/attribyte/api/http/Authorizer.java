@@ -27,7 +27,7 @@ public interface Authorizer {
     * Determine if a request is authorized.
     * @param auth The authentication scheme.
     * @param request The HTTP request.
-    * @return The HTTP "Unauthorized" (or some other) response to be returned to the client if the request is not authorized. Otherwise, <code>null</code>.
+    * @return The HTTP "Unauthorized" (or some other) response to be returned to the client if the request is not authorized. Otherwise, {@code null}.
     * @throws org.attribyte.api.DatastoreException on error retrieving security credentials.
     */
    public Response isAuthorized(AuthScheme auth, Request request) throws DatastoreException;

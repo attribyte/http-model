@@ -63,7 +63,7 @@ public class ResponseBuilder {
    }
 
    /**
-    * Creates a response builder with a response code and body as a <code>ByteSource</code>.
+    * Creates a response builder with a response code and body as a {@code ByteSource}.
     * @param statusCode The response code.
     * @param bodySource The response body source.
     */
@@ -103,7 +103,7 @@ public class ResponseBuilder {
    }
 
    /**
-    * Sets a <code>ByteSource</code> for the response body.
+    * Sets a {@code ByteSource} for the response body.
     * @param body The body byte source.
     * @return A self-reference.
     */
@@ -117,7 +117,7 @@ public class ResponseBuilder {
     * @return The response.
     */
    public Response create() {
-      return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes) :
+      return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, timing) :
               new StreamedResponse(statusCode, headers, bodySource, attributes);
    }
 
@@ -198,6 +198,16 @@ public class ResponseBuilder {
    }
 
    /**
+    * Sets request/response timing.
+    * @param timing The timing.
+    * @return A self-reference.
+    */
+   public ResponseBuilder setTiming(final Timing timing) {
+      this.timing = timing;
+      return this;
+   }
+
+   /**
     * Creates the attributes map if necessary.
     * @return The attributes.
     */
@@ -216,4 +226,5 @@ public class ResponseBuilder {
    ByteSource bodySource = null;
    //Constructors force this to be initialized to something...
    int statusCode;
+   Timing timing = null;
 }

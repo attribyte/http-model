@@ -204,8 +204,8 @@ public final class Header {
    /**
     * Creates a map of headers from a generic map.
     * <p>
-    *   Map values may be <code>Header</code>, <code>String[]</code>, or <code>Collection&lt;String&gt;</code>.
-    *   If value is none of these, <code>toString</code> is called
+    *   Map values may be {@code Header}, {@code String[]}, or {@code Collection<String>}.
+    *   If value is none of these, {@code toString} is called
     *   to create <em>a single value</em>.
     *   Header keys are case-insensitive, so keys in the new map are lower-case.
     * </p>

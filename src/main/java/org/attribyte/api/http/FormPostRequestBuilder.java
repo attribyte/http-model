@@ -21,7 +21,7 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * Builds immutable HTTP <code>POST</code> requests with body specified as <code>application/x-www-form-urlencoded</code> parameters.
+ * Builds immutable HTTP {@code POST} requests with body specified as {@code application/x-www-form-urlencoded} parameters.
  * <p>
  * Parameters in the URI are <em>not</em> parsed.
  * </p>
@@ -29,7 +29,7 @@ import java.util.Map;
 public class FormPostRequestBuilder extends RequestBuilderWithParameters {
 
    /**
-    * Creates a <code>POST</code> request builder.
+    * Creates a {@code POST} request builder.
     * @param uri The URI. If a query string is specified, it is preserved but parameters are ignored.
     * @throws InvalidURIException if URI is invalid.
     */
@@ -38,7 +38,7 @@ public class FormPostRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a <code>POST</code> request builder.
+    * Creates a {@code POST} request builder.
     * @param uri The URI. If a query string is specified, it is preserved but parameters are ignored.
     */
    public FormPostRequestBuilder(final URI uri) {
@@ -80,9 +80,9 @@ public class FormPostRequestBuilder extends RequestBuilderWithParameters {
    /**
     * Adds a map of parameters.
     * <p>
-    * The <code>toString</code> method will be called on map keys
-    * to generate parameter names. Map values may be <code>String</code>,
-    * <code>String[]</code>, <code>Collection&lt;String&gt;</code>.
+    * The {@code toString} method will be called on map keys
+    * to generate parameter names. Map values may be {@code String},
+    * {@code String[]}, {@code Collection<String>}.
     * </p>
     * @param parameters The map of parameters.
     */

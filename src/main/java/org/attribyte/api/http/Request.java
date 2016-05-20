@@ -49,34 +49,34 @@ public final class Request {
    public enum Method {
 
       /**
-       * The HTTP <code>HEAD</code> method.
+       * The HTTP {@code HEAD} method.
        */
       HEAD,
 
       /**
-       * The HTTP <code>GET</code> method.
+       * The HTTP {@code GET} method.
        */
       GET,
 
       /**
-       * The HTTP <code>POST</code> method.
+       * The HTTP {@code POST} method.
        */
       POST,
 
       /**
-       * The HTTP <code>PUT</code> method.
+       * The HTTP {@code PUT} method.
        */
       PUT,
 
       /**
-       * The HTTP <code>DELETE</code> method.
+       * The HTTP {@code DELETE} method.
        */
       DELETE;
 
       /**
        * Gets a method from a string.
        * @param str The string.
-       * @return The method or <code>null</code> if string does not match a valid method.
+       * @return The method or {@code null} if string does not match a valid method.
        */
       public static Method fromString(String str) {
          return strMap.get(str.toUpperCase());
@@ -113,7 +113,7 @@ public final class Request {
    }
 
    /**
-    * Creates a request with the body specified as a <code>ByteString</code>.
+    * Creates a request with the body specified as a {@code ByteString}.
     * @param method The method.
     * @param uri The URI.
     * @param headers The HTTP headers.
@@ -143,7 +143,7 @@ public final class Request {
 
    /**
     * Gets the decoded query string.
-    * @return The decoded query string or <code>null</code> if none.
+    * @return The decoded query string or {@code null} if none.
     */
    public String getQueryString() {
       return uri.getQuery();
@@ -151,7 +151,7 @@ public final class Request {
 
    /**
     * Gets the raw query string, without decoding.
-    * @return The query string or <code>null</code> if none.
+    * @return The query string or {@code null} if none.
     */
    public String getRawQueryString() {
       return uri.getRawQuery();
@@ -160,7 +160,7 @@ public final class Request {
    /**
     * Gets the path component of the request URI.
     * <p>
-    * Path always begins with '/' and is never <code>null</code>.
+    * Path always begins with '/' and is never {@code null}.
     * </p>
     * @return The path.
     */
@@ -172,7 +172,7 @@ public final class Request {
    /**
     * Gets the path component of a URI.
     * <p>
-    * Path always begins with '/' and is never <code>null</code>.
+    * Path always begins with '/' and is never {@code null}.
     * Components are decoded.
     * </p>
     * @param uri The URI.
@@ -227,7 +227,7 @@ public final class Request {
    /**
     * Gets the first header value.
     * @param name The header name.
-    * @return The value or <code>null</code> if none.
+    * @return The value or {@code null} if none.
     */
    public String getHeaderValue(final String name) {
       Header h = headers.get(name);
@@ -239,7 +239,7 @@ public final class Request {
    /**
     * Gets all values for a header.
     * @param name The header name.
-    * @return The values or <code>null</code> if none.
+    * @return The values or {@code null} if none.
     */
    public String[] getHeaderValues(final String name) {
       Header h = headers.get(name);
@@ -251,7 +251,7 @@ public final class Request {
    /**
     * Gets an immutable list of values for a header.
     * @param name The header name.
-    * @return The values or <code>null</code> if none.
+    * @return The values or {@code null} if none.
     */
    public ImmutableList<String> getHeaderValueList(final String name) {
       Header h = headers.get(name);
@@ -263,7 +263,7 @@ public final class Request {
    /**
     * Gets a header.
     * @param name The header name.
-    * @return The header or <code>null</code> if none.
+    * @return The header or {@code null} if none.
     */
    public Header getHeader(final String name) {
       Header h = headers.get(name);
@@ -274,7 +274,7 @@ public final class Request {
    /**
     * Gets the first parameter value.
     * @param name The parameter name.
-    * @return The value or <code>null</code> if none.
+    * @return The value or {@code null} if none.
     */
    public String getParameterValue(final String name) {
       Parameter p = parameters.get(caseSensitiveParameters ? name : name.toLowerCase());
@@ -284,7 +284,7 @@ public final class Request {
    /**
     * Gets all values for a parameter.
     * @param name The parameter name.
-    * @return The values or <code>null</code> if none.
+    * @return The values or {@code null} if none.
     */
    public String[] getParameterValues(final String name) {
       Parameter p = parameters.get(caseSensitiveParameters ? name : name.toLowerCase());
@@ -319,22 +319,22 @@ public final class Request {
 
    /**
     * Gets the request body, if any.
-    * @return The body, or <code>null</code> if none.
+    * @return The body, or {@code null} if none.
     */
    public ByteString getBody() {
       return body;
    }
 
    /**
-    * Gets the value of the <code>Content-Type</code> header.
-    * @return The content type, or <code>null</code> if none.
+    * Gets the value of the {@code Content-Type} header.
+    * @return The content type, or {@code null} if none.
     */
    public String getContentType() {
       return getHeaderValue(Header.CONTENT_TYPE);
    }
 
    /**
-    * Gets the charset specified with the request <code>Content-Type</code> header, if any.
+    * Gets the charset specified with the request {@code Content-Type} header, if any.
     * @param defaultCharset The default charset to return if none is specified in the header.
     * @return The charset or the default charset.
     */
@@ -343,12 +343,12 @@ public final class Request {
    }
 
    /**
-    * The expected value for a form encoded header: <code>application/x-www-form-urlencoded</code>.
+    * The expected value for a form encoded header: {@code application/x-www-form-urlencoded}.
     */
    public static final String FORM_ENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded";
 
    /**
-    * Determine if the request is encoded as a form <code>application/x-www-form-urlencoded</code>
+    * Determine if the request is encoded as a form {@code application/x-www-form-urlencoded}
     * @return Is the request encoded as a form?
     */
    public boolean isFormEncoded() {
@@ -373,15 +373,15 @@ public final class Request {
 
    /**
     * Gets the IP address of the client that sent the request.
-    * @return The IP address or <code>null</code> if unavailable.
+    * @return The IP address or {@code null} if unavailable.
     */
    public String getRemoteAddr() {
       return attributes == null ? null : (String)attributes.get(REMOTE_ADDR);
    }
 
    /**
-    * Gets the server name (as specified in the <code>Host</code> header.
-    * @return The server name, excluding any port, or <code>null</code> if unspecified.
+    * Gets the server name (as specified in the {@code Host} header.
+    * @return The server name, excluding any port, or {@code null} if unspecified.
     */
    public String getServerName() {
       String host = getHeaderValue("Host");
@@ -636,7 +636,7 @@ public final class Request {
    /**
     * An immutable map of parameters.
     * <p>
-    *    If <code>caseSensitiveParameters == false</code>,
+    *    If {@code caseSensitiveParameters == false},
     *    map keys are lower-cased.
     * </p>
     */

@@ -130,31 +130,11 @@ public class JettyClient implements AsyncClient {
    @Override
    public ListenableFuture<org.attribyte.api.http.Response> asyncSend(org.attribyte.api.http.Request request, RequestOptions options) {
       final SettableFuture<org.attribyte.api.http.Response> fut = SettableFuture.create();
+      final TimingListener listener = new TimingListener(fut, options.maxResponseBytes);
       toJettyRequest(request)
               .followRedirects(options.followRedirects)
-              .send(new BufferingResponseListener(options.maxResponseBytes) {
-                       @Override
-                       public void onComplete(Result result) {
-                          if(!result.isFailed()) {
-                             ResponseBuilder builder = new ResponseBuilder();
-                             Response response = result.getResponse();
-                             builder.setStatusCode(response.getStatus());
-                             HttpFields headers = response.getHeaders();
-                             for(HttpField header : headers) {
-                                builder.addHeader(header.getName(), header.getValue());
-                             }
-                             byte[] responseContent = getContent();
-                             if(responseContent != null) {
-                                builder.setBody(responseContent);
-                             }
-                             fut.set(builder.create());
-                          } else {
-                             fut.setException(result.getFailure());
-                          }
-                       }
-                    }
-              );
-
+              .listener(listener)
+              .send(listener);
       return fut;
    }
 

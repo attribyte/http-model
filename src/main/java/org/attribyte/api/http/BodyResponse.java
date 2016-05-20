@@ -31,8 +31,9 @@ public class BodyResponse extends Response {
     * @param body The response body.
     */
    BodyResponse(final int statusCode, final Map<?, ?> headers,
-                final ByteString body, final Map<String, Object> attributes) {
-      super(statusCode, headers, attributes);
+                final ByteString body, final Map<String, Object> attributes,
+                final Timing timing) {
+      super(statusCode, headers, attributes, timing);
       this.body = body;
    }
 

@@ -39,19 +39,19 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A parsed <code>robots.txt</code> file.
+ * A parsed {@code robots.txt} file.
  */
 public class RobotsTxt {
 
    /**
-    * Creates a robots.txt from the standard location (<code>/robots.txt</code>).
-    * @param host The hostname. The URL will be created as <code>[host]/robots.txt</code>.
+    * Creates a robots.txt from the standard location ({@code /robots.txt}).
+    * @param host The hostname. The URL will be created as {@code [host]/robots.txt}.
     * @param httpClient The HTTP client for making the request.
-    * @param userAgent The <code>User-Agent</code> sent with the request.
+    * @param userAgent The {@code User-Agent} sent with the request.
     * @param preserveAgents The set of agents to preserve. Agents not contained
     * in this set will be ignored during parse.
-    * @param logger A logger for errors. May be <code>null</code>. If specified HTTP errors during
-    * parse will be logged at the <code>warn</code> level.
+    * @param logger A logger for errors. May be {@code null}. If specified HTTP errors during
+    * parse will be logged at the {@code warn} level.
     */
    public static RobotsTxt parse(final String host, final Client httpClient,
                                  final String userAgent, final Set<String> preserveAgents,
@@ -110,7 +110,7 @@ public class RobotsTxt {
    @SuppressWarnings("unchecked")
    /**
     * Parse robots.txt from a character stream.
-    * @param r A reader from which the <code>robots.txt</code> is read.
+    * @param r A reader from which the {@code robots.txt} is read.
     * @param agents A list of user agents that, if listed in the file, should be preserved.
     * The wildcard (*) is always preserved.
     */

@@ -21,12 +21,12 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * Builds immutable HTTP <code>HEAD</code> requests.
+ * Builds immutable HTTP {@code HEAD} requests.
  */
 public class HeadRequestBuilder extends RequestBuilderWithParameters {
 
    /**
-    * Creates a <code>HEAD</code> request builder with URI parsed from a string and
+    * Creates a {@code HEAD} request builder with URI parsed from a string and
     * pre-parsed parameters.
     * The URI parameters are not parsed, nor checked against the specified parameters.
     * @param uri The URI string to be parsed.
@@ -38,7 +38,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a <code>HEAD</code> request builder with URI parsed from a string with parameter case-sensitivity specified.
+    * Creates a {@code HEAD} request builder with URI parsed from a string with parameter case-sensitivity specified.
     * @param uri The URI string to be parsed.
     * @param caseSensitiveParameters Should case be preserved URI parameter names?
     * @throws InvalidURIException if URI is invalid.
@@ -52,7 +52,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a <code>HEAD</code> request builder with parameter case-sensitivity specified.
+    * Creates a {@code HEAD} request builder with parameter case-sensitivity specified.
     * @param uri The URI.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
     */
@@ -65,7 +65,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a <code>HEAD</code> request builder with URI parsed from a string.
+    * Creates a {@code HEAD} request builder with URI parsed from a string.
     * <p>
     * Case is preserved for parameter names.
     * </p>
@@ -81,7 +81,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a <code>HEAD</code> request builder.
+    * Creates a {@code HEAD} request builder.
     * <p>
     * Case is preserved for parameter names.
     * </p>
