@@ -165,7 +165,7 @@ public class ClientOptions {
    static final String[] PROXY_PORT = new String[]{"proxyPort", "0"};
    static final String[] FOLLOW_REDIRECTS = new String[]{"followRedirects", "true"};
    static final String[] MAX_CONNECTIONS_PER_DESTINATION = new String[]{"maxConnectionsPerDestination", "1024"};
-   static final String[] MAX_CONNECTIONS_TOTAL = new String[]{"maxConnectionsPerDestination", "4096"};
+   static final String[] MAX_CONNECTIONS_TOTAL = new String[]{"maxConnectionsTotal", "4096"};
    static final String[] REQUEST_BUFFER_SIZE = new String[]{"requestBufferSize", "4096"};
    static final String[] RESPONSE_BUFFER_SIZE = new String[]{"responseBufferSize", "16384"};
 
