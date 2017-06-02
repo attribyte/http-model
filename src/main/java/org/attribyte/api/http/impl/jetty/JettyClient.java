@@ -21,11 +21,9 @@ import org.attribyte.api.InitializationException;
 import org.attribyte.api.Logger;
 import org.attribyte.api.http.AsyncClient;
 import org.attribyte.api.http.ClientOptions;
-import org.attribyte.api.http.GetRequestBuilder;
 import org.attribyte.api.http.Header;
 import org.attribyte.api.http.Parameter;
 import org.attribyte.api.http.RequestOptions;
-import org.attribyte.api.http.Response;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.ProxyConfiguration;
 import org.eclipse.jetty.client.api.Request;
@@ -38,8 +36,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.client.HttpProxy;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -49,26 +45,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class JettyClient implements AsyncClient {
 
-   public static void main(String[] args) throws Exception {
-
-      //URL url = new URL("https://daringfireball.net/2017/06/fuck_facebook");
-      //HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-      //System.out.println("code is " + conn.getResponseCode());
-      //conn.disconnect();
-
-      JettyClient client = new JettyClient(ClientOptions.IMPLEMENTATION_DEFAULT);
-      RequestOptions options = new RequestOptions(true, 100000000, 30);
-      Response response = client.send(new GetRequestBuilder("https://daringfireball.net/2017/06/fuck_facebook").create(), options);
-      System.out.println(response.toString());
-
-   }
-
-
    /**
     * Creates an <em>uninitialized</em> client.
     */
    public JettyClient() {
-
    }
 
    /**
@@ -78,7 +58,6 @@ public class JettyClient implements AsyncClient {
    public JettyClient(final ClientOptions options) throws InitializationException {
       initFromOptions(options);
    }
-
 
    private void initFromOptions(final ClientOptions options) throws InitializationException {
 
