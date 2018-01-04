@@ -90,11 +90,7 @@ public class BasicAuthScheme extends AuthScheme {
 
       String upass = new String(BaseEncoding.base64().decode(authorization), Charsets.UTF_8).trim();
       int index = upass.indexOf(':');
-      if(index < 1) {
-         return null;
-      } else {
-         return upass.substring(0, index);
-      }
+      return index < 1 ? null : upass.substring(0, index);
    }
 
    @Override
