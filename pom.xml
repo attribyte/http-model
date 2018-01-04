@@ -8,6 +8,9 @@
     <version>0.5.3</version>
     <packaging>jar</packaging>
     <name>Attribyte HTTP model</name>
+    <properties>
+        <jettyVersion>[9.3, 9.5)</jettyVersion>
+    </properties>
     <description>
         An HTTP model that presents an immutable interface and provides several common
         client implementations/models that can easily be swapped.
@@ -36,7 +39,7 @@
         <dependency>
             <groupId>org.attribyte</groupId>
             <artifactId>attribyte-shared-base</artifactId>
-            <version>1.0.2</version>
+            <version>[1.0.2,)</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -60,7 +63,8 @@
         </dependency>
 
         <!--
-            Optional dependencies. Select based on the needs of your project.
+            Optional dependencies.
+            Select based on the needs of your project.
         -->
 
         <dependency>
@@ -68,25 +72,72 @@
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
             <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>9.3.8.v20160314</version>
+            <version>${jettyVersion}</version>
             <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.ning</groupId>
             <artifactId>async-http-client</artifactId>
             <version>1.8.15</version>
             <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.3.6</version>
             <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <fork>true</fork>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
