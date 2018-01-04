@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import org.apache.commons.codec.binary.Base64;
+import com.google.common.io.BaseEncoding;
 import org.attribyte.api.http.AuthScheme;
 import org.attribyte.api.http.Header;
 import org.attribyte.api.http.Request;
@@ -88,7 +88,7 @@ public class BasicAuthScheme extends AuthScheme {
 
       authorization = authorization.substring(6).trim();
 
-      String upass = new String(Base64.decodeBase64(authorization), Charsets.US_ASCII).trim();
+      String upass = new String(BaseEncoding.base64().decode(authorization), Charsets.UTF_8).trim();
       int index = upass.indexOf(':');
       if(index < 1) {
          return null;
@@ -111,7 +111,7 @@ public class BasicAuthScheme extends AuthScheme {
 
       authorization = authorization.substring(6).trim();
 
-      String upass = new String(Base64.decodeBase64(authorization), Charsets.US_ASCII).trim();
+      String upass = new String(BaseEncoding.base64().decode(authorization), Charsets.UTF_8).trim();
 
       int index = upass.indexOf(':');
       if(index < 1) {
@@ -141,9 +141,9 @@ public class BasicAuthScheme extends AuthScheme {
       String up = buf.toString();
       buf.setLength(0);
 
-      byte[] bytes = Base64.encodeBase64(up.getBytes());
+      String upEncoded = BaseEncoding.base64().encode(up.getBytes());
       buf.append("Basic ");
-      buf.append(new String(bytes, Charsets.UTF_8));
+      buf.append(upEncoded);
       return buf.toString();
    }
 
