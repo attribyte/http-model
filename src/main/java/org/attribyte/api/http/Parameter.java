@@ -90,10 +90,7 @@ public final class Parameter {
 
    /**
     * Gets the first value.
-    * <p>
-    * Never returns null. If the parameter has no value(s), an
-    * empty string is returned.
-    * </p>
+    * @return The first value or an empty string if none.
     */
    public String getValue() {
       return values.isEmpty() ? "" : values.get(0);
@@ -101,7 +98,7 @@ public final class Parameter {
 
    /**
     * Gets all the values.
-    * @return The values.
+    * @return The values or a zero-length array if none.
     */
    public String[] getValues() {
       return values.toArray(new String[values.size()]);

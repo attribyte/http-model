@@ -70,6 +70,7 @@ public class GetRequestBuilder extends RequestBuilderWithParameters {
     * Case is preserved for parameter names.
     * </p>
     * @param uri The URI string to be parsed.
+    * @throws InvalidURIException if URI is invalid.
     */
    public GetRequestBuilder(final String uri) throws InvalidURIException {
       super(uri, true);

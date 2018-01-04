@@ -54,6 +54,7 @@ public class JettyClient implements AsyncClient {
    /**
     * Creates a client with specified options.
     * @param options The options.
+    * @throws InitializationException if options are invalid or other initialization error.
     */
    public JettyClient(final ClientOptions options) throws InitializationException {
       initFromOptions(options);

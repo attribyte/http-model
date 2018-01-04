@@ -98,10 +98,7 @@ public final class Header {
 
    /**
     * Gets the first value.
-    * <p>
-    * Never returns null. If the header has no value(s), an
-    * empty string is returned.
-    * </p>
+    * @return The value or an empty string if no value.
     */
    public String getValue() {
       return values.isEmpty() ? "" : values.get(0);
@@ -109,7 +106,7 @@ public final class Header {
 
    /**
     * Gets all the values.
-    * @return The values.
+    * @return The values or an zero-lengh array if none.
     */
    public String[] getValues() {
       return values.toArray(new String[values.size()]);

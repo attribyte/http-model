@@ -52,6 +52,7 @@ public class RobotsTxt {
     * in this set will be ignored during parse.
     * @param logger A logger for errors. May be {@code null}. If specified HTTP errors during
     * parse will be logged at the {@code warn} level.
+    * @return The parsed robots.txt.
     */
    public static RobotsTxt parse(final String host, final Client httpClient,
                                  final String userAgent, final Set<String> preserveAgents,
@@ -191,6 +192,7 @@ public class RobotsTxt {
     * Determine if a user agent is allowed for the specified path.
     * @param userAgent The user agent string.
     * @param path The path.
+    * @return Is the agent allowed?
     */
    public final boolean isAllowed(String userAgent, String path) {
       return isAllowed(userAgent, path, true);
@@ -208,6 +210,7 @@ public class RobotsTxt {
     * @param path The path.
     * @param checkWildcard Should the wildcard record be checked? (This gives a way to know if a
     * user agent is explicitly disallowed by name.)
+    * @return Is the agent allowed?
     */
    public final boolean isAllowed(String userAgent, String path, final boolean checkWildcard) {
 

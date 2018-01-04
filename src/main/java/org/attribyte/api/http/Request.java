@@ -195,6 +195,7 @@ public final class Request {
     * </p>
     * @param uri The URI.
     * @return The host URL.
+    * @throws InvalidURIException if the URI can't be parsed.
     */
    public static final String getHostURL(final String uri) throws InvalidURIException {
 

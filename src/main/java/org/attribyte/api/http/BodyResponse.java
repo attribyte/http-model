@@ -29,6 +29,8 @@ public class BodyResponse extends Response {
     * @param statusCode The HTTP response status code.
     * @param headers The response headers.
     * @param body The response body.
+    * @param attributes A map of attributes associated with the response.
+    * @param timing Timing information for the response.
     */
    BodyResponse(final int statusCode, final Map<?, ?> headers,
                 final ByteString body, final Map<String, Object> attributes,

@@ -54,6 +54,7 @@ public abstract class AuthScheme {
     * @param userId An id that uniquely identifies the user (e.g. 'username').
     * @param secret The authentication secret for the username.
     * @return The request with authentication credentials added.
+    * @throws java.security.GeneralSecurityException on security-related error adding auth.
     */
    public abstract Request addAuth(Request request, String userId, String secret) throws java.security.GeneralSecurityException;
 
@@ -61,6 +62,7 @@ public abstract class AuthScheme {
     * Gets the user id from the request, if possible.
     * @param request The request.
     * @return The user id, or {@code null} if none.
+    * @throws java.security.GeneralSecurityException on security-related error getting user id.
     */
    public abstract String getUserId(Request request) throws java.security.GeneralSecurityException;
 
@@ -70,6 +72,7 @@ public abstract class AuthScheme {
     * @param userId The user id for the secret.
     * @param secret The secret data.
     * @return The HTTP "Unauthorized" response if request is not authorized, otherwise {@code null}.
+    * @throws java.security.GeneralSecurityException on security-related error during authentication.
     */
    public abstract Response authenticate(Request request, String userId, String secret) throws java.security.GeneralSecurityException;
 

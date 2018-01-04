@@ -120,6 +120,7 @@ public class Response {
     * @param statusCode The HTTP response status code.
     * @param headers The response headers.
     * @param attributes The attributes.
+    * @param timing Timing information associated with the response.
     */
    public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes,
                    final Timing timing) {

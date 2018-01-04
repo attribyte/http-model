@@ -58,6 +58,7 @@ public class Bridge {
     * but it does not include query string parameters.
     * </cite>
     * </p>
+    * @param request The request.
     * @return A {@code StringBuilder} containing the original URL, excluding the query string.
     */
    public static StringBuilder getRequestURL(final Request request) {
@@ -95,6 +96,7 @@ public class Bridge {
     * The web container does not decode this String.
     * </cite>
     * </p>
+    * @param request The request.
     * @return The URI.
     */
    public static String getRequestURI(final Request request) {

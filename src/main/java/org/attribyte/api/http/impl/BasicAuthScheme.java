@@ -147,6 +147,7 @@ public class BasicAuthScheme extends AuthScheme {
     * Create the base 64 encoding 'Authorization' header.
     * @param username The username.
     * @param password The password.
+    * @return A (singleton) list of headers to be added.
     */
    private static List<Header> buildAuthHeaders(String username, String password) {
       Header header = new Header(AUTH_HEADER, buildAuthHeaderValue(username, password));
