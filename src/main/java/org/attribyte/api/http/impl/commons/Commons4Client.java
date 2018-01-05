@@ -111,7 +111,6 @@ public class Commons4Client implements org.attribyte.api.http.Client {
       initFromOptions(options);
    }
 
-   @Override
    /**
     * Initializes the client from properties.
     * <p>
@@ -137,6 +136,7 @@ public class Commons4Client implements org.attribyte.api.http.Client {
     * @param logger The logger. If unspecified, messages are logged to the console.
     * @throws org.attribyte.api.InitializationException on initialization error.
     */
+   @Override
    public void init(String prefix, Properties props, Logger logger) throws InitializationException {
       if(isInit.compareAndSet(false, true)) {
          ClientOptions options = new ClientOptions(prefix, props);
@@ -179,6 +179,7 @@ public class Commons4Client implements org.attribyte.api.http.Client {
                      nameValuePairs.add(new BasicNameValuePair(parameter.getName(), value));
                   }
                }
+               entityBuilder.setParameters(nameValuePairs);
             }
             entityEnclosingRequest.setEntity(entityBuilder.build());
             break;
