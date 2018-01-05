@@ -206,6 +206,7 @@ public final class Header {
     *   Header keys are case-insensitive, so keys in the new map are lower-case.
     * </p>
     * @param inputHeaders The input header map.
+    * @param outputMap The map to fill.
     * @return The new header map.
     */
    @SuppressWarnings("unchecked")

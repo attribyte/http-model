@@ -113,9 +113,7 @@ public class Commons4Client implements org.attribyte.api.http.Client {
 
    /**
     * Initializes the client from properties.
-    * <p>
     *   The following properties are available. <b>Bold</b> properties are required.
-    *
     *   <h2>HTTP Client</h2>
     *   <dl>
     *     <dt><b>User-Agent</b></dt>
@@ -130,7 +128,6 @@ public class Commons4Client implements org.attribyte.api.http.Client {
     *     <dt>proxyPort</dt>
     *     <dd>The HTTP proxy port. Required when {@code proxyHost} is specified</dd>
     *   </dl>
-    * </p>
     * @param prefix The prefix for all properties (e.g. 'client.').
     * @param props The properties.
     * @param logger The logger. If unspecified, messages are logged to the console.

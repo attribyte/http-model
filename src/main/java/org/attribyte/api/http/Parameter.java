@@ -155,9 +155,13 @@ public final class Parameter {
     *   Map values may be {@code Parameter}, {@code String[]}, or a {@code Collection} If
     *   value is none of these, {@code toString} is used to generate a single value.
     * </p>
+    * @param inputParameters The input map.
+    * @param outputMap The map to be filled.
+    * @return The filled output map.
     */
    @SuppressWarnings("unchecked")
-   static final Map<String, Parameter> createMap(final Map<?,?> inputParameters, final Map<String, Parameter> outputMap) {
+   static final Map<String, Parameter> createMap(final Map<?,?> inputParameters,
+                                                 final Map<String, Parameter> outputMap) {
 
       if(inputParameters == null) return Maps.newHashMap();
 

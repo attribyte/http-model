@@ -110,10 +110,13 @@ public class Bridge {
     *   by the servlet API.
     * </p>
     * @param request The servlet request.
-    * @param maxBodyBytes The maximum number of bytes read. If < 1, the body is not read.
+    * @param maxBodyBytes The maximum number of bytes read. If &lt; 1, the body is not read.
+    * @return The request.
+    * @throws IOException on invalid request.
     */
    @SuppressWarnings("unchecked")
-   public static final Request fromServletRequest(final HttpServletRequest request, final int maxBodyBytes) throws IOException {
+   public static final Request fromServletRequest(final HttpServletRequest request,
+                                                  final int maxBodyBytes) throws IOException {
 
       Map<String, Header> headers = Maps.newHashMapWithExpectedSize(8);
       List<String> valueList = Lists.newArrayListWithExpectedSize(2);
