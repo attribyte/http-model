@@ -109,13 +109,13 @@ public class RobotsTxt {
       //Internal-use only...
    }
 
-   @SuppressWarnings("unchecked")
    /**
     * Parse robots.txt from a character stream.
     * @param r A reader from which the {@code robots.txt} is read.
     * @param agents A list of user agents that, if listed in the file, should be preserved.
     * The wildcard (*) is always preserved.
     */
+   @SuppressWarnings("unchecked")
    public RobotsTxt(final Reader r, final Set<String> agents) throws IOException {
 
       Set<String> preserveAgents = null;

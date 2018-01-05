@@ -13,7 +13,7 @@
  *
  */
 
-package org.attribyte.api.http.impl.test;
+package org.attribyte.api.http.test;
 
 import org.attribyte.api.ConsoleLogger;
 import org.attribyte.api.http.Client;
@@ -37,7 +37,7 @@ public class SimpleTest {
       try {
 
          Properties props = new Properties();
-         args = InitUtil.fromCommandLine(args, props);
+         InitUtil.fromCommandLine(args, props);
          InitUtil init = new InitUtil("", props, false);
          boolean implementationDefaults = init.getProperty("implDefaults", "false").equalsIgnoreCase("true");
 

@@ -56,7 +56,7 @@ public final class Header {
     */
    public Header(final String name, final String value) {
       this.name = name;
-      this.values = Strings.isNullOrEmpty(value) ? ImmutableList.<String>of() : ImmutableList.of(value);
+      this.values = Strings.isNullOrEmpty(value) ? ImmutableList.of() : ImmutableList.of(value);
    }
 
    /**
@@ -106,7 +106,7 @@ public final class Header {
 
    /**
     * Gets all the values.
-    * @return The values or an zero-lengh array if none.
+    * @return The values or an zero-length array if none.
     */
    public String[] getValues() {
       return values.toArray(new String[values.size()]);
@@ -182,7 +182,7 @@ public final class Header {
     * @return The mutable map.
     */
    static final Map<String, Header> createMap(final Map<?,?> inputHeaders) {
-      return createMap(inputHeaders, Maps.<String, Header>newHashMapWithExpectedSize(inputHeaders.size()));
+      return createMap(inputHeaders, Maps.newHashMapWithExpectedSize(inputHeaders.size()));
    }
 
    /**
@@ -194,10 +194,9 @@ public final class Header {
       if(inputHeaders == null) {
          return ImmutableMap.of();
       }
-      return ImmutableMap.copyOf(createMap(inputHeaders, Maps.<String, Header>newHashMapWithExpectedSize(inputHeaders.size())));
+      return ImmutableMap.copyOf(createMap(inputHeaders, Maps.newHashMapWithExpectedSize(inputHeaders.size())));
    }
 
-   @SuppressWarnings("unchecked")
    /**
     * Creates a map of headers from a generic map.
     * <p>
@@ -209,6 +208,7 @@ public final class Header {
     * @param inputHeaders The input header map.
     * @return The new header map.
     */
+   @SuppressWarnings("unchecked")
    static final Map<String, Header> createMap(final Map<?,?> inputHeaders, final Map<String, Header> outputMap) {
 
       if(inputHeaders == null) return Maps.newHashMap();

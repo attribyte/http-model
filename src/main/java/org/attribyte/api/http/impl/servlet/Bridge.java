@@ -103,7 +103,6 @@ public class Bridge {
       return request.getURI().getRawPath();
    }
 
-   @SuppressWarnings("unchecked")
    /**
     * Creates a request from a servlet HTTP request.
     * <p>
@@ -113,6 +112,7 @@ public class Bridge {
     * @param request The servlet request.
     * @param maxBodyBytes The maximum number of bytes read. If < 1, the body is not read.
     */
+   @SuppressWarnings("unchecked")
    public static final Request fromServletRequest(final HttpServletRequest request, final int maxBodyBytes) throws IOException {
 
       Map<String, Header> headers = Maps.newHashMapWithExpectedSize(8);

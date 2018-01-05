@@ -109,7 +109,7 @@ public final class Request {
       this.parameters = Parameter.createImmutableMap(parameters);
       this.caseSensitiveParameters = caseSensitiveParameters;
       this.body = body != null ? ByteString.copyFrom(body) : null;
-      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
    }
 
    /**
@@ -130,7 +130,7 @@ public final class Request {
       this.parameters = Parameter.createImmutableMap(parameters);
       this.caseSensitiveParameters = caseSensitiveParameters;
       this.body = body;
-      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
    }
 
    /**
@@ -258,7 +258,7 @@ public final class Request {
       Header h = headers.get(name);
       if(h != null) return h.getValueList();
       h = headers.get(name.toLowerCase());
-      return h == null ? ImmutableList.<String>of() : h.getValueList();
+      return h == null ? ImmutableList.of() : h.getValueList();
    }
 
    /**
@@ -299,7 +299,7 @@ public final class Request {
     */
    public ImmutableList<String> getParameterValueList(final String name) {
       Parameter p = parameters.get(caseSensitiveParameters ? name : name.toLowerCase());
-      return p == null ? ImmutableList.<String>of() : p.getValueList();
+      return p == null ? ImmutableList.of() : p.getValueList();
    }
 
    /**

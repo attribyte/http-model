@@ -23,7 +23,6 @@ import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -111,7 +110,7 @@ public class Response {
    public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes) {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
-      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
       this.timing = null;
    }
 
@@ -126,7 +125,7 @@ public class Response {
                    final Timing timing) {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
-      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.<String, Object>of();
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
       this.timing = timing;
    }
 
@@ -177,7 +176,7 @@ public class Response {
       Header h = headers.get(name);
       if(h != null) return h.getValueList();
       h = headers.get(name.toLowerCase());
-      return h == null ? ImmutableList.<String>of() : h.getValueList();
+      return h == null ? ImmutableList.of() : h.getValueList();
    }
 
    /**

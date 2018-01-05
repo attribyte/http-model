@@ -48,7 +48,7 @@ public final class Parameter {
     */
    public Parameter(final String name, final String value) {
       this.name = name;
-      this.values = Strings.isNullOrEmpty(value) ? ImmutableList.<String>of() : ImmutableList.of(value);
+      this.values = Strings.isNullOrEmpty(value) ? ImmutableList.of() : ImmutableList.of(value);
    }
 
    /**
@@ -133,7 +133,7 @@ public final class Parameter {
     * @return The mutable map.
     */
    static final Map<String, Parameter> createMap(final Map<?,?> inputParameters) {
-      return createMap(inputParameters, Maps.<String, Parameter>newHashMapWithExpectedSize(inputParameters.size()));
+      return createMap(inputParameters, Maps.newHashMapWithExpectedSize(inputParameters.size()));
    }
 
    /**
@@ -149,7 +149,6 @@ public final class Parameter {
       return ImmutableMap.copyOf(createMap(inputParameters));
    }
 
-   @SuppressWarnings("unchecked")
    /**
     * Creates a map of parameters from a generic map.
     * <p>
@@ -157,6 +156,7 @@ public final class Parameter {
     *   value is none of these, {@code toString} is used to generate a single value.
     * </p>
     */
+   @SuppressWarnings("unchecked")
    static final Map<String, Parameter> createMap(final Map<?,?> inputParameters, final Map<String, Parameter> outputMap) {
 
       if(inputParameters == null) return Maps.newHashMap();

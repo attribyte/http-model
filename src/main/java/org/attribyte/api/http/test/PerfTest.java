@@ -13,7 +13,7 @@
  *
  */
 
-package org.attribyte.api.http.impl.test;
+package org.attribyte.api.http.test;
 
 import com.google.common.collect.Lists;
 import com.google.common.hash.HashCode;
@@ -47,7 +47,7 @@ public class PerfTest {
       try {
 
          Properties props = new Properties();
-         args = InitUtil.fromCommandLine(args, props);
+         InitUtil.fromCommandLine(args, props);
          InitUtil init = new InitUtil("", props, false);
 
          String clientName = init.getProperty("client", "");
