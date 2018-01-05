@@ -10,6 +10,7 @@
     <name>Attribyte HTTP model</name>
     <properties>
         <jettyVersion>[9.3, 9.5)</jettyVersion>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <description>
         An HTTP model that presents an immutable interface and provides several common

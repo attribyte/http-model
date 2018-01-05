@@ -33,7 +33,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
     * @param parameters A generic map of parameters.
     * @throws InvalidURIException if URI is invalid.
     */
-   public HeadRequestBuilder(final String uri, final Map parameters) throws InvalidURIException {
+   public HeadRequestBuilder(final String uri, final Map<?,?> parameters) throws InvalidURIException {
       super(uri, parameters);
    }
 

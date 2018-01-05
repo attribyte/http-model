@@ -132,7 +132,7 @@ public final class Parameter {
     * @param inputParameters The generic map.
     * @return The mutable map.
     */
-   static final Map<String, Parameter> createMap(final Map inputParameters) {
+   static final Map<String, Parameter> createMap(final Map<?,?> inputParameters) {
       return createMap(inputParameters, Maps.<String, Parameter>newHashMapWithExpectedSize(inputParameters.size()));
    }
 
@@ -141,7 +141,7 @@ public final class Parameter {
     * @param inputParameters The generic map.
     * @return The immutable map.
     */
-   static final ImmutableMap<String, Parameter> createImmutableMap(final Map inputParameters) {
+   static final ImmutableMap<String, Parameter> createImmutableMap(final Map<?,?> inputParameters) {
       if(inputParameters == null) {
          return ImmutableMap.of();
       }
@@ -157,18 +157,18 @@ public final class Parameter {
     *   value is none of these, {@code toString} is used to generate a single value.
     * </p>
     */
-   static final Map<String, Parameter> createMap(final Map inputParameters, final Map<String, Parameter> outputMap) {
+   static final Map<String, Parameter> createMap(final Map<?,?> inputParameters, final Map<String, Parameter> outputMap) {
 
       if(inputParameters == null) return Maps.newHashMap();
 
-      for(final Map.Entry curr : (Iterable<Map.Entry>)inputParameters.entrySet()) {
+      for(final Map.Entry<?,?> curr : inputParameters.entrySet()) {
          Object key = curr.getKey();
          String keyStr = key.toString();
          Object value = curr.getValue();
          if(value instanceof Parameter) {
             outputMap.put(keyStr, (Parameter)value);
          } else if(value instanceof Collection) {
-            Collection c = (Collection)value;
+            Collection<?> c = (Collection)value;
             List<String> values = Lists.newArrayListWithExpectedSize(c.size());
             for(Object o : c) {
                if(o != null) {

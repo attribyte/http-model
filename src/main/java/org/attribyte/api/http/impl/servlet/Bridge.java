@@ -117,10 +117,10 @@ public class Bridge {
 
       Map<String, Header> headers = Maps.newHashMapWithExpectedSize(8);
       List<String> valueList = Lists.newArrayListWithExpectedSize(2);
-      Enumeration headerNames = request.getHeaderNames();
+      Enumeration<?> headerNames = request.getHeaderNames();
       while(headerNames.hasMoreElements()) {
          String name = (String)headerNames.nextElement();
-         Enumeration headerValues = request.getHeaders(name);
+         Enumeration<?> headerValues = request.getHeaders(name);
          valueList.clear();
          while(headerValues.hasMoreElements()) {
             valueList.add((String)headerValues.nextElement());
@@ -138,7 +138,7 @@ public class Bridge {
       final String requestURL = Strings.isNullOrEmpty(queryString) ?
               request.getRequestURL().toString() : request.getRequestURL().append('?').append(queryString).toString();
 
-      final Map parameterMap = request.getParameterMap();
+      final Map<?,?> parameterMap = request.getParameterMap();
 
       Method method = Method.fromString(request.getMethod());
       switch(method) {

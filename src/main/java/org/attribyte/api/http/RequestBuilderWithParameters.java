@@ -34,7 +34,7 @@ public abstract class RequestBuilderWithParameters extends RequestBuilder {
     * @param parameters The parameters.
     * @throws InvalidURIException if URI is invalid.
     */
-   protected RequestBuilderWithParameters(final String uri, final Map parameters) throws InvalidURIException {
+   protected RequestBuilderWithParameters(final String uri, final Map<?,?> parameters) throws InvalidURIException {
       super(uri);
       this.caseSensitiveParameters = false;
       this.parameters = Parameter.createMap(parameters);

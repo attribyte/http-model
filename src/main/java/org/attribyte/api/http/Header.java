@@ -181,7 +181,7 @@ public final class Header {
     * @param inputHeaders The input header map.
     * @return The mutable map.
     */
-   static final Map<String, Header> createMap(final Map inputHeaders) {
+   static final Map<String, Header> createMap(final Map<?,?> inputHeaders) {
       return createMap(inputHeaders, Maps.<String, Header>newHashMapWithExpectedSize(inputHeaders.size()));
    }
 
@@ -190,7 +190,7 @@ public final class Header {
     * @param inputHeaders The input header map.
     * @return The mutable map.
     */
-   static final ImmutableMap<String, Header> createImmutableMap(final Map inputHeaders) {
+   static final ImmutableMap<String, Header> createImmutableMap(final Map<?,?> inputHeaders) {
       if(inputHeaders == null) {
          return ImmutableMap.of();
       }
@@ -209,11 +209,10 @@ public final class Header {
     * @param inputHeaders The input header map.
     * @return The new header map.
     */
-   static final Map<String, Header> createMap(final Map inputHeaders, final Map<String, Header> outputMap) {
+   static final Map<String, Header> createMap(final Map<?,?> inputHeaders, final Map<String, Header> outputMap) {
 
       if(inputHeaders == null) return Maps.newHashMap();
-
-      for(final Map.Entry curr : (Iterable<Map.Entry>)inputHeaders.entrySet()) {
+      for(final Map.Entry<?,?> curr : inputHeaders.entrySet()) {
          Object key = curr.getKey();
          String keyStr = key.toString().intern();
          String lcKey = keyStr.intern();
@@ -221,7 +220,7 @@ public final class Header {
          if(value instanceof Header) {
             outputMap.put(lcKey, (Header)value);
          } else if(value instanceof Collection) {
-            Collection c = (Collection)value;
+            Collection<?> c = (Collection)value;
             List<String> values = Lists.newArrayListWithExpectedSize(c.size());
             for(Object o : c) {
                if(o != null) {

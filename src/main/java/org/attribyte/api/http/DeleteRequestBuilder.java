@@ -33,7 +33,7 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
     * @param parameters A generic map of parameters.
     * @throws InvalidURIException if URI is invalid.
     */
-   public DeleteRequestBuilder(final String uri, final Map parameters) throws InvalidURIException {
+   public DeleteRequestBuilder(final String uri, final Map<?,?> parameters) throws InvalidURIException {
       super(uri, parameters);
    }
 

@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -142,7 +143,7 @@ public class RobotsTxt {
             String currAgent = getValue(currLine);
             if(currAgent != null) {
                if(currRecordLists == null || newAgent) {
-                  currRecordLists = (ArrayList<String>[])new ArrayList[2];
+                  currRecordLists = (ArrayList<String>[])Array.newInstance(String.class, 2);
                   newAgent = false;
                }
 
