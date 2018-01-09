@@ -1,33 +1,25 @@
-##About
+## About
 
 An HTTP model that presents an immutable interface and allows client implementations/models to be easily swapped.
 
-##Build
+## Build
 
-The build uses [Apache Ant](http://ant.apache.org/) and
-[Apache Ivy](https://ant.apache.org/ivy/) to resolve dependencies. The following ant tasks
-are available:
+The build uses [Apache Maven](https://maven.apache.org/) to resolve
+dependencies, compile and generate documentation.
 
-* compile - Compiles the source
-* dist - Resolves dependencies, compiles the source, and creates a jar in dist/lib. This is the default task.
-* full-dist - Resolves dependencies, compiles the source, creates a jar in dist/lib, and copies dependencies to dist/extlib
-* clean - Removes all build files and jars.
+#### Common Tasks
+
+* mvn package - Compile, package and generate documentation in `target`.
+* mvn dependency:copy-dependencies Copy all required and optional library dependencies to `target/dependency`.
+* mvn clean - Remove all files in `target`.
  
-##Dependencies
+## Documentation
 
-
-* [Attribyte shared-base](https://github.com/attribyte/shared-base)
-* [Apache commons-codec](http://commons.apache.org/proper/commons-codec/)
-* [Google Guava](https://code.google.com/p/guava-libraries/)
-* Various client implementations. TODO: Allow selective inclusion/exclusion of these.
-
-##Documentation
-
-* [Javadoc](https://www.attribyte.org/projects/http-model/javadoc/index.html)
+* [Javadoc](https://www.attribyte.com/projects/http-model/javadoc/index.html)
  
-##License
+## License
 
-Copyright 2014 [Attribyte, LLC](https://attribyte.com)
+Copyright 2014-2018 [Attribyte, LLC](https://attribyte.com)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
