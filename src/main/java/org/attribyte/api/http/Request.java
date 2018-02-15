@@ -105,7 +105,7 @@ public final class Request {
    Request(final Method method, final URI uri, Map<String, Header> headers, Map<String, Parameter> parameters,
            final boolean caseSensitiveParameters, final byte[] body, final Map<String, Object> attributes,
            final List<Cookie> cookies) {
-      this(method, uri, headers, parameters, caseSensitiveParameters, ByteString.copyFrom(body), attributes, cookies);
+      this(method, uri, headers, parameters, caseSensitiveParameters, body != null ? ByteString.copyFrom(body) : null, attributes, cookies);
    }
 
    /**
