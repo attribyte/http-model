@@ -218,6 +218,7 @@ public class PerfTest {
       int count;
       int errorCount;
       volatile boolean running = true;
+      @SuppressWarnings("deprecation")
       private final HashFunction hashFunction = Hashing.md5();
       long startTimestamp = 0L;
       long elapsedTime = 0L;

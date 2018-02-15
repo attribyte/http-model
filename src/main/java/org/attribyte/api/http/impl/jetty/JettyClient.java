@@ -65,7 +65,7 @@ public class JettyClient implements AsyncClient {
    private void initFromOptions(final ClientOptions options) throws InitializationException {
 
       if(options != ClientOptions.IMPLEMENTATION_DEFAULT) {
-         SslContextFactory sslContextFactory = new SslContextFactory(true);
+         SslContextFactory sslContextFactory = new SslContextFactory(options.trustAllCertificates);
          sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
          this.httpClient = new HttpClient(sslContextFactory);
          this.httpClient.setFollowRedirects(options.followRedirects);
@@ -96,8 +96,7 @@ public class JettyClient implements AsyncClient {
       }
    }
 
-   public synchronized void init(String prefix, Properties props, Logger logger) throws InitializationException {
-
+   public void init(String prefix, Properties props, Logger logger) throws InitializationException {
       if(isInit.compareAndSet(false, true)) {
          initFromOptions(new ClientOptions(prefix, props));
       }

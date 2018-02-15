@@ -65,7 +65,7 @@ public class NingClient implements AsyncClient {
          config.setPooledConnectionIdleTimeout(options.getTimeProperty("pooledConnectionIdleTimeout",
                  AsyncHttpClientConfigDefaults.defaultPooledConnectionIdleTimeout()));
          config.setConnectionTTL(options.getTimeProperty("maxConnectionLife", AsyncHttpClientConfigDefaults.defaultConnectionTTL()));
-         //TODO: There are quite a few more.
+         //TODO: There are quite a few more, including SSL.
          this.httpClient = new AsyncHttpClient(config.build());
       } else {
          this.httpClient = new AsyncHttpClient(new AsyncHttpClientConfig.Builder().build());

@@ -29,6 +29,7 @@ import org.attribyte.api.http.Response;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
+import java.lang.SuppressWarnings;
 
 /**
  * The Standard (insecure) "Basic" scheme.
@@ -43,6 +44,7 @@ public class BasicAuthScheme extends AuthScheme {
 
    public static final String AUTH_HEADER = "Authorization";
 
+   @SuppressWarnings("deprecation")
    private static final HashFunction HASH_FUNCTION = Hashing.sha1();
 
    /**

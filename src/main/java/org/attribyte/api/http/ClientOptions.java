@@ -86,6 +86,11 @@ public class ClientOptions {
    public final int responseBufferSize;
 
    /**
+    * Should SSL certificates be trusted even if invalid ({code false}).
+    */
+   public final boolean trustAllCertificates;
+
+   /**
     * Arbitrary, implementation-specific properties.
     */
    private final Properties props;
@@ -168,6 +173,7 @@ public class ClientOptions {
    static final String[] MAX_CONNECTIONS_TOTAL = new String[]{"maxConnectionsTotal", "4096"};
    static final String[] REQUEST_BUFFER_SIZE = new String[]{"requestBufferSize", "4096"};
    static final String[] RESPONSE_BUFFER_SIZE = new String[]{"responseBufferSize", "16384"};
+   static final String[] TRUST_ALL_CERTIFICATES = new String[] {"trustAllCertificates", "false"};
 
    /**
     * Creates options from properties.
@@ -188,6 +194,7 @@ public class ClientOptions {
       this.maxConnectionsTotal = init.getIntProperty(MAX_CONNECTIONS_TOTAL[KEY], Integer.parseInt(MAX_CONNECTIONS_TOTAL[DEFAULT_VALUE]));
       this.requestBufferSize = init.getIntProperty(REQUEST_BUFFER_SIZE[KEY], Integer.parseInt(REQUEST_BUFFER_SIZE[DEFAULT_VALUE]));
       this.responseBufferSize = init.getIntProperty(RESPONSE_BUFFER_SIZE[KEY], Integer.parseInt(RESPONSE_BUFFER_SIZE[DEFAULT_VALUE]));
+      this.trustAllCertificates = init.getProperty(TRUST_ALL_CERTIFICATES[KEY], TRUST_ALL_CERTIFICATES[DEFAULT_VALUE]).equalsIgnoreCase("true");
       this.props = init.getProperties();
 
    }
@@ -199,6 +206,7 @@ public class ClientOptions {
                  final int maxConnectionsPerDestination,
                  final int maxConnectionsTotal,
                  final int requestBufferSize, final int responseBufferSize,
+                 final boolean trustAllCertificates,
                  final Properties props) {
       this.userAgent = userAgent;
       this.connectionTimeoutMillis = connectionTimeoutMillis;
@@ -211,6 +219,7 @@ public class ClientOptions {
       this.maxConnectionsTotal = maxConnectionsTotal;
       this.requestBufferSize = requestBufferSize;
       this.responseBufferSize = responseBufferSize;
+      this.trustAllCertificates = trustAllCertificates;
       this.props = props;
    }
 
@@ -226,6 +235,7 @@ public class ClientOptions {
       this.maxConnectionsTotal = 0;
       this.requestBufferSize = 0;
       this.responseBufferSize = 0;
+      this.trustAllCertificates = false;
       this.props = null;
    }
 
@@ -234,100 +244,238 @@ public class ClientOptions {
     */
    public static class Builder {
 
+      /**
+       * Gets the user agent.
+       * @return The user agent.
+       */
       public String getUserAgent() {
          return userAgent;
       }
 
-      public void setUserAgent(final String userAgent) {
+      /**
+       * Sets the user agent.
+       * @param userAgent The user agent.
+       * @return A self-reference.
+       */
+      public Builder setUserAgent(final String userAgent) {
          this.userAgent = userAgent;
+         return this;
       }
 
+      /**
+       * Gets the connection timeout in milliseconds.
+       * @return The timeout in milliseconds.
+       */
       public int getConnectionTimeoutMillis() {
          return connectionTimeoutMillis;
       }
 
-      public void setConnectionTimeoutMillis(final int connectionTimeoutMillis) {
+      /**
+       * Sets the connection timeout in milliseconds.
+       * @param connectionTimeoutMillis The connection timeout in milliseconds.
+       * @return A self-reference.
+       */
+      public Builder setConnectionTimeoutMillis(final int connectionTimeoutMillis) {
          this.connectionTimeoutMillis = connectionTimeoutMillis;
+         return this;
       }
 
+      /**
+       * Gets the request timeout in milliseconds.
+       * @return The request timeout in milliseconds.
+       */
       public int getRequestTimeoutMillis() {
          return requestTimeoutMillis;
       }
 
-      public void setRequestTimeoutMillis(final int requestTimeoutMillis) {
+      /**
+       * Sets the request timeout in milliseconds.
+       * @param requestTimeoutMillis The request timeout in milliseconds.
+       * @return A self-reference.
+       */
+      public Builder setRequestTimeoutMillis(final int requestTimeoutMillis) {
          this.requestTimeoutMillis = requestTimeoutMillis;
+         return this;
       }
 
+      /**
+       * Gets the socket timeout in milliseconds.
+       * @return The socket timeout in milliseconds.
+       */
       public int getSocketTimeoutMillis() {
          return socketTimeoutMillis;
       }
 
-      public void setSocketTimeoutMillis(final int socketTimeoutMillis) {
+      /**
+       * Sets the socket timeout in milliseconds.
+       * @param socketTimeoutMillis  The socket timeout in milliseconds.
+       * @return A self-reference.
+       */
+      public Builder setSocketTimeoutMillis(final int socketTimeoutMillis) {
          this.socketTimeoutMillis = socketTimeoutMillis;
+         return this;
       }
 
+      /**
+       * Gets the proxy host.
+       * @return The proxy host.
+       */
       public String getProxyHost() {
          return proxyHost;
       }
 
-      public void setProxyHost(final String proxyHost) {
+      /**
+       * Sets the proxy host.
+       * @param proxyHost The proxy host.
+       * @return A self-reference.
+       */
+      public Builder setProxyHost(final String proxyHost) {
          this.proxyHost = proxyHost;
+         return this;
       }
 
+      /**
+       * Gets the proxy port.
+       * @return The proxy port.
+       */
       public int getProxyPort() {
          return proxyPort;
       }
 
-      public void setProxyPort(final int proxyPort) {
+      /**
+       * Sets the proxy port.
+       * @param proxyPort The proxy port.
+       * @return A self-reference.
+       */
+      public Builder setProxyPort(final int proxyPort) {
          this.proxyPort = proxyPort;
+         return this;
       }
 
+      /**
+       * Gets the follow redirects setting.
+       * @return Are redirects followed?
+       */
       public boolean getFollowRedirects() {
          return followRedirects;
       }
 
-      public void setFollowRedirects(final boolean followRedirects) {
+      /**
+       * Sets if redirects are followed.
+       * @param followRedirects Are redirects followed?
+       * @return A self-reference.
+       */
+      public Builder setFollowRedirects(final boolean followRedirects) {
          this.followRedirects = followRedirects;
+         return this;
       }
 
+      /**
+       * Gets the maximum number of connections per destination.
+       * @return The number of connections.
+       */
       public int getMaxConnectionsPerDestination() {
          return maxConnectionsPerDestination;
       }
 
-      public void setMaxConnectionsPerDestination(final int maxConnectionsPerDestination) {
+      /**
+       * Sets the maximum number of connections per destination.
+       * @param maxConnectionsPerDestination The number of connections.
+       * @return A self-reference.
+       */
+      public Builder setMaxConnectionsPerDestination(final int maxConnectionsPerDestination) {
          this.maxConnectionsPerDestination = maxConnectionsPerDestination;
+         return this;
       }
 
+      /**
+       * Gets the maximum total number of connections.
+       * @return The number of connections.
+       */
       public int getMaxConnectionsTotal() {
          return maxConnectionsTotal;
       }
 
-      public void setMaxConnectionsTotal(final int maxConnectionsTotal) {
+      /**
+       * Sets the maximum total number of connections.
+       * @param maxConnectionsTotal The number of connections.
+       * @return A self-reference.
+       */
+      public Builder setMaxConnectionsTotal(final int maxConnectionsTotal) {
          this.maxConnectionsTotal = maxConnectionsTotal;
+         return this;
       }
 
+      /**
+       * Gets the request buffer size.
+       * @return The request buffer size.
+       */
       public int getRequestBufferSize() {
          return requestBufferSize;
       }
 
-      public void setRequestBufferSize(final int requestBufferSize) {
+      /**
+       * Sets the request buffer size.
+       * @param requestBufferSize The request buffer size.
+       * @return A self-reference.
+       */
+      public Builder setRequestBufferSize(final int requestBufferSize) {
          this.requestBufferSize = requestBufferSize;
+         return this;
       }
 
+      /**
+       * Gets the response buffer size.
+       * @return The response buffer size.
+       */
       public int getResponseBufferSize() {
          return responseBufferSize;
       }
 
-      public void setResponseBufferSize(final int responseBufferSize) {
+      /**
+       * Sets the response buffer size.
+       * @param responseBufferSize The response buffer size.
+       * @return A self-reference.
+       */
+      public Builder setResponseBufferSize(final int responseBufferSize) {
          this.responseBufferSize = responseBufferSize;
+         return this;
       }
 
+      /**
+       * Gets the extra properties.
+       * @return The properties.
+       */
       public Properties getProps() {
          return props;
       }
 
-      public void setProps(final Properties props) {
+      /**
+       * Sets the extra properties.
+       * @param props The properties.
+       * @return A self-reference.
+       */
+      public Builder setProps(final Properties props) {
          this.props = props != null ? props : new Properties();
+         return this;
+      }
+
+      /**
+       * Are all (even invalid) certificates trusted?
+       * @return Are all certificates trusted.
+       */
+      public boolean getTrustAllCertificates() {
+         return trustAllCertificates;
+      }
+
+      /**
+       * Sets if all (even invalid) certificates are trusted.
+       * @param trustAllCertificates Are all certificates trusted?
+       * @return A self-reference.
+       */
+      public Builder setTrustAllCertificates(final boolean trustAllCertificates) {
+         this.trustAllCertificates = trustAllCertificates;
+         return this;
       }
 
       /**
@@ -339,9 +487,14 @@ public class ClientOptions {
                  proxyHost, proxyPort,
                  followRedirects,
                  maxConnectionsPerDestination, maxConnectionsTotal,
-                 requestBufferSize, responseBufferSize, props);
+                 requestBufferSize, responseBufferSize, trustAllCertificates, props);
       }
 
+      /**
+       * Convert a time string to an integer number of milliseconds.
+       * @param timeString The time string.
+       * @return The number of milliseconds as an integer.
+       */
       private int fromTime(final String timeString) {
          try {
             return (int)InitUtil.millisFromTime(timeString);
@@ -361,6 +514,7 @@ public class ClientOptions {
       int maxConnectionsTotal = Integer.parseInt(MAX_CONNECTIONS_TOTAL[DEFAULT_VALUE]);
       int requestBufferSize = Integer.parseInt(REQUEST_BUFFER_SIZE[DEFAULT_VALUE]);
       int responseBufferSize = Integer.parseInt(RESPONSE_BUFFER_SIZE[DEFAULT_VALUE]);
+      boolean trustAllCertificates = false;
       Properties props = new Properties();
    }
 }
