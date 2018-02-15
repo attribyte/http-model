@@ -101,10 +101,9 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
          ResponseBuilder builder = new ResponseBuilder();
          Response response = result.getResponse();
          builder.setStatusCode(response.getStatus());
-         HttpFields headers = response.getHeaders();
-         for(HttpField header : headers) {
+         response.getHeaders().forEach(header -> {
             builder.addHeader(header.getName(), header.getValue()); //Note that getValues returns quoted csv so don't want that.
-         }
+         });
          byte[] responseContent = getContent();
          if(responseContent != null) {
             builder.setBody(responseContent);

@@ -47,7 +47,7 @@ public class FormPostRequestBuilder extends RequestBuilderWithParameters {
 
    @Override
    public Request create() {
-      return new Request(Request.Method.POST, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes);
+      return new Request(Request.Method.POST, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes, cookies);
    }
 
 

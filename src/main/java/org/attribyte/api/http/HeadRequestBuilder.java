@@ -97,7 +97,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
 
    @Override
    public Request create() {
-      return new Request(Request.Method.HEAD, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes);
+      return new Request(Request.Method.HEAD, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes, cookies);
    }
 }
 

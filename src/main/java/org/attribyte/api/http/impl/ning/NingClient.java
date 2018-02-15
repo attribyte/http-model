@@ -23,11 +23,11 @@ import com.ning.http.client.AsyncHttpClientConfigDefaults;
 import com.ning.http.client.ProxyServer;
 import com.ning.http.client.Request;
 import com.ning.http.client.RequestBuilder;
+import com.ning.http.client.cookie.Cookie;
 import org.attribyte.api.InitializationException;
 import org.attribyte.api.Logger;
 import org.attribyte.api.http.AsyncClient;
 import org.attribyte.api.http.ClientOptions;
-import org.attribyte.api.http.Header;
 import org.attribyte.api.http.Parameter;
 import org.attribyte.api.http.RequestOptions;
 
@@ -195,10 +195,14 @@ public class NingClient implements AsyncClient {
             break;
       }
 
-      Collection<Header> headers = request.getHeaders();
-      for(Header header : headers) {
+      request.getHeaders().forEach(header -> {
          header.getValueList().forEach(value -> ningRequestBuilder.addHeader(header.getName(), value));
-      }
+      });
+
+      request.cookies.forEach(cookie -> {
+         ningRequestBuilder.addCookie(Cookie.newValidCookie(cookie.name, cookie.value, false, cookie.domain,
+                 cookie.path, cookie.maxAgeSeconds, cookie.secure, cookie.httpOnly));
+      });
 
       return ningRequestBuilder.build();
    }

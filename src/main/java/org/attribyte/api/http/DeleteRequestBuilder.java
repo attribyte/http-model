@@ -97,7 +97,7 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
 
    @Override
    public Request create() {
-      return new Request(Request.Method.DELETE, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes);
+      return new Request(Request.Method.DELETE, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes, cookies);
    }
 }
 

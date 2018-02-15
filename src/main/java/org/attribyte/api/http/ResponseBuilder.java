@@ -16,11 +16,13 @@
 package org.attribyte.api.http;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSource;
 import com.google.protobuf.ByteString;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -117,8 +119,8 @@ public class ResponseBuilder {
     * @return The response.
     */
    public Response create() {
-      return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, timing) :
-              new StreamedResponse(statusCode, headers, bodySource, attributes);
+      return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, timing, cookies) :
+              new StreamedResponse(statusCode, headers, bodySource, attributes, cookies);
    }
 
    /**
@@ -128,7 +130,7 @@ public class ResponseBuilder {
    public StreamedResponse createStreamed() {
       final ByteSource bodySource =
               this.bodySource != null ? this.bodySource : body != null ? ByteSource.wrap(body.toByteArray()) : null;
-      return new StreamedResponse(statusCode, headers, bodySource, attributes);
+      return new StreamedResponse(statusCode, headers, bodySource, attributes, cookies);
    }
 
    /**
@@ -208,6 +210,18 @@ public class ResponseBuilder {
    }
 
    /**
+    * Sets cookies.
+    * @param cookies A collection of cookies.
+    * @return A self-reference.
+    */
+   public ResponseBuilder setCookies(final Collection<Cookie> cookies) {
+      if(cookies != null) {
+         this.cookies = Lists.newArrayList(cookies);
+      }
+      return this;
+   }
+
+   /**
     * Creates the attributes map if necessary.
     * @return The attributes.
     */
@@ -227,4 +241,5 @@ public class ResponseBuilder {
    //Constructors force this to be initialized to something...
    int statusCode;
    Timing timing = null;
+   List<Cookie> cookies = null;
 }

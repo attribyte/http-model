@@ -19,6 +19,7 @@ import com.google.common.io.ByteSource;
 import com.google.protobuf.ByteString;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -32,10 +33,12 @@ public class StreamedResponse extends Response {
     * @param headers The response headers.
     * @param body The response body source.
     * @param attributes The attributes.
+    * @param cookies The cookies.
     */
    StreamedResponse(final int statusCode, final Map<?, ?> headers,
-                    final ByteSource body, final Map<String, Object> attributes) {
-      super(statusCode, headers, attributes);
+                    final ByteSource body, final Map<String, Object> attributes,
+                    final Collection<Cookie> cookies) {
+      super(statusCode, headers, attributes, null, cookies);
       this.body = body;
    }
 

@@ -98,6 +98,7 @@ public class Response {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
       this.attributes = ImmutableMap.of();
+      this.cookies = ImmutableList.of();
       this.timing = null;
    }
 
@@ -111,11 +112,12 @@ public class Response {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
+      this.cookies = ImmutableList.of();
       this.timing = null;
    }
 
    /**
-    * Creates a response with attributes.
+    * Creates a response with attributes and timing.
     * @param statusCode The HTTP response status code.
     * @param headers The response headers.
     * @param attributes The attributes.
@@ -126,9 +128,26 @@ public class Response {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
+      this.cookies = ImmutableList.of();
       this.timing = timing;
    }
 
+   /**
+    * Creates a response with attributes, timing and cookies.
+    * @param statusCode The HTTP response status code.
+    * @param headers The response headers.
+    * @param attributes The attributes.
+    * @param timing Timing information associated with the response.
+    * @param cookies A collection of cookies.
+    */
+   public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes,
+                   final Timing timing, final Collection<Cookie> cookies) {
+      this.statusCode = statusCode;
+      this.headers = Header.createImmutableMap(headers);
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
+      this.cookies = cookies != null ? ImmutableList.copyOf(cookies) : ImmutableList.of();
+      this.timing = timing;
+   }
 
    /**
     * Gets the HTTP response code.
@@ -292,6 +311,11 @@ public class Response {
     * </p>
     */
    public final ImmutableMap<String, Object> attributes;
+
+   /**
+    * An immutable list of cookies.
+    */
+   public final ImmutableList<Cookie> cookies;
 
 
    /**

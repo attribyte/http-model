@@ -17,6 +17,7 @@ package org.attribyte.api.http;
 
 import com.google.protobuf.ByteString;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -31,11 +32,12 @@ public class BodyResponse extends Response {
     * @param body The response body.
     * @param attributes A map of attributes associated with the response.
     * @param timing Timing information for the response.
+    * @param cookies A collection of cookies.
     */
    BodyResponse(final int statusCode, final Map<?, ?> headers,
                 final ByteString body, final Map<String, Object> attributes,
-                final Timing timing) {
-      super(statusCode, headers, attributes, timing);
+                final Timing timing, final Collection<Cookie> cookies) {
+      super(statusCode, headers, attributes, timing, cookies);
       this.body = body;
    }
 

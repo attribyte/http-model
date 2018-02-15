@@ -17,6 +17,7 @@ package org.attribyte.api.http.impl.ning;
 
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.Response;
+import org.attribyte.api.http.Cookie;
 import org.attribyte.api.http.ResponseBuilder;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class CompletionHandler extends AsyncCompletionHandler<Response> {
 
@@ -39,6 +41,14 @@ public abstract class CompletionHandler extends AsyncCompletionHandler<Response>
       for(Map.Entry<String, List<String>> header : entries) {
          header.getValue().forEach(value -> builder.addHeader(header.getKey(), value));
       }
+
+      if(response.getCookies() != null) {
+         builder.setCookies(response.getCookies().stream().map(cookie -> new Cookie(
+                 cookie.getName(), cookie.getValue(), cookie.getDomain(), cookie.getPath(),
+                 (int)cookie.getMaxAge(), cookie.isSecure(), cookie.isHttpOnly())
+         ).collect(Collectors.toList()));
+      }
+
       InputStream is = response.getResponseBodyAsStream();
       if(is != null) {
          try {

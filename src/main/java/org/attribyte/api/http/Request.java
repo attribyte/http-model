@@ -100,16 +100,12 @@ public final class Request {
     * @param caseSensitiveParameters Are parameters case-sensitive?
     * @param body The body. May be null.
     * @param attributes Additional attributes.
+    * @param cookies A list of cookies.
     */
    Request(final Method method, final URI uri, Map<String, Header> headers, Map<String, Parameter> parameters,
-           final boolean caseSensitiveParameters, final byte[] body, final Map<String, Object> attributes) {
-      this.method = method;
-      this.uri = uri;
-      this.headers = Header.createImmutableMap(headers);
-      this.parameters = Parameter.createImmutableMap(parameters);
-      this.caseSensitiveParameters = caseSensitiveParameters;
-      this.body = body != null ? ByteString.copyFrom(body) : null;
-      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
+           final boolean caseSensitiveParameters, final byte[] body, final Map<String, Object> attributes,
+           final List<Cookie> cookies) {
+      this(method, uri, headers, parameters, caseSensitiveParameters, ByteString.copyFrom(body), attributes, cookies);
    }
 
    /**
@@ -121,9 +117,11 @@ public final class Request {
     * @param caseSensitiveParameters Are parameters case-sensitive?
     * @param body The body. May be null.
     * @param attributes Additional attributes.
+    * @param cookies A list of cookies.
     */
    Request(final Method method, final URI uri, Map<String, Header> headers, Map<String, Parameter> parameters,
-           final boolean caseSensitiveParameters, final ByteString body, final Map<String, Object> attributes) {
+           final boolean caseSensitiveParameters, final ByteString body, final Map<String, Object> attributes,
+           final List<Cookie> cookies) {
       this.method = method;
       this.uri = uri;
       this.headers = Header.createImmutableMap(headers);
@@ -131,6 +129,7 @@ public final class Request {
       this.caseSensitiveParameters = caseSensitiveParameters;
       this.body = body;
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
+      this.cookies = cookies != null ? ImmutableList.copyOf(cookies) : ImmutableList.of();
    }
 
    /**
@@ -459,7 +458,7 @@ public final class Request {
       for(Header header : headers) {
          newHeaders.put(header.getName(), header);
       }
-      return new Request(this.method, this.uri, newHeaders, this.parameters, this.caseSensitiveParameters, this.body, this.attributes);
+      return new Request(this.method, this.uri, newHeaders, this.parameters, this.caseSensitiveParameters, this.body, this.attributes, this.cookies);
    }
 
    /**
@@ -604,6 +603,9 @@ public final class Request {
       }
 
       buf.append(newline);
+      buf.append("Cookies: ").append(newline);
+
+      buf.append(newline);
       buf.append("Body: ").append(newline);
       if(body != null) {
          try {
@@ -647,6 +649,11 @@ public final class Request {
     * An immutable map of attributes.
     */
    public final ImmutableMap<String, Object> attributes;
+
+   /**
+    * A list of cookies.
+    */
+   public final List<Cookie> cookies;
 
    /**
     * The request body. May be null.

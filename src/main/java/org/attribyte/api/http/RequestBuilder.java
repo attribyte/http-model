@@ -15,12 +15,14 @@
 
 package org.attribyte.api.http;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.attribyte.api.InvalidURIException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -105,6 +107,9 @@ public abstract class RequestBuilder {
     * @return A self-reference.
     */
    public RequestBuilder addAttribute(final String name, final Object object) {
+      if(attributes == null) {
+         attributes = Maps.newHashMapWithExpectedSize(2);
+      }
       attributes.put(name, object);
       return this;
    }
@@ -116,13 +121,29 @@ public abstract class RequestBuilder {
     */
    public RequestBuilder addAttributes(final Map<String, Object> attributes) {
       if(attributes != null) {
+         if(this.attributes == null) {
+            this.attributes = Maps.newHashMapWithExpectedSize(2);
+         }
          this.attributes.putAll(attributes);
       }
       return this;
    }
 
-   final Map<String, Header> headers = Maps.newHashMapWithExpectedSize(8);
-   final Map<String, Object> attributes = Maps.newHashMapWithExpectedSize(2);
-   final URI uri;
-}
+   /**
+    * Adds a cookie.
+    * @param cookie The cookie to add.
+    * @return A self-reference.
+    */
+   public RequestBuilder addCookie(final Cookie cookie) {
+      if(cookies == null) {
+         cookies = Lists.newArrayListWithExpectedSize(4);
+      }
+      cookies.add(cookie);
+      return this;
+   }
 
+   protected final Map<String, Header> headers = Maps.newHashMapWithExpectedSize(8);
+   protected final URI uri;
+   protected Map<String, Object> attributes = null;
+   protected List<Cookie> cookies = null;
+}

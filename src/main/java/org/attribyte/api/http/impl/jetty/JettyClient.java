@@ -21,7 +21,6 @@ import org.attribyte.api.InitializationException;
 import org.attribyte.api.Logger;
 import org.attribyte.api.http.AsyncClient;
 import org.attribyte.api.http.ClientOptions;
-import org.attribyte.api.http.Header;
 import org.attribyte.api.http.Parameter;
 import org.attribyte.api.http.RequestOptions;
 import org.attribyte.api.http.Response;
@@ -37,6 +36,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.client.HttpProxy;
 
 import java.io.IOException;
+import java.net.HttpCookie;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
@@ -189,10 +189,14 @@ public class JettyClient implements AsyncClient {
             break;
       }
 
-      Collection<Header> headers = request.getHeaders();
-      for(Header header : headers) {
+      request.getHeaders().forEach(header -> {
          header.getValueList().forEach(value -> jettyRequest.header(header.getName(), value));
-      }
+      });
+
+      request.cookies.forEach(cookie -> {
+         jettyRequest.cookie(new HttpCookie(cookie.name, cookie.value));
+      });
+
       return jettyRequest;
    }
 
