@@ -15,7 +15,7 @@ dependencies, compile and generate documentation.
  
 ## Documentation
 
-* [Javadoc](https://www.attribyte.com/projects/http-model/javadoc/index.html)
+* [Javadoc](https://attribyte.com/projects/http-model/javadoc/index.html)
  
 ## License
 

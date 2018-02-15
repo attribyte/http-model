@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Attribyte, LLC
+ * Copyright 2014-2018 Attribyte, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.attribyte.api.http.ClientOptions;
 import org.attribyte.api.http.Header;
 import org.attribyte.api.http.Parameter;
 import org.attribyte.api.http.RequestOptions;
+import org.attribyte.api.http.Response;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.ProxyConfiguration;
 import org.eclipse.jetty.client.api.Request;
@@ -38,6 +39,7 @@ import org.eclipse.jetty.client.HttpProxy;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -127,7 +129,23 @@ public class JettyClient implements AsyncClient {
    @Override
    public ListenableFuture<org.attribyte.api.http.Response> asyncSend(org.attribyte.api.http.Request request, RequestOptions options) {
       final SettableFuture<org.attribyte.api.http.Response> fut = SettableFuture.create();
-      final TimingListener listener = new TimingListener(fut, options.maxResponseBytes);
+      final SettableFutureTimingListener listener = new SettableFutureTimingListener(fut, options.maxResponseBytes);
+      toJettyRequest(request)
+              .followRedirects(options.followRedirects)
+              .listener(listener)
+              .send(listener);
+      return fut;
+   }
+
+   @Override
+   public CompletableFuture<Response> completableSend(org.attribyte.api.http.Request request) {
+      return completableSend(request, RequestOptions.DEFAULT);
+   }
+
+   @Override
+   public CompletableFuture<Response> completableSend(org.attribyte.api.http.Request request, RequestOptions options) {
+      final CompletableFuture<org.attribyte.api.http.Response> fut = new CompletableFuture<>();
+      final CompletableTimingListener listener = new CompletableTimingListener(fut, options.maxResponseBytes);
       toJettyRequest(request)
               .followRedirects(options.followRedirects)
               .listener(listener)
@@ -175,9 +193,8 @@ public class JettyClient implements AsyncClient {
 
       Collection<Header> headers = request.getHeaders();
       for(Header header : headers) {
-         jettyRequest.header(header.getName(), header.getValue());
+         header.getValueList().forEach(value -> jettyRequest.header(header.getName(), value));
       }
-
       return jettyRequest;
    }
 

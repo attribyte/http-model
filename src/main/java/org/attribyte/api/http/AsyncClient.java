@@ -15,25 +15,44 @@
 
 package org.attribyte.api.http;
 
+import com.google.common.base.Joiner;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
- * Defines the async HTTP client interface.
+ * Sends requests asynchronously with a "future" result.
  */
 public interface AsyncClient extends Client {
 
    /**
-    * Sends a request with default options.
+    * Sends a request with default options that completes with a {@code ListenableFuture}.
     * @param request The request.
     * @return The (listenable) response future.
     */
    public ListenableFuture<Response> asyncSend(Request request);
 
    /**
-    * Sends a request with specified options.
+    * Sends a request with specified options that completes with a {@code ListenableFuture}.
     * @param request The request.
     * @param options The request options.
     * @return The (listenable) response future.
     */
    public ListenableFuture<Response> asyncSend(Request request, RequestOptions options);
+
+
+   /**
+    * Sends a request with default options that completes with a {@code CompletableFuture}.
+    * @param request The request.
+    * @return The (completable) response future.
+    */
+   public CompletableFuture<Response> completableSend(org.attribyte.api.http.Request request);
+
+   /**
+    * Sends a request with specified options that completes with a {@code CompletableFuture}.
+    * @param request The request.
+    * @param options The request options.
+    * @return The (completable) response future.
+    */
+   public CompletableFuture<Response> completableSend(org.attribyte.api.http.Request request, RequestOptions options);
 }

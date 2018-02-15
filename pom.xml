@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.attribyte</groupId>
     <artifactId>attribyte-http</artifactId>
-    <version>0.5.4</version>
+    <version>0.5.5-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Attribyte HTTP model</name>
     <properties>
@@ -36,6 +36,12 @@
         <developerConnection>scm:git:git@github.com:attribyte/http-model.git</developerConnection>
         <url>git@github.com:attribyte/http-model.git</url>
     </scm>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.attribyte</groupId>
@@ -80,7 +86,7 @@
         <dependency>
             <groupId>com.ning</groupId>
             <artifactId>async-http-client</artifactId>
-            <version>1.8.15</version>
+            <version>[1.9, 2.0)</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
@@ -95,6 +101,17 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

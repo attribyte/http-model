@@ -1,6 +1,20 @@
+/*
+ * Copyright 2018 Attribyte, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package org.attribyte.api.http.impl.jetty;
 
-import com.google.common.util.concurrent.SettableFuture;
 import org.attribyte.api.http.ResponseBuilder;
 import org.attribyte.api.http.Timing;
 import org.eclipse.jetty.client.api.Request;
@@ -12,11 +26,10 @@ import org.eclipse.jetty.http.HttpFields;
 
 import java.nio.ByteBuffer;
 
-class TimingListener extends BufferingResponseListener implements Request.Listener {
+abstract class TimingListener extends BufferingResponseListener implements Request.Listener {
 
-   TimingListener(final SettableFuture<org.attribyte.api.http.Response> fut, final int maxResponseBytes) {
+   TimingListener(final int maxResponseBytes) {
       super(maxResponseBytes);
-      this.fut = fut;
    }
 
    @Override
@@ -90,18 +103,30 @@ class TimingListener extends BufferingResponseListener implements Request.Listen
          builder.setStatusCode(response.getStatus());
          HttpFields headers = response.getHeaders();
          for(HttpField header : headers) {
-            builder.addHeader(header.getName(), header.getValue());
+            builder.addHeader(header.getName(), header.getValue()); //Note that getValues returns quoted csv so don't want that.
          }
          byte[] responseContent = getContent();
          if(responseContent != null) {
             builder.setBody(responseContent);
          }
          builder.setTiming(timing());
-         fut.set(builder.create());
+         completed(builder.create());
       } else {
-         fut.setException(result.getFailure());
+         failed(result.getFailure());
       }
    }
+
+   /**
+    * Called when the request is completed with success.
+    * @param response The complete response.
+    */
+   abstract protected void completed(final org.attribyte.api.http.Response response);
+
+   /**
+    * Called when the request fails with an exception.
+    * @param failure The failure.
+    */
+   abstract protected void failed(final Throwable failure);
 
    /**
     * Creates the accumulated timing information.
@@ -117,11 +142,6 @@ class TimingListener extends BufferingResponseListener implements Request.Listen
               responseCompleteTick - requestSentTick
       );
    }
-
-   /**
-    * The future result.
-    */
-   private final SettableFuture<org.attribyte.api.http.Response> fut;
 
    /**
     * The tick in nanoseconds when the request was queued for processing.
