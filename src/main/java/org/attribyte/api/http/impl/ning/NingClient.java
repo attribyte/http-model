@@ -133,7 +133,7 @@ public class NingClient implements AsyncClient {
    public ListenableFuture<org.attribyte.api.http.Response> asyncSend(final org.attribyte.api.http.Request request,
                                                                       final RequestOptions options) {
       final SettableFuture<org.attribyte.api.http.Response> fut = SettableFuture.create();
-      httpClient.executeRequest(toNingRequest(request, options), new SettableFutureCompletionHandler(fut, options.maxResponseBytes));
+      httpClient.executeRequest(toNingRequest(request, options), new ListenableFutureCompletionHandler(fut, options.maxResponseBytes));
       return fut;
    }
 
@@ -146,7 +146,7 @@ public class NingClient implements AsyncClient {
    public CompletableFuture<org.attribyte.api.http.Response> completableSend(final org.attribyte.api.http.Request request,
                                                                              final RequestOptions options) {
       final CompletableFuture<org.attribyte.api.http.Response> fut = new CompletableFuture<>();
-      httpClient.executeRequest(toNingRequest(request, options), new CompletableCompletionHandler(fut, options.maxResponseBytes));
+      httpClient.executeRequest(toNingRequest(request, options), new CompletableFutureCompletionHandler(fut, options.maxResponseBytes));
       return fut;
    }
 

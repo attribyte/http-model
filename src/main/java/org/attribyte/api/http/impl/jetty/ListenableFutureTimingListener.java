@@ -13,20 +13,19 @@
  *
  */
 
-package org.attribyte.api.http.impl.ning;
+package org.attribyte.api.http.impl.jetty;
 
 import com.google.common.util.concurrent.SettableFuture;
-import org.attribyte.api.http.Response;
 
-class SettableFutureCompletionHandler extends CompletionHandler {
+class ListenableFutureTimingListener extends TimingListener {
 
-   SettableFutureCompletionHandler(final SettableFuture<Response> fut, final int maxResponseBytes) {
+   ListenableFutureTimingListener(final SettableFuture<org.attribyte.api.http.Response> fut, final int maxResponseBytes) {
       super(maxResponseBytes);
       this.fut = fut;
    }
 
    @Override
-   protected void completed(final Response response) {
+   protected void completed(final org.attribyte.api.http.Response response) {
       fut.set(response);
    }
 

@@ -12,29 +12,31 @@
  * See the License for the specific language governing permissions and limitations under the License.
  *
  */
-package org.attribyte.api.http.impl.jetty;
 
-import java.util.concurrent.CompletableFuture;
+package org.attribyte.api.http.impl.ning;
 
-class CompletableTimingListener extends TimingListener {
+import com.google.common.util.concurrent.SettableFuture;
+import org.attribyte.api.http.Response;
 
-   CompletableTimingListener(final CompletableFuture<org.attribyte.api.http.Response> fut, final int maxResponseBytes) {
+class ListenableFutureCompletionHandler extends CompletionHandler {
+
+   ListenableFutureCompletionHandler(final SettableFuture<Response> fut, final int maxResponseBytes) {
       super(maxResponseBytes);
       this.fut = fut;
    }
 
    @Override
-   protected void completed(final org.attribyte.api.http.Response response) {
-      fut.complete(response);
+   protected void completed(final Response response) {
+      fut.set(response);
    }
 
    @Override
    protected void failed(final Throwable failure) {
-      fut.completeExceptionally(failure);
+      fut.setException(failure);
    }
 
    /**
     * The future result.
     */
-   private final CompletableFuture<org.attribyte.api.http.Response> fut;
+   private final SettableFuture<org.attribyte.api.http.Response> fut;
 }

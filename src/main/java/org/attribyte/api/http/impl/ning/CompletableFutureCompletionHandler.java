@@ -19,9 +19,9 @@ import org.attribyte.api.http.Response;
 
 import java.util.concurrent.CompletableFuture;
 
-class CompletableCompletionHandler extends CompletionHandler {
+class CompletableFutureCompletionHandler extends CompletionHandler {
 
-   CompletableCompletionHandler(final CompletableFuture<org.attribyte.api.http.Response> fut, final int maxResponseBytes) {
+   CompletableFutureCompletionHandler(final CompletableFuture<org.attribyte.api.http.Response> fut, final int maxResponseBytes) {
       super(maxResponseBytes);
       this.fut = new CompletableFuture<>();
    }
