@@ -651,9 +651,9 @@ public final class Request {
    public final ImmutableMap<String, Object> attributes;
 
    /**
-    * A list of cookies.
+    * An immutable list of cookies.
     */
-   public final List<Cookie> cookies;
+   public final ImmutableList<Cookie> cookies;
 
    /**
     * The request body. May be null.
