@@ -86,7 +86,6 @@ public class JettyClient implements AsyncClient {
       } else {
          SslContextFactory sslContextFactory = new SslContextFactory();
          sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
-         System.out.println(sslContextFactory.dump());
          this.httpClient = new HttpClient(sslContextFactory);
       }
 
