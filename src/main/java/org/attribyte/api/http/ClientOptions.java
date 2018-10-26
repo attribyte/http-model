@@ -150,11 +150,8 @@ public class ClientOptions {
    public int getTimeProperty(final String name, final int defaultValue) {
       String val = props.getProperty(name);
       if(val != null) {
-         try {
-            return (int)InitUtil.millisFromTime(val);
-         } catch(InitializationException ie) {
-            return defaultValue;
-         }
+         long millis = InitUtil.millisFromTime(val);
+         return millis != Long.MAX_VALUE ? (int)millis : 0;
       } else {
          return defaultValue;
       }
@@ -496,11 +493,8 @@ public class ClientOptions {
        * @return The number of milliseconds as an integer.
        */
       private int fromTime(final String timeString) {
-         try {
-            return (int)InitUtil.millisFromTime(timeString);
-         } catch(InitializationException ie) {
-            return 0; //Should never happen unless our compiled-in default values are invalid!
-         }
+         long millis = InitUtil.millisFromTime(timeString);
+         return millis != Long.MAX_VALUE ? (int)millis : 0;
       }
 
       String userAgent = USER_AGENT[DEFAULT_VALUE];
