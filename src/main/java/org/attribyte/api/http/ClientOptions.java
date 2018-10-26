@@ -151,7 +151,7 @@ public class ClientOptions {
       String val = props.getProperty(name);
       if(val != null) {
          long millis = InitUtil.millisFromTime(val);
-         return millis != Long.MAX_VALUE ? (int)millis : 0;
+         return millis != Long.MIN_VALUE ? (int)millis : 0;
       } else {
          return defaultValue;
       }
@@ -494,7 +494,7 @@ public class ClientOptions {
        */
       private int fromTime(final String timeString) {
          long millis = InitUtil.millisFromTime(timeString);
-         return millis != Long.MAX_VALUE ? (int)millis : 0;
+         return millis != Long.MIN_VALUE ? (int)millis : 0;
       }
 
       String userAgent = USER_AGENT[DEFAULT_VALUE];
