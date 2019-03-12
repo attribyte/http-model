@@ -18,8 +18,10 @@ import java.util.concurrent.CompletableFuture;
 
 class CompletableFutureTimingListener extends TimingListener {
 
-   CompletableFutureTimingListener(final CompletableFuture<org.attribyte.api.http.Response> fut, final int maxResponseBytes) {
-      super(maxResponseBytes);
+   CompletableFutureTimingListener(final CompletableFuture<org.attribyte.api.http.Response> fut,
+                                   final int maxResponseBytes,
+                                   final boolean truncateOnLimit) {
+      super(maxResponseBytes, truncateOnLimit);
       this.fut = fut;
    }
 

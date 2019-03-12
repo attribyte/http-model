@@ -19,8 +19,10 @@ import com.google.common.util.concurrent.SettableFuture;
 
 class ListenableFutureTimingListener extends TimingListener {
 
-   ListenableFutureTimingListener(final SettableFuture<org.attribyte.api.http.Response> fut, final int maxResponseBytes) {
-      super(maxResponseBytes);
+   ListenableFutureTimingListener(final SettableFuture<org.attribyte.api.http.Response> fut,
+                                  final int maxResponseBytes,
+                                  final boolean truncateOnLimit) {
+      super(maxResponseBytes, truncateOnLimit);
       this.fut = fut;
    }
 

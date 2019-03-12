@@ -233,6 +233,22 @@ public class Response {
       return attributes == null ? null : attributes.get(name);
    }
 
+   /**
+    * Gets an attribute with a default value.
+    * @param name The name.
+    * @param defaultValue The default value.
+    * @param <T> The expected type.
+    * @return The variable or {@code null}.
+    */
+   @SuppressWarnings("unchecked")
+   public <T> T getAttribute(String name, T defaultValue) {
+      if(attributes == null) {
+         return defaultValue;
+      } else {
+         T value = (T)attributes.get(name);
+         return value != null ? value : defaultValue;
+      }
+   }
 
    /**
     * Gets the request/response timing, if available.
@@ -316,7 +332,6 @@ public class Response {
     * An immutable list of cookies.
     */
    public final ImmutableList<Cookie> cookies;
-
 
    /**
     * Request/response timing.

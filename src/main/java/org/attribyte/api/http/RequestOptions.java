@@ -54,6 +54,40 @@ public class RequestOptions {
       this.followRedirects = followRedirects;
       this.maxResponseBytes = maxResponseBytes;
       this.timeoutSeconds = timeoutSeconds;
+      this.truncateOnLimit = false;
+   }
+
+   /**
+    * Creates request options.
+    * @param followRedirects Should redirects be followed?
+    * @param maxResponseBytes The maximum allowed response size in bytes.
+    * @param timeoutSeconds The maximum time to wait for a response in seconds.
+    * @param truncateOnLimit Should the response be truncated if {@code maxResponseBytes} is reached (otherwise an exception is thrown)?
+    */
+   public RequestOptions(final boolean followRedirects,
+                         final int maxResponseBytes,
+                         final int timeoutSeconds,
+                         final boolean truncateOnLimit) {
+      this.followRedirects = followRedirects;
+      this.maxResponseBytes = maxResponseBytes;
+      this.timeoutSeconds = timeoutSeconds;
+      this.truncateOnLimit = truncateOnLimit;
+   }
+
+   /**
+    * Create request options that truncate the response if the limit is reached.
+    * @return The new request options.
+    */
+   public RequestOptions truncateOnLimit() {
+      return new RequestOptions(followRedirects, maxResponseBytes, timeoutSeconds, true);
+   }
+
+   /**
+    * Create request options that follows redirects.
+    * @return The new request options.
+    */
+   public RequestOptions followRedirects() {
+      return new RequestOptions(true, maxResponseBytes, timeoutSeconds, truncateOnLimit);
    }
 
    /**
@@ -67,8 +101,12 @@ public class RequestOptions {
    public final int maxResponseBytes;
 
    /**
+    * Should the response be truncated if {@code maxResponseBytes} is reached (otherwise an exception is thrown)?
+    */
+   public final boolean truncateOnLimit;
+
+   /**
     * The maximum time to wait for a response in seconds.
     */
    public final int timeoutSeconds;
-
 }

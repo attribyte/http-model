@@ -27,8 +27,11 @@ import java.nio.ByteBuffer;
 
 abstract class TimingListener extends BufferingResponseListener implements Request.Listener {
 
-   TimingListener(final int maxResponseBytes) {
+   TimingListener(final int maxResponseBytes,
+                  final boolean truncateOnLimit) {
       super(maxResponseBytes);
+      this.maxResponseBytes = maxResponseBytes;
+      this.truncateOnLimit = truncateOnLimit;
    }
 
    @Override
@@ -81,7 +84,18 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
       if(responseContentStartedTick == 0L) {
          responseContentStartedTick = getTick();
       }
-      super.onContent(response, content);
+
+      if(truncateOnLimit) {
+         int length = content.remaining();
+         if(!truncated && responseBytesRead + length < maxResponseBytes) {
+            super.onContent(response, content);
+            responseBytesRead += length;
+         } else { //Ignore...
+            truncated = true;
+         }
+      } else {
+         super.onContent(response, content);
+      }
    }
 
    @Override
@@ -108,6 +122,10 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
             builder.setBody(responseContent);
          }
          builder.setTiming(timing());
+
+         if(truncated) {
+            builder.addAttribute("truncated", Boolean.TRUE);
+         }
          completed(builder.create());
       } else {
          failed(result.getFailure());
@@ -175,6 +193,27 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
     * The tick in nanoseconds when the response is complete.
     */
    private long responseCompleteTick;
+
+   /**
+    * Count the number of bytes read.
+    */
+   private int responseBytesRead = 0;
+
+   /**
+    * Should the response be truncated if {@code maxResponseBytes} is reached
+    * instead of allowing an exception to be thrown?
+    */
+   private boolean truncateOnLimit;
+
+   /**
+    * Was the response truncated?
+    */
+   private boolean truncated = false;
+
+   /**
+    * The maximum buffered response size.
+    */
+   protected final int maxResponseBytes;
 
    /**
     * Gets the current tick in nanoseconds.

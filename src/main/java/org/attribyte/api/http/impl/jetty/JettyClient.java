@@ -127,7 +127,8 @@ public class JettyClient implements AsyncClient {
    @Override
    public ListenableFuture<org.attribyte.api.http.Response> asyncSend(org.attribyte.api.http.Request request, RequestOptions options) {
       final SettableFuture<org.attribyte.api.http.Response> fut = SettableFuture.create();
-      final ListenableFutureTimingListener listener = new ListenableFutureTimingListener(fut, options.maxResponseBytes);
+      final ListenableFutureTimingListener listener =
+              new ListenableFutureTimingListener(fut, options.maxResponseBytes, options.truncateOnLimit);
       toJettyRequest(request)
               .followRedirects(options.followRedirects)
               .listener(listener)
@@ -143,7 +144,8 @@ public class JettyClient implements AsyncClient {
    @Override
    public CompletableFuture<Response> completableSend(org.attribyte.api.http.Request request, RequestOptions options) {
       final CompletableFuture<org.attribyte.api.http.Response> fut = new CompletableFuture<>();
-      final CompletableFutureTimingListener listener = new CompletableFutureTimingListener(fut, options.maxResponseBytes);
+      final CompletableFutureTimingListener listener =
+              new CompletableFutureTimingListener(fut, options.maxResponseBytes, options.truncateOnLimit);
       toJettyRequest(request)
               .followRedirects(options.followRedirects)
               .listener(listener)
