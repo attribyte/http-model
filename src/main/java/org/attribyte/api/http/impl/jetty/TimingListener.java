@@ -20,7 +20,6 @@ import org.attribyte.api.http.Timing;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.client.util.BufferingResponseListener;
 import org.eclipse.jetty.http.HttpField;
 
 import java.nio.ByteBuffer;
@@ -29,8 +28,7 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
 
    TimingListener(final int maxResponseBytes,
                   final boolean truncateOnLimit) {
-      super(maxResponseBytes);
-      this.maxResponseBytes = maxResponseBytes;
+      super(maxResponseBytes, truncateOnLimit);
       this.truncateOnLimit = truncateOnLimit;
    }
 
@@ -84,18 +82,7 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
       if(responseContentStartedTick == 0L) {
          responseContentStartedTick = getTick();
       }
-
-      if(truncateOnLimit) {
-         int length = content.remaining();
-         if(!truncated && responseBytesRead + length < maxResponseBytes) {
-            super.onContent(response, content);
-            responseBytesRead += length;
-         } else { //Ignore...
-            truncated = true;
-         }
-      } else {
-         super.onContent(response, content);
-      }
+      super.onContent(response, content);
    }
 
    @Override
@@ -111,25 +98,36 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
    @Override
    public void onComplete(Result result) {
       if(!result.isFailed()) {
-         ResponseBuilder builder = new ResponseBuilder();
-         Response response = result.getResponse();
-         builder.setStatusCode(response.getStatus());
-         response.getHeaders().forEach(header -> {
-            builder.addHeader(header.getName(), header.getValue()); //Note that getValues returns quoted csv so don't want that.
-         });
-         byte[] responseContent = getContent();
-         if(responseContent != null) {
-            builder.setBody(responseContent);
-         }
-         builder.setTiming(timing());
-
-         if(truncated) {
-            builder.addAttribute("truncated", Boolean.TRUE);
-         }
+         ResponseBuilder builder = fromResult(result, false);
+         completed(builder.create());
+      } else if(truncateOnLimit && result.getFailure() instanceof CapacityReached){
+         ResponseBuilder builder = fromResult(result, true);
          completed(builder.create());
       } else {
          failed(result.getFailure());
       }
+   }
+
+   private ResponseBuilder fromResult(final Result result,
+                                      final boolean truncated) {
+
+      ResponseBuilder builder = new ResponseBuilder();
+      Response response = result.getResponse();
+      builder.setStatusCode(response.getStatus());
+      response.getHeaders().forEach(header -> {
+         builder.addHeader(header.getName(), header.getValue()); //Note that getValues returns quoted csv so don't want that.
+      });
+      byte[] responseContent = getContent();
+      if(responseContent != null) {
+         builder.setBody(responseContent);
+      }
+      builder.setTiming(timing());
+
+      if(truncated) {
+         builder.addAttribute("truncated", Boolean.TRUE);
+      }
+
+      return builder;
    }
 
    /**
@@ -204,16 +202,6 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
     * instead of allowing an exception to be thrown?
     */
    private boolean truncateOnLimit;
-
-   /**
-    * Was the response truncated?
-    */
-   private boolean truncated = false;
-
-   /**
-    * The maximum buffered response size.
-    */
-   protected final int maxResponseBytes;
 
    /**
     * Gets the current tick in nanoseconds.
