@@ -15,6 +15,8 @@
 
 package org.attribyte.api.http;
 
+import com.google.common.base.MoreObjects;
+
 /**
  * Request-specific options.
  */
@@ -88,6 +90,16 @@ public class RequestOptions {
     */
    public RequestOptions followRedirects() {
       return new RequestOptions(true, maxResponseBytes, timeoutSeconds, truncateOnLimit);
+   }
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this)
+              .add("followRedirects", followRedirects)
+              .add("maxResponseBytes", maxResponseBytes)
+              .add("truncateOnLimit", truncateOnLimit)
+              .add("timeoutSeconds", timeoutSeconds)
+              .toString();
    }
 
    /**
