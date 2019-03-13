@@ -29,7 +29,6 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
    TimingListener(final int maxResponseBytes,
                   final boolean truncateOnLimit) {
       super(maxResponseBytes, truncateOnLimit);
-      this.truncateOnLimit = truncateOnLimit;
    }
 
    @Override
@@ -100,7 +99,7 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
       if(!result.isFailed()) {
          ResponseBuilder builder = fromResult(result, false);
          completed(builder.create());
-      } else if(truncateOnLimit && result.getFailure() instanceof CapacityReached){
+      } else if(truncateOnLimit && result.getFailure() instanceof CapacityReached) {
          ResponseBuilder builder = fromResult(result, true);
          completed(builder.create());
       } else {
@@ -196,12 +195,6 @@ abstract class TimingListener extends BufferingResponseListener implements Reque
     * Count the number of bytes read.
     */
    private int responseBytesRead = 0;
-
-   /**
-    * Should the response be truncated if {@code maxResponseBytes} is reached
-    * instead of allowing an exception to be thrown?
-    */
-   private boolean truncateOnLimit;
 
    /**
     * Gets the current tick in nanoseconds.

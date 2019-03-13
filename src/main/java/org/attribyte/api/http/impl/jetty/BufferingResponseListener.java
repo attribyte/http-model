@@ -45,23 +45,27 @@ import org.eclipse.jetty.util.BufferUtil;
  * via {@link #getContent()} or {@link #getContentAsString()}.</p>
  * <p>Instances of this class are not reusable, so one must be allocated for each request.</p>
  */
-public abstract class BufferingResponseListener extends Listener.Adapter {
+abstract class BufferingResponseListener extends Listener.Adapter {
 
    /**
     * Thrown when buffering capacity is exceeded.
     */
    protected static class CapacityReached extends Exception {
-
       CapacityReached(final String message) {
          super(message);
       }
    }
 
    private final int maxLength;
-   private final boolean truncateOnLimit;
    private ByteBuffer buffer;
    private String mediaType;
    private String encoding;
+
+   /**
+    * Should the response be truncated if {@code maxResponseBytes} is reached
+    * instead of allowing an exception to be thrown?
+    */
+   protected final boolean truncateOnLimit;
 
    /**
     * Creates an instance with the given maximum length
@@ -82,6 +86,7 @@ public abstract class BufferingResponseListener extends Listener.Adapter {
       super.onHeaders(response);
       Request request = response.getRequest();
       HttpFields headers = response.getHeaders();
+
       long length = headers.getLongField(HttpHeader.CONTENT_LENGTH.asString());
       if(truncateOnLimit || HttpMethod.HEAD.is(request.getMethod())) {
          length = 0;
