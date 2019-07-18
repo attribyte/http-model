@@ -63,36 +63,45 @@ public class JettyClient implements AsyncClient {
    }
 
    private void initFromOptions(final ClientOptions options) throws InitializationException {
-
-      if(options != ClientOptions.IMPLEMENTATION_DEFAULT) {
-         SslContextFactory sslContextFactory = new SslContextFactory(options.trustAllCertificates);
-         sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
-         this.httpClient = new HttpClient(sslContextFactory);
-         this.httpClient.setFollowRedirects(options.followRedirects);
-         this.httpClient.setConnectTimeout(options.connectionTimeoutMillis);
-         this.httpClient.setMaxConnectionsPerDestination(options.maxConnectionsPerDestination);
-         this.httpClient.setCookieStore(new HttpCookieStore.Empty());
-         if(options.proxyHost != null) {
-            ProxyConfiguration proxyConfig = httpClient.getProxyConfiguration();
-            proxyConfig.getProxies().add(new HttpProxy(options.proxyHost, options.proxyPort));
-         }
-         this.httpClient.setUserAgentField(new HttpField(HttpHeader.USER_AGENT, options.userAgent));
-         this.httpClient.setRequestBufferSize(options.requestBufferSize);
-         this.httpClient.setResponseBufferSize(options.responseBufferSize);
-         this.httpClient.setIdleTimeout(options.getIntProperty("idleTimeout", 0));
-         this.httpClient.setAddressResolutionTimeout(options.getIntProperty("addressResolutionTimeout", 15000));
-         this.httpClient.setMaxRedirects(options.getIntProperty("maxRedirects", 8));
-         this.httpClient.setMaxRequestsQueuedPerDestination(options.getIntProperty("maxRequestsQueuedPerDestination", 1024));
-      } else {
-         SslContextFactory sslContextFactory = new SslContextFactory();
-         sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
-         this.httpClient = new HttpClient(sslContextFactory);
-      }
-
+      this.httpClient = jettyClientFromOptions(options);
       try {
          this.httpClient.start();
       } catch(Exception e) {
          throw new InitializationException("Problem starting client", e);
+      }
+   }
+
+   /**
+    * Creates and initializes a new Jetty client from HTTP client options.
+    * @param options The options.
+    * @return The initialized (but not started) client.
+    */
+   public static HttpClient jettyClientFromOptions(final ClientOptions options) {
+
+      if(options != ClientOptions.IMPLEMENTATION_DEFAULT) {
+         SslContextFactory sslContextFactory = new SslContextFactory(options.trustAllCertificates);
+         sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
+         HttpClient httpClient = new HttpClient(sslContextFactory);
+         httpClient.setFollowRedirects(options.followRedirects);
+         httpClient.setConnectTimeout(options.connectionTimeoutMillis);
+         httpClient.setMaxConnectionsPerDestination(options.maxConnectionsPerDestination);
+         httpClient.setCookieStore(new HttpCookieStore.Empty());
+         if(options.proxyHost != null) {
+            ProxyConfiguration proxyConfig = httpClient.getProxyConfiguration();
+            proxyConfig.getProxies().add(new HttpProxy(options.proxyHost, options.proxyPort));
+         }
+         httpClient.setUserAgentField(new HttpField(HttpHeader.USER_AGENT, options.userAgent));
+         httpClient.setRequestBufferSize(options.requestBufferSize);
+         httpClient.setResponseBufferSize(options.responseBufferSize);
+         httpClient.setIdleTimeout(options.getIntProperty("idleTimeout", 0));
+         httpClient.setAddressResolutionTimeout(options.getIntProperty("addressResolutionTimeout", 15000));
+         httpClient.setMaxRedirects(options.getIntProperty("maxRedirects", 8));
+         httpClient.setMaxRequestsQueuedPerDestination(options.getIntProperty("maxRequestsQueuedPerDestination", 1024));
+         return httpClient;
+      } else {
+         SslContextFactory sslContextFactory = new SslContextFactory();
+         sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
+         return new HttpClient(sslContextFactory);
       }
    }
 
