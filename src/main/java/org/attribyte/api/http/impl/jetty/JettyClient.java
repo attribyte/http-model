@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Attribyte, LLC
+ * Copyright 2014-2019 Attribyte, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and limitations under the License.
  *
  */
-
 package org.attribyte.api.http.impl.jetty;
 
+import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import org.attribyte.api.InitializationException;
@@ -25,6 +25,7 @@ import org.attribyte.api.http.Parameter;
 import org.attribyte.api.http.RequestOptions;
 import org.attribyte.api.http.Response;
 import org.attribyte.api.http.ResponseBuilder;
+import org.attribyte.api.http.StreamedResponse;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.ProxyConfiguration;
 import org.eclipse.jetty.client.api.Request;
@@ -37,18 +38,17 @@ import org.eclipse.jetty.util.HttpCookieStore;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.client.HttpProxy;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpCookie;
 import java.util.Collection;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 public class JettyClient implements AsyncClient {
 
@@ -168,43 +168,40 @@ public class JettyClient implements AsyncClient {
    }
 
    /**
-    * Send a request and optionally stream the content.
+    * Sends a request and allows the response to be streamed when it is available.
     * @param request The request.
-    * @param responseBuilder A builder to receive status and headers. May be {@code null}.
-    * @param writeOnStatus Writes the HTTP response to the output on any of these status. If {@code null} writes on any status.
-    * @param consumer A consumer for the input stream. Input stream must be closed after response is consumed.
-    * @param timeout The time to wait for the response.
+    * @param timeout The time to wait for the response to return status and headers.
     * @param timeoutUnits The timeout units.
     * @throws TimeoutException on timeout.
     * @throws InterruptedException on interrupted.
     * @throws ExecutionException on send exception.
-    * @return The status code.
+    * @return The streamed response.
     */
-   public int send(final org.attribyte.api.http.Request request,
-                   final ResponseBuilder responseBuilder,
-                   final Set<Integer> writeOnStatus,
-                   final Consumer<InputStream> consumer,
-                   final long timeout,
-                   final TimeUnit timeoutUnits)
+   public StreamedResponse stream(final org.attribyte.api.http.Request request,
+                                  final long timeout,
+                                  final TimeUnit timeoutUnits)
            throws TimeoutException, InterruptedException, ExecutionException {
 
+      ResponseBuilder responseBuilder = new ResponseBuilder();
       InputStreamResponseListener listener = new InputStreamResponseListener();
       toJettyRequest(request).send(listener);
       org.eclipse.jetty.client.api.Response response =
               listener.get(timeout, timeoutUnits);
+      responseBuilder.setStatusCode(response.getStatus());
+      response.getHeaders().forEach(header -> responseBuilder.addHeader(header.getName(), header.getValue()));
+      responseBuilder.setBody(new ByteSource() {
+         @Override
+         public InputStream openStream() {
+            return listener.getInputStream();
+         }
 
-      if(responseBuilder != null) {
-         responseBuilder.setStatusCode(response.getStatus());
-         response.getHeaders().forEach(header -> {
-            responseBuilder.addHeader(header.getName(), header.getValue());
-         });
-      }
+         @Override
+         public InputStream openBufferedStream() {
+            return new BufferedInputStream(listener.getInputStream());
+         }
+      });
 
-      if(writeOnStatus == null || writeOnStatus.contains(response.getStatus())) {
-         consumer.accept(listener.getInputStream());
-      }
-
-      return response.getStatus();
+      return responseBuilder.createStreamed();
    }
 
    @Override
@@ -223,7 +220,7 @@ public class JettyClient implements AsyncClient {
          case POST:
             jettyRequest.method(HttpMethod.POST);
             Collection<Parameter> parameters = request.getParameters();
-            if(parameters.size() > 0) {
+            if(!parameters.isEmpty()) {
                for(Parameter parameter : parameters) {
                   jettyRequest.param(parameter.getName(), parameter.getValue());
                }
@@ -245,13 +242,10 @@ public class JettyClient implements AsyncClient {
             break;
       }
 
-      request.getHeaders().forEach(header -> {
-         header.getValueList().forEach(value -> jettyRequest.header(header.getName(), value));
-      });
+      request.getHeaders().forEach(header ->
+              header.getValueList().forEach(value -> jettyRequest.header(header.getName(), value)));
 
-      request.cookies.forEach(cookie -> {
-         jettyRequest.cookie(new HttpCookie(cookie.name, cookie.value));
-      });
+      request.cookies.forEach(cookie -> jettyRequest.cookie(new HttpCookie(cookie.name, cookie.value)));
 
       return jettyRequest;
    }
