@@ -69,6 +69,16 @@ public final class Request {
       PUT,
 
       /**
+       * The HTTP {@code PATCH} method.
+       */
+      PATCH,
+
+      /**
+       * The HTTP {@code OPTIONS} method.
+       */
+      OPTIONS,
+
+      /**
        * The HTTP {@code DELETE} method.
        */
       DELETE;
@@ -82,13 +92,14 @@ public final class Request {
          return strMap.get(str.toUpperCase());
       }
 
-      private static final ImmutableMap<String, Method> strMap = ImmutableMap.of(
-              "GET", GET,
-              "POST", POST,
-              "HEAD", HEAD,
-              "DELETE", DELETE,
-              "PUT", PUT
-      );
+      private static final ImmutableMap<String, Method> strMap = ImmutableMap.<String, Method>builder()
+              .put("GET", GET)
+              .put("POST", POST)
+              .put("HEAD", HEAD)
+              .put("DELETE", DELETE)
+              .put("PUT", PUT)
+              .put("PATCH", PATCH)
+              .put("OPTIONS", OPTIONS).build();
    }
 
    /**

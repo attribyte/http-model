@@ -187,8 +187,17 @@ public class NingClient implements AsyncClient {
                ningRequestBuilder.setBody(request.getBody().toByteArray());
             }
             break;
+         case PATCH:
+            ningRequestBuilder.setMethod("PATCH");
+            if(request.getBody() != null) {
+               ningRequestBuilder.setBody(request.getBody().toByteArray());
+            }
+            break;
          case DELETE:
             ningRequestBuilder.setMethod("DELETE");
+            break;
+         case OPTIONS:
+            ningRequestBuilder.setMethod("OPTIONS");
             break;
          case HEAD:
             ningRequestBuilder.setMethod("HEAD");

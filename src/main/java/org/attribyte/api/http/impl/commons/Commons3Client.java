@@ -28,6 +28,7 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.methods.OptionsMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
@@ -161,6 +162,9 @@ public class Commons3Client implements org.attribyte.api.http.Client {
          case DELETE:
             method = new DeleteMethod(request.getURI().toString());
             break;
+         case OPTIONS:
+            method = new OptionsMethod(request.getURI().toString());
+            break;
          case HEAD:
             method = new HeadMethod(request.getURI().toString());
             method.setFollowRedirects(options.followRedirects);
@@ -183,6 +187,18 @@ public class Commons3Client implements org.attribyte.api.http.Client {
             break;
          case PUT:
             method = new PutMethod(request.getURI().toString());
+            if(request.getBody() != null) {
+               ByteArrayRequestEntity requestEntity = new ByteArrayRequestEntity(request.getBody().toByteArray());
+               ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
+            }
+            break;
+         case PATCH:
+            method = new EntityEnclosingMethod(request.getURI().toString()) {
+               @Override
+               public String getName() {
+                  return "PATCH";
+               }
+            };
             if(request.getBody() != null) {
                ByteArrayRequestEntity requestEntity = new ByteArrayRequestEntity(request.getBody().toByteArray());
                ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);

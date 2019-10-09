@@ -217,6 +217,9 @@ public class JettyClient implements AsyncClient {
          case GET:
             jettyRequest.method(HttpMethod.GET);
             break;
+         case OPTIONS:
+            jettyRequest.method(HttpMethod.OPTIONS);
+            break;
          case POST:
             jettyRequest.method(HttpMethod.POST);
             Collection<Parameter> parameters = request.getParameters();
@@ -230,6 +233,12 @@ public class JettyClient implements AsyncClient {
             break;
          case PUT:
             jettyRequest.method(HttpMethod.PUT);
+            if(request.getBody() != null) {
+               jettyRequest.content(new ByteBufferContentProvider(request.getBody().asReadOnlyByteBuffer()));
+            }
+            break;
+         case PATCH:
+            jettyRequest.method("PATCH");
             if(request.getBody() != null) {
                jettyRequest.content(new ByteBufferContentProvider(request.getBody().asReadOnlyByteBuffer()));
             }

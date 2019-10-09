@@ -26,6 +26,8 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -158,6 +160,9 @@ public class Commons4Client implements org.attribyte.api.http.Client {
          case DELETE:
             commonsRequest = new HttpDelete(request.getURI());
             break;
+         case OPTIONS:
+            commonsRequest = new HttpOptions(request.getURI());
+            break;
          case HEAD:
             commonsRequest = new HttpHead(request.getURI());
             break;
@@ -183,6 +188,16 @@ public class Commons4Client implements org.attribyte.api.http.Client {
          }
          case PUT: {
             HttpEntityEnclosingRequestBase entityEnclosingRequest = new HttpPut(request.getURI());
+            commonsRequest = entityEnclosingRequest;
+            EntityBuilder entityBuilder = EntityBuilder.create();
+            if(request.getBody() != null) {
+               entityBuilder.setBinary(request.getBody().toByteArray());
+            }
+            entityEnclosingRequest.setEntity(entityBuilder.build());
+            break;
+         }
+         case PATCH: {
+            HttpEntityEnclosingRequestBase entityEnclosingRequest = new HttpPatch(request.getURI());
             commonsRequest = entityEnclosingRequest;
             EntityBuilder entityBuilder = EntityBuilder.create();
             if(request.getBody() != null) {

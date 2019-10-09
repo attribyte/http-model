@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2010, 2019 Attribyte, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -21,29 +21,29 @@ import java.net.URI;
 import java.util.Map;
 
 /**
- * Builds immutable HTTP {@code DELETE} requests.
+ * Builds immutable HTTP {@code OPTIONS} requests.
  */
-public class DeleteRequestBuilder extends RequestBuilderWithParameters {
+public class OptionsRequestBuilder extends RequestBuilderWithParameters {
 
    /**
-    * Creates a {@code DELETE} request builder with URI parsed from a string and
+    * Creates a {@code OPTIONS} request builder with URI parsed from a string and
     * pre-parsed parameters.
     * The URI parameters are not parsed, nor checked against the specified parameters.
     * @param uri The URI string to be parsed.
     * @param parameters A generic map of parameters.
     * @throws InvalidURIException if URI is invalid.
     */
-   public DeleteRequestBuilder(final String uri, final Map<?,?> parameters) throws InvalidURIException {
+   public OptionsRequestBuilder(final String uri, final Map<?,?> parameters) throws InvalidURIException {
       super(uri, parameters);
    }
 
    /**
-    * Creates a {@code DELETE} request builder with URI parsed from a string with parameter case-sensitivity specified.
+    * Creates a {@code OPTIONS} request builder with URI parsed from a string with parameter case-sensitivity specified.
     * @param uri The URI string to be parsed.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
     * @throws InvalidURIException if URI is invalid.
     */
-   public DeleteRequestBuilder(final String uri, final boolean caseSensitiveParameters) throws InvalidURIException {
+   public OptionsRequestBuilder(final String uri, final boolean caseSensitiveParameters) throws InvalidURIException {
       super(uri, caseSensitiveParameters);
       String qs = this.uri.getQuery();
       if(qs != null) {
@@ -52,11 +52,11 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a {@code DELETE} request builder with parameter case-sensitivity specified.
+    * Creates a {@code OPTIONS} request builder with parameter case-sensitivity specified.
     * @param uri The URI.
     * @param caseSensitiveParameters Should case be preserved for URI parameter names?
     */
-   public DeleteRequestBuilder(final URI uri, final boolean caseSensitiveParameters) {
+   public OptionsRequestBuilder(final URI uri, final boolean caseSensitiveParameters) {
       super(uri, caseSensitiveParameters);
       String qs = this.uri.getQuery();
       if(qs != null) {
@@ -65,14 +65,14 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a {@code DELETE} request builder with URI parsed from a string.
+    * Creates a {@code OPTIONS} request builder with URI parsed from a string.
     * <p>
     * Case is preserved for parameter names.
     * </p>
     * @param uri The URI string to be parsed.
     * @throws InvalidURIException if URI is invalid.
     */
-   public DeleteRequestBuilder(final String uri) throws InvalidURIException {
+   public OptionsRequestBuilder(final String uri) throws InvalidURIException {
       super(uri, true);
       String qs = this.uri.getQuery();
       if(qs != null) {
@@ -81,13 +81,13 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
    }
 
    /**
-    * Creates a {@code DELETE} request builder.
+    * Creates a {@code OPTIONS} request builder.
     * <p>
     * Case is preserved for parameter names.
     * </p>
     * @param uri The URI.
     */
-   public DeleteRequestBuilder(final URI uri) {
+   public OptionsRequestBuilder(final URI uri) {
       super(uri, true);
       String qs = this.uri.getQuery();
       if(qs != null) {
@@ -97,7 +97,7 @@ public class DeleteRequestBuilder extends RequestBuilderWithParameters {
 
    @Override
    public Request create() {
-      return new Request(Request.Method.DELETE, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes, cookies);
+      return new Request(Request.Method.OPTIONS, uri, headers, parameters, caseSensitiveParameters, (byte[])null, attributes, cookies);
    }
 }
 
