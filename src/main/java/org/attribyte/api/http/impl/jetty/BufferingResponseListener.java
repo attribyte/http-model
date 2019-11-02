@@ -27,16 +27,11 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 import org.attribyte.api.http.ResponseBuilder;
-import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Response.Listener;
 import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.http.HttpFields;
-import org.eclipse.jetty.http.HttpHeader;
-import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.util.BufferUtil;
 
 /**
@@ -46,27 +41,7 @@ import org.eclipse.jetty.util.BufferUtil;
  * via {@link #getContent()} or {@link #getContentAsString()}.</p>
  * <p>Instances of this class are not reusable, so one must be allocated for each request.</p>
  */
-abstract class BufferingResponseListener extends StatsListener {
-
-   /**
-    * Thrown when buffering capacity is exceeded.
-    */
-   protected static class CapacityReached extends Exception {
-      CapacityReached(final String message) {
-         super(message);
-      }
-   }
-
-   private final int maxLength;
-   private ByteBuffer buffer;
-   private String mediaType;
-   private String encoding;
-
-   /**
-    * Should the response be truncated if {@code maxResponseBytes} is reached
-    * instead of allowing an exception to be thrown?
-    */
-   protected final boolean truncateOnLimit;
+abstract class BufferingResponseListener extends BaseResponseListener {
 
    /**
     * Creates an instance with the given maximum length
@@ -74,61 +49,7 @@ abstract class BufferingResponseListener extends StatsListener {
     */
    public BufferingResponseListener(final int maxLength,
                                     final boolean truncateOnLimit) {
-      if(maxLength < 0) {
-         throw new IllegalArgumentException("Invalid max length " + maxLength);
-      }
-
-      this.maxLength = maxLength;
-      this.truncateOnLimit = truncateOnLimit;
-   }
-
-   @Override
-   public void onHeaders(Response response) {
-      super.onHeaders(response);
-      Request request = response.getRequest();
-      HttpFields headers = response.getHeaders();
-
-      long length = headers.getLongField(HttpHeader.CONTENT_LENGTH.asString());
-      if(truncateOnLimit || HttpMethod.HEAD.is(request.getMethod())) {
-         length = 0;
-      }
-
-      if(length > maxLength) {
-         response.abort(new CapacityReached("Buffering capacity " + maxLength + " exceeded"));
-         return;
-      }
-
-      String contentType = headers.get(HttpHeader.CONTENT_TYPE);
-      if(contentType != null) {
-         String media = contentType;
-
-         String charset = "charset=";
-         int index = contentType.toLowerCase(Locale.ENGLISH).indexOf(charset);
-         if(index > 0) {
-            media = contentType.substring(0, index);
-            String encoding = contentType.substring(index + charset.length());
-
-            // Sometimes charsets arrive with an ending semicolon.
-            int semicolon = encoding.indexOf(';');
-            if(semicolon > 0) {
-               encoding = encoding.substring(0, semicolon).trim();
-            }
-            // Sometimes charsets are quoted.
-            int lastIndex = encoding.length() - 1;
-            if(encoding.charAt(0) == '"' && encoding.charAt(lastIndex) == '"') {
-               encoding = encoding.substring(1, lastIndex).trim();
-            }
-
-            this.encoding = encoding;
-         }
-
-         int semicolon = media.indexOf(';');
-         if(semicolon > 0) {
-            media = media.substring(0, semicolon).trim();
-         }
-
-         this.mediaType = media;
-      }
+      super(maxLength, truncateOnLimit);
    }
 
    @Override
@@ -179,32 +100,6 @@ abstract class BufferingResponseListener extends StatsListener {
       }
 
       return builder;
-   }
-
-   /**
-    * Called when the request is completed with success.
-    * @param response The complete response.
-    */
-   abstract protected void completed(final org.attribyte.api.http.Response response);
-
-   /**
-    * Called when the request fails with an exception.
-    * @param failure The failure.
-    */
-   abstract protected void failed(final Throwable failure);
-
-   /**
-    * @return The media type.
-    */
-   public String getMediaType() {
-      return mediaType;
-   }
-
-   /**
-    * @return The encoding.
-    */
-   public String getEncoding() {
-      return encoding;
    }
 
    /**
@@ -269,4 +164,9 @@ abstract class BufferingResponseListener extends StatsListener {
          return new ByteArrayInputStream(buffer.array(), buffer.arrayOffset(), buffer.remaining());
       }
    }
+
+   /**
+    * Holds the response content.
+    */
+   private ByteBuffer buffer;
 }
