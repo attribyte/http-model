@@ -16,11 +16,11 @@ package org.attribyte.api.http.impl.jetty;
 
 import java.util.concurrent.CompletableFuture;
 
-class CompletableFutureTimingListener extends TimingListener {
+class CompletableFutureResponseListener extends BufferingResponseListener {
 
-   CompletableFutureTimingListener(final CompletableFuture<org.attribyte.api.http.Response> fut,
-                                   final int maxResponseBytes,
-                                   final boolean truncateOnLimit) {
+   CompletableFutureResponseListener(final CompletableFuture<org.attribyte.api.http.Response> fut,
+                                     final int maxResponseBytes,
+                                     final boolean truncateOnLimit) {
       super(maxResponseBytes, truncateOnLimit);
       this.fut = fut;
    }

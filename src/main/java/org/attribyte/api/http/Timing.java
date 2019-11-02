@@ -31,16 +31,19 @@ public class Timing {
     * @param timeToRequestComplete The time (nanos) for the request to complete after it is started.
     * @param timeToResponseStatus The time (nanos) before the response status line is received.
     * @param timeToFirstResponseHeader The time (nanos) before the first response header is received.
+    * @param timeToLastResponseHeader The time (nanos) before the last response header is received.
     * @param timeToFirstResponseContent The time (nanos) before the first bye of response content is received.
     * @param timeToCompleteResponse The time (nanos) for the response to be completed, with all bytes read.
     */
    public Timing(final long timeToRequestStart, final long timeToRequestComplete,
-                 final long timeToResponseStatus, final long timeToFirstResponseHeader,
+                 final long timeToResponseStatus,
+                 final long timeToFirstResponseHeader, final long timeToLastResponseHeader,
                  final long timeToFirstResponseContent, final long timeToCompleteResponse) {
       this.timeToRequestStart = timeToRequestStart;
       this.timeToRequestComplete = timeToRequestComplete;
       this.timeToResponseStatus = timeToResponseStatus;
       this.timeToFirstResponseHeader = timeToFirstResponseHeader;
+      this.timeToLastResponseHeader = timeToLastResponseHeader;
       this.timeToFirstResponseContent = timeToFirstResponseContent;
       this.timeToCompleteResponse = timeToCompleteResponse;
    }
@@ -82,6 +85,15 @@ public class Timing {
    }
 
    /**
+    * Gets the time to the last response header.
+    * @param timeUnit The desired time unit.
+    * @return The time in the requested units.
+    */
+   public long timeToLastResponseHeader(final TimeUnit timeUnit) {
+      return timeUnit.convert(timeToLastResponseHeader, TimeUnit.NANOSECONDS);
+   }
+
+   /**
     * Gets the time to the first response content.
     * @param timeUnit The desired time unit.
     * @return The time in the requested units.
@@ -106,6 +118,7 @@ public class Timing {
               .add("timeToRequestComplete", timeToRequestComplete(TimeUnit.MICROSECONDS))
               .add("timeToResponseStatus", timeToResponseStatus(TimeUnit.MICROSECONDS))
               .add("timeToFirstResponseHeader", timeToFirstResponseHeader(TimeUnit.MICROSECONDS))
+              .add("timeToLastResponseHeader", timeToLastResponseHeader(TimeUnit.MICROSECONDS))
               .add("timeToFirstResponseContent", timeToFirstResponseContent(TimeUnit.MICROSECONDS))
               .add("timeToCompleteResponse", timeToCompleteResponse(TimeUnit.MICROSECONDS))
               .add("units", "microsecond")
@@ -116,6 +129,7 @@ public class Timing {
    private final long timeToRequestComplete;
    private final long timeToResponseStatus;
    private final long timeToFirstResponseHeader;
+   private final long timeToLastResponseHeader;
    private final long timeToFirstResponseContent;
    private final long timeToCompleteResponse;
 }

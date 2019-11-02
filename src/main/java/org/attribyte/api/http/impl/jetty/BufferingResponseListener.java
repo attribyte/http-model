@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
+import org.attribyte.api.http.ResponseBuilder;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Response.Listener;
@@ -45,7 +46,7 @@ import org.eclipse.jetty.util.BufferUtil;
  * via {@link #getContent()} or {@link #getContentAsString()}.</p>
  * <p>Instances of this class are not reusable, so one must be allocated for each request.</p>
  */
-abstract class BufferingResponseListener extends Listener.Adapter {
+abstract class BufferingResponseListener extends StatsListener {
 
    /**
     * Thrown when buffering capacity is exceeded.
@@ -132,6 +133,7 @@ abstract class BufferingResponseListener extends Listener.Adapter {
 
    @Override
    public void onContent(Response response, ByteBuffer content) {
+      super.onContent(response, content);
       int length = content.remaining();
       if(length > BufferUtil.space(buffer)) {
          int requiredCapacity = buffer == null ? length : buffer.capacity() + length;
@@ -145,12 +147,62 @@ abstract class BufferingResponseListener extends Listener.Adapter {
    }
 
    @Override
-   public abstract void onComplete(Result result);
+   public void onComplete(Result result) {
+      if(!result.isFailed()) {
+         ResponseBuilder builder = fromResult(result, false);
+         completed(builder.create());
+      } else if(truncateOnLimit && result.getFailure() instanceof CapacityReached) {
+         ResponseBuilder builder = fromResult(result, true);
+         completed(builder.create());
+      } else {
+         failed(result.getFailure());
+      }
+   }
 
+   private ResponseBuilder fromResult(final Result result,
+                                      final boolean truncated) {
+
+      ResponseBuilder builder = new ResponseBuilder();
+      Response response = result.getResponse();
+      builder.setStatusCode(response.getStatus());
+      response.getHeaders().forEach(header -> {
+         builder.addHeader(header.getName(), header.getValue()); //Note that getValues returns quoted csv so don't want that.
+      });
+      byte[] responseContent = getContent();
+      if(responseContent != null) {
+         builder.setBody(responseContent);
+      }
+      builder.setTiming(timing());
+
+      if(truncated) {
+         builder.addAttribute("truncated", Boolean.TRUE);
+      }
+
+      return builder;
+   }
+
+   /**
+    * Called when the request is completed with success.
+    * @param response The complete response.
+    */
+   abstract protected void completed(final org.attribyte.api.http.Response response);
+
+   /**
+    * Called when the request fails with an exception.
+    * @param failure The failure.
+    */
+   abstract protected void failed(final Throwable failure);
+
+   /**
+    * @return The media type.
+    */
    public String getMediaType() {
       return mediaType;
    }
 
+   /**
+    * @return The encoding.
+    */
    public String getEncoding() {
       return encoding;
    }
