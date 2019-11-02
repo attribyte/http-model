@@ -67,6 +67,18 @@ abstract class BufferingResponseListener extends BaseResponseListener {
       BufferUtil.append(buffer, content);
    }
 
+   /**
+    * Called when the request is completed with success.
+    * @param response The complete response.
+    */
+   abstract protected void completed(final org.attribyte.api.http.Response response);
+
+   /**
+    * Called when the request fails with an exception.
+    * @param failure The failure.
+    */
+   abstract protected void failed(final Throwable failure);
+
    @Override
    public void onComplete(Result result) {
       if(!result.isFailed()) {

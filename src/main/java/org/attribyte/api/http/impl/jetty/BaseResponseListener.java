@@ -105,18 +105,6 @@ abstract class BaseResponseListener extends StatsListener {
    }
 
    /**
-    * Called when the request is completed with success.
-    * @param response The complete response.
-    */
-   abstract protected void completed(final org.attribyte.api.http.Response response);
-
-   /**
-    * Called when the request fails with an exception.
-    * @param failure The failure.
-    */
-   abstract protected void failed(final Throwable failure);
-
-   /**
     * @return The media type.
     */
    public String getMediaType() {
