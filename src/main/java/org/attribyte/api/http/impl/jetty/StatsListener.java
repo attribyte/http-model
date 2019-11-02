@@ -150,7 +150,7 @@ public class StatsListener implements Request.Listener, Response.Listener {
    /**
     * The tick in nanoseconds when the first chunk of content is received.
     */
-   private long responseContentStartedTick = 0L;
+   protected long responseContentStartedTick = 0L;
 
    /**
     * The tick in nanoseconds when the response is complete.
@@ -190,12 +190,12 @@ public class StatsListener implements Request.Listener, Response.Listener {
    /**
     * The number of chunks in the response.
     */
-   private int responseChunkCount = 0;
+   protected int responseChunkCount = 0;
 
    /**
     * The size of the response body.
     */
-   private long responseBodySize = 0L;
+   protected long responseBodySize = 0L;
 
    /**
     * Creates the accumulated timing information.
@@ -217,7 +217,7 @@ public class StatsListener implements Request.Listener, Response.Listener {
     * Gets the current tick in nanoseconds.
     * @return The tick.
     */
-   private static long getTick() {
+   protected static long getTick() {
       return System.nanoTime();
    }
 
