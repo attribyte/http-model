@@ -23,7 +23,7 @@ public class StatsListener implements Request.Listener, Response.Listener {
 
    @Override
    public void onBegin(Request request) {
-      //Do nothing...
+      requestBeginTick = getTick();
    }
 
    @Override
@@ -123,6 +123,11 @@ public class StatsListener implements Request.Listener, Response.Listener {
    private long requestQueuedTick;
 
    /**
+    * The tick in nanoseconds when the request send starts.
+    */
+   private long requestBeginTick;
+
+   /**
     * The tick in nanoseconds when the request was sent.
     */
    private long requestSentTick;
@@ -201,15 +206,15 @@ public class StatsListener implements Request.Listener, Response.Listener {
     * Creates the accumulated timing information.
     * @return The timing.
     */
-   protected Timing timing() {
+   public Timing timing() {
       return new Timing(
-              requestSentTick - requestQueuedTick,
-              requestCompleteTick - requestSentTick,
-              responseStatusReceivedTick - requestSentTick,
-              firstHeaderReceivedTick - requestSentTick,
-              lastHeaderReceivedTick - requestSentTick,
-              responseContentStartedTick - requestSentTick,
-              responseCompleteTick - requestSentTick
+              requestBeginTick - requestQueuedTick,
+              requestCompleteTick - requestQueuedTick,
+              responseStatusReceivedTick - requestQueuedTick,
+              firstHeaderReceivedTick - requestQueuedTick,
+              lastHeaderReceivedTick - requestQueuedTick,
+              responseContentStartedTick - requestQueuedTick,
+              responseCompleteTick - requestQueuedTick
       );
    }
 
