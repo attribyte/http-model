@@ -11,6 +11,7 @@
     <properties>
         <jettyVersion>9.4.22.v20191022</jettyVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <exclude.tests>**/*Test*.java</exclude.tests>
     </properties>
     <description>
         An HTTP model that presents an immutable interface and provides several common
@@ -122,6 +123,12 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
 
         <!--
