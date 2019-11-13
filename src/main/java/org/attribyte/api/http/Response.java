@@ -100,6 +100,7 @@ public class Response {
       this.attributes = ImmutableMap.of();
       this.cookies = ImmutableList.of();
       this.timing = null;
+      this.stats = null;
    }
 
    /**
@@ -114,6 +115,7 @@ public class Response {
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
       this.cookies = ImmutableList.of();
       this.timing = null;
+      this.stats = null;
    }
 
    /**
@@ -130,6 +132,7 @@ public class Response {
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
       this.cookies = ImmutableList.of();
       this.timing = timing;
+      this.stats = null;
    }
 
    /**
@@ -147,6 +150,26 @@ public class Response {
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
       this.cookies = cookies != null ? ImmutableList.copyOf(cookies) : ImmutableList.of();
       this.timing = timing;
+      this.stats = null;
+   }
+
+   /**
+    * Creates a response with attributes, stats and cookies.
+    * @param statusCode The HTTP response status code.
+    * @param headers The response headers.
+    * @param attributes The attributes.
+    * @param timing The timing.
+    * @param stats The stats associated with the response.
+    * @param cookies A collection of cookies.
+    */
+   public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes,
+                   final Stats stats, final Timing timing, final Collection<Cookie> cookies) {
+      this.statusCode = statusCode;
+      this.headers = Header.createImmutableMap(headers);
+      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
+      this.cookies = cookies != null ? ImmutableList.copyOf(cookies) : ImmutableList.of();
+      this.timing = timing;
+      this.stats = stats;
    }
 
    /**
@@ -334,8 +357,13 @@ public class Response {
    public final ImmutableList<Cookie> cookies;
 
    /**
-    * Request/response timing.
+    * Request/response timing, if any.
     */
    public final Timing timing;
+
+   /**
+    * The stats, if any.
+    */
+   public final Stats stats;
 }
 

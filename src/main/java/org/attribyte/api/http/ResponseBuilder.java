@@ -119,8 +119,13 @@ public class ResponseBuilder {
     * @return The response.
     */
    public Response create() {
-      return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, timing, cookies) :
-              new StreamedResponse(statusCode, headers, bodySource, attributes, cookies);
+      if(stats != null) {
+         return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, stats, timing, cookies) :
+                 new StreamedResponse(statusCode, headers, bodySource, attributes, stats, timing, cookies);
+      } else {
+         return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, timing, cookies) :
+                 new StreamedResponse(statusCode, headers, bodySource, attributes, timing, cookies);
+      }
    }
 
    /**
@@ -128,9 +133,15 @@ public class ResponseBuilder {
     * @return The response.
     */
    public StreamedResponse createStreamed() {
-      final ByteSource bodySource =
-              this.bodySource != null ? this.bodySource : body != null ? ByteSource.wrap(body.toByteArray()) : null;
-      return new StreamedResponse(statusCode, headers, bodySource, attributes, cookies);
+      if(stats != null) {
+         final ByteSource bodySource =
+                 this.bodySource != null ? this.bodySource : body != null ? ByteSource.wrap(body.toByteArray()) : null;
+         return new StreamedResponse(statusCode, headers, bodySource, attributes, stats, timing, cookies);
+      } else {
+         final ByteSource bodySource =
+                 this.bodySource != null ? this.bodySource : body != null ? ByteSource.wrap(body.toByteArray()) : null;
+         return new StreamedResponse(statusCode, headers, bodySource, attributes, stats, cookies);
+      }
    }
 
    /**
@@ -206,6 +217,18 @@ public class ResponseBuilder {
     */
    public ResponseBuilder setTiming(final Timing timing) {
       this.timing = timing;
+      this.stats = null;
+      return this;
+   }
+
+   /**
+    * Sets request/response stats.
+    * @param stats The stats.
+    * @return A self-reference.
+    */
+   public ResponseBuilder setStats(final Stats stats) {
+      this.stats = stats;
+      this.timing = null;
       return this;
    }
 
@@ -241,5 +264,6 @@ public class ResponseBuilder {
    //Constructors force this to be initialized to something...
    int statusCode;
    Timing timing = null;
+   Stats stats = null;
    List<Cookie> cookies = null;
 }

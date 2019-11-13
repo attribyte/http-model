@@ -33,12 +33,32 @@ public class StreamedResponse extends Response {
     * @param headers The response headers.
     * @param body The response body source.
     * @param attributes The attributes.
+    * @param timing The timing.
     * @param cookies The cookies.
     */
    StreamedResponse(final int statusCode, final Map<?, ?> headers,
                     final ByteSource body, final Map<String, Object> attributes,
+                    final Timing timing,
                     final Collection<Cookie> cookies) {
-      super(statusCode, headers, attributes, null, cookies);
+      super(statusCode, headers, attributes, timing, cookies);
+      this.body = body;
+   }
+
+   /**
+    * Creates a response.
+    * @param statusCode The HTTP response status code.
+    * @param headers The response headers.
+    * @param body The response body source.
+    * @param attributes The attributes.
+    * @param stats The stats.
+    * @param timing The timing.
+    * @param cookies The cookies.
+    */
+   StreamedResponse(final int statusCode, final Map<?, ?> headers,
+                    final ByteSource body, final Map<String, Object> attributes,
+                    final Stats stats, final Timing timing,
+                    final Collection<Cookie> cookies) {
+      super(statusCode, headers, attributes, stats, timing, cookies);
       this.body = body;
    }
 

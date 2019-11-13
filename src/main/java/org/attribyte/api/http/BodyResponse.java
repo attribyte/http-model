@@ -41,6 +41,23 @@ public class BodyResponse extends Response {
       this.body = body;
    }
 
+   /**
+    * Creates a response.
+    * @param statusCode The HTTP response status code.
+    * @param headers The response headers.
+    * @param body The response body.
+    * @param attributes A map of attributes associated with the response.
+    * @param stats Full stats for the response.
+    * @param timing The timing.
+    * @param cookies A collection of cookies.
+    */
+   BodyResponse(final int statusCode, final Map<?, ?> headers,
+                final ByteString body, final Map<String, Object> attributes,
+                final Stats stats, final Timing timing, final Collection<Cookie> cookies) {
+      super(statusCode, headers, attributes, stats, timing, cookies);
+      this.body = body;
+   }
+
    @Override
    public ByteString getBody() {
       return body;

@@ -44,8 +44,8 @@ public class Timing {
       this.timeToResponseStatus = timeToResponseStatus;
       this.timeToFirstResponseHeader = timeToFirstResponseHeader;
       this.timeToLastResponseHeader = timeToLastResponseHeader;
-      this.timeToFirstResponseContent = timeToFirstResponseContent;
-      this.timeToCompleteResponse = timeToCompleteResponse;
+      this.timeToFirstResponseContent = timeToFirstResponseContent > 0 ? timeToFirstResponseContent : 0;
+      this.timeToCompleteResponse = timeToCompleteResponse > 0 ? timeToCompleteResponse : 0;
    }
 
    /**
@@ -125,11 +125,11 @@ public class Timing {
               .toString();
    }
 
-   private final long timeToRequestStart;
-   private final long timeToRequestComplete;
-   private final long timeToResponseStatus;
-   private final long timeToFirstResponseHeader;
-   private final long timeToLastResponseHeader;
-   private final long timeToFirstResponseContent;
-   private final long timeToCompleteResponse;
+   protected final long timeToRequestStart;
+   protected final long timeToRequestComplete;
+   protected final long timeToResponseStatus;
+   protected final long timeToFirstResponseHeader;
+   protected final long timeToLastResponseHeader;
+   protected final long timeToFirstResponseContent;
+   protected final long timeToCompleteResponse;
 }

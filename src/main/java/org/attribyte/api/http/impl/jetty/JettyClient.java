@@ -14,6 +14,7 @@
  */
 package org.attribyte.api.http.impl.jetty;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
@@ -183,24 +184,35 @@ public class JettyClient implements AsyncClient {
            throws TimeoutException, InterruptedException, ExecutionException {
 
       ResponseBuilder responseBuilder = new ResponseBuilder();
-      InputStreamResponseListener listener = new InputStreamResponseListener();
-      toJettyRequest(request).send(listener);
+
+
+      InputStreamResponseListener inputStreamListener = new InputStreamResponseListener();
+      StatsListener statsListener = new StatsListener();
+      ListenerChain listenerChain = new ListenerChain(ImmutableList.of(statsListener),
+              ImmutableList.of(statsListener, inputStreamListener));
+
+      toJettyRequest(request)
+              .listener(listenerChain)
+              .send(listenerChain);
+
       org.eclipse.jetty.client.api.Response response =
-              listener.get(timeout, timeoutUnits);
+              inputStreamListener.get(timeout, timeoutUnits);
+
       responseBuilder.setStatusCode(response.getStatus());
       response.getHeaders().forEach(header -> responseBuilder.addHeader(header.getName(), header.getValue()));
       responseBuilder.setBody(new ByteSource() {
          @Override
          public InputStream openStream() {
-            return listener.getInputStream();
+            return inputStreamListener.getInputStream();
          }
 
          @Override
          public InputStream openBufferedStream() {
-            return new BufferedInputStream(listener.getInputStream());
+            return new BufferedInputStream(inputStreamListener.getInputStream());
          }
       });
 
+      responseBuilder.setStats(statsListener.stats());
       return responseBuilder.createStreamed();
    }
 

@@ -1,51 +1,33 @@
-//
-//  ========================================================================
-//  Copyright (c) 1995-2019 Mort Bay Consulting Pty. Ltd.
-//  ------------------------------------------------------------------------
-//  All rights reserved. This program and the accompanying materials
-//  are made available under the terms of the Eclipse Public License v1.0
-//  and Apache License v2.0 which accompanies this distribution.
-//
-//      The Eclipse Public License is available at
-//      http://www.eclipse.org/legal/epl-v10.html
-//
-//      The Apache License v2.0 is available at
-//      http://www.opensource.org/licenses/apache2.0.php
-//
-//  You may elect to redistribute this code under either of these licenses.
-//  ========================================================================
-//
-//  Modified to allow partial response, even if Content-Length exceeds buffer capacity.
-//  See: https://github.com/eclipse/jetty.project/blob/jetty-9.4.x/jetty-client/src/main/java/org/eclipse/jetty/client/util/BufferingResponseListener.java
-//
-
+/*
+ * Copyright 2019 Attribyte, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
 
 package org.attribyte.api.http.impl.jetty;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import org.attribyte.api.http.ResponseBuilder;
 import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Response.Listener;
 import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.util.BufferUtil;
 
-/**
- * <p>Implementation of {@link Listener} that buffers the content up to a maximum length
- * specified to the constructors.</p>
- * <p>The content may be retrieved from {@link #onSuccess(Response)} or {@link #onComplete(Result)}
- * via {@link #getContent()} or {@link #getContentAsString()}.</p>
- * <p>Instances of this class are not reusable, so one must be allocated for each request.</p>
- */
 abstract class BufferingResponseListener extends BaseResponseListener {
 
    /**
     * Creates an instance with the given maximum length
     * @param maxLength the maximum length of the content
+    * @param truncateOnLimit If we reach the maximum length, should the content simply be truncated?
     */
    public BufferingResponseListener(final int maxLength,
                                     final boolean truncateOnLimit) {
@@ -105,7 +87,7 @@ abstract class BufferingResponseListener extends BaseResponseListener {
       if(responseContent != null) {
          builder.setBody(responseContent);
       }
-      builder.setTiming(timing());
+      builder.setStats(stats());
 
       if(truncated) {
          builder.addAttribute("truncated", Boolean.TRUE);
@@ -115,66 +97,11 @@ abstract class BufferingResponseListener extends BaseResponseListener {
    }
 
    /**
-    * @return the content as bytes
-    * @see #getContentAsString()
+    * Gets the content.
+    * @return The content.
     */
    public byte[] getContent() {
-      if(buffer == null) {
-         return new byte[0];
-      } else {
-         return BufferUtil.toArray(buffer);
-      }
-   }
-
-   /**
-    * @return the content as a string, using the "Content-Type" header to detect the encoding
-    * or defaulting to UTF-8 if the encoding could not be detected.
-    * @see #getContentAsString(String)
-    */
-   public String getContentAsString() {
-      String encoding = this.encoding;
-      if(encoding == null) {
-         return getContentAsString(StandardCharsets.UTF_8);
-      } else {
-         return getContentAsString(encoding);
-      }
-   }
-
-   /**
-    * @param encoding the encoding of the content bytes
-    * @return the content as a string, with the specified encoding
-    * @see #getContentAsString()
-    */
-   public String getContentAsString(String encoding) {
-      if(buffer == null) {
-         return null;
-      } else {
-         return BufferUtil.toString(buffer, Charset.forName(encoding));
-      }
-   }
-
-   /**
-    * @param encoding the encoding of the content bytes
-    * @return the content as a string, with the specified encoding
-    * @see #getContentAsString()
-    */
-   public String getContentAsString(Charset encoding) {
-      if(buffer == null) {
-         return null;
-      } else {
-         return BufferUtil.toString(buffer, encoding);
-      }
-   }
-
-   /**
-    * @return Content as InputStream
-    */
-   public InputStream getContentAsInputStream() {
-      if(buffer == null) {
-         return new ByteArrayInputStream(new byte[0]);
-      } else {
-         return new ByteArrayInputStream(buffer.array(), buffer.arrayOffset(), buffer.remaining());
-      }
+      return buffer != null ? BufferUtil.toArray(buffer) : new byte[0];
    }
 
    /**

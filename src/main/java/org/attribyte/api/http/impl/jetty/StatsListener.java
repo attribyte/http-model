@@ -1,6 +1,23 @@
+/*
+ * Copyright 2019 Attribyte, LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ */
+
 package org.attribyte.api.http.impl.jetty;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
+import org.attribyte.api.http.Stats;
 import org.attribyte.api.http.Timing;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
@@ -10,9 +27,11 @@ import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.util.Callback;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongConsumer;
 
-public class StatsListener implements Request.Listener, Response.Listener {
+public class StatsListener implements Listener {
 
    /* Request.Listener */
 
@@ -79,7 +98,8 @@ public class StatsListener implements Request.Listener, Response.Listener {
 
    @Override
    public void onContent(Response response, ByteBuffer content) {
-      responseChunkCount++;
+      responseChunkCount.incrementAndGet();
+      responseBodySize.addAndGet(content.remaining());
       if(responseContentStartedTick == 0L) {
          responseContentStartedTick = getTick();
       }
@@ -195,12 +215,12 @@ public class StatsListener implements Request.Listener, Response.Listener {
    /**
     * The number of chunks in the response.
     */
-   protected int responseChunkCount = 0;
+   protected AtomicInteger responseChunkCount = new AtomicInteger(0);
 
    /**
     * The size of the response body.
     */
-   protected long responseBodySize = 0L;
+   protected AtomicLong responseBodySize = new AtomicLong(0);
 
    /**
     * Creates the accumulated timing information.
@@ -217,6 +237,26 @@ public class StatsListener implements Request.Listener, Response.Listener {
               responseCompleteTick - requestQueuedTick
       );
    }
+
+   /**
+    * Creates the accumulated stats.
+    * @return The status.
+    */
+   public Stats stats() {
+      return new Stats(
+              requestBeginTick - requestQueuedTick,
+              requestCompleteTick - requestQueuedTick,
+              responseStatusReceivedTick - requestQueuedTick,
+              firstHeaderReceivedTick - requestQueuedTick,
+              lastHeaderReceivedTick - requestQueuedTick,
+              responseContentStartedTick - requestQueuedTick,
+              responseCompleteTick - requestQueuedTick,
+              requestHeaderCount, requestHeaderSize,
+              requestChunkCount, requestBodySize,
+              responseHeaderCount, responseHeaderSize, responseChunkCount, responseBodySize
+      );
+   }
+
 
    /**
     * Gets the current tick in nanoseconds.
@@ -242,5 +282,20 @@ public class StatsListener implements Request.Listener, Response.Listener {
          size += Strings.nullToEmpty(field.getValue()).length();
       }
       return size;
+   }
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this)
+              .add("timing", timing())
+              .add("requestHeaderCount", requestHeaderCount)
+              .add("requestHeaderSize", requestHeaderSize)
+              .add("requestChunkCount", requestChunkCount)
+              .add("requestBodySize", requestBodySize)
+              .add("responseHeaderCount", responseHeaderCount)
+              .add("responseHeaderSize", responseHeaderSize)
+              .add("responseChunkCount", responseChunkCount)
+              .add("responseBodySize", responseBodySize)
+              .toString();
    }
 }
