@@ -132,7 +132,7 @@ public class Bridge {
          if(valueList.size() == 1) {
             headers.put(name, new Header(name, valueList.get(0)));
          } else {
-            headers.put(name, new Header(name, valueList.toArray(new String[valueList.size()])));
+            headers.put(name, new Header(name, valueList.toArray(new String[0])));
          }
       }
 

@@ -99,7 +99,6 @@ public class Response {
       this.headers = Header.createImmutableMap(headers);
       this.attributes = ImmutableMap.of();
       this.cookies = ImmutableList.of();
-      this.timing = null;
       this.stats = null;
    }
 
@@ -114,43 +113,23 @@ public class Response {
       this.headers = Header.createImmutableMap(headers);
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
       this.cookies = ImmutableList.of();
-      this.timing = null;
       this.stats = null;
    }
 
    /**
-    * Creates a response with attributes and timing.
+    * Creates a response with attributes and stats.
     * @param statusCode The HTTP response status code.
     * @param headers The response headers.
     * @param attributes The attributes.
-    * @param timing Timing information associated with the response.
+    * @param stats Stats associated with the response.
     */
    public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes,
-                   final Timing timing) {
+                   final Stats stats) {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
       this.cookies = ImmutableList.of();
-      this.timing = timing;
-      this.stats = null;
-   }
-
-   /**
-    * Creates a response with attributes, timing and cookies.
-    * @param statusCode The HTTP response status code.
-    * @param headers The response headers.
-    * @param attributes The attributes.
-    * @param timing Timing information associated with the response.
-    * @param cookies A collection of cookies.
-    */
-   public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes,
-                   final Timing timing, final Collection<Cookie> cookies) {
-      this.statusCode = statusCode;
-      this.headers = Header.createImmutableMap(headers);
-      this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
-      this.cookies = cookies != null ? ImmutableList.copyOf(cookies) : ImmutableList.of();
-      this.timing = timing;
-      this.stats = null;
+      this.stats = stats;
    }
 
    /**
@@ -158,17 +137,15 @@ public class Response {
     * @param statusCode The HTTP response status code.
     * @param headers The response headers.
     * @param attributes The attributes.
-    * @param timing The timing.
     * @param stats The stats associated with the response.
     * @param cookies A collection of cookies.
     */
    public Response(final int statusCode, final Map<?, ?> headers, final Map<String, Object> attributes,
-                   final Stats stats, final Timing timing, final Collection<Cookie> cookies) {
+                   final Stats stats, final Collection<Cookie> cookies) {
       this.statusCode = statusCode;
       this.headers = Header.createImmutableMap(headers);
       this.attributes = attributes != null ? ImmutableMap.copyOf(attributes) : ImmutableMap.of();
       this.cookies = cookies != null ? ImmutableList.copyOf(cookies) : ImmutableList.of();
-      this.timing = timing;
       this.stats = stats;
    }
 
@@ -276,9 +253,19 @@ public class Response {
    /**
     * Gets the request/response timing, if available.
     * @return The timing or {@code null} if none set.
+    * @see #getStats
     */
+   @Deprecated
    public Timing getTiming() {
-      return timing;
+      return stats;
+   }
+
+   /**
+    * Gets the stats, if available.
+    * @return The stats or {@code null} if none set.
+    */
+   public Stats getStats() {
+      return stats;
    }
 
    @Override
@@ -321,10 +308,10 @@ public class Response {
          ioe.printStackTrace();
       }
 
-      if(timing != null) {
+      if(stats != null) {
          buf.append(newline);
          buf.append(newline);
-         buf.append(timing.toString());
+         buf.append(stats.toString());
       }
 
       return buf.toString();
@@ -357,12 +344,7 @@ public class Response {
    public final ImmutableList<Cookie> cookies;
 
    /**
-    * Request/response timing, if any.
-    */
-   public final Timing timing;
-
-   /**
-    * The stats, if any.
+    * The full stats, if any.
     */
    public final Stats stats;
 }

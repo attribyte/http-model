@@ -70,11 +70,7 @@ public class BasicAuthScheme extends AuthScheme {
    @Override
    public boolean hasCredentials(Request request) {
       String auth = request.getHeaderValue(AUTH_HEADER);
-      if(auth == null || !auth.toLowerCase().startsWith("basic ")) {
-         return false;
-      } else {
-         return true;
-      }
+      return auth != null && auth.toLowerCase().startsWith("basic ");
    }
 
    @Override

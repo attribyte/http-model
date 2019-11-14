@@ -34,12 +34,7 @@ public final class Parameter {
    /**
     * Compare parameters by name. Safe for use by many threads.
     */
-   public static final Comparator<Parameter> nameComparator = new Comparator<Parameter>() {
-      @Override
-      public int compare(final Parameter p1, final Parameter p2) {
-         return p1.name.compareTo(p2.name);
-      }
-   };
+   public static final Comparator<Parameter> nameComparator = (p1, p2) -> p1.name.compareTo(p2.name);
 
    /**
     * Creates a parameter.
@@ -101,7 +96,7 @@ public final class Parameter {
     * @return The values or a zero-length array if none.
     */
    public String[] getValues() {
-      return values.toArray(new String[values.size()]);
+      return values.toArray(new String[0]);
    }
 
    /**
@@ -163,7 +158,9 @@ public final class Parameter {
    static final Map<String, Parameter> createMap(final Map<?,?> inputParameters,
                                                  final Map<String, Parameter> outputMap) {
 
-      if(inputParameters == null) return Maps.newHashMap();
+      if(inputParameters == null) {
+         return Maps.newHashMap();
+      }
 
       for(final Map.Entry<?,?> curr : inputParameters.entrySet()) {
          Object key = curr.getKey();

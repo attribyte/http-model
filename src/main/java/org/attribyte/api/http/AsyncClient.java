@@ -15,7 +15,6 @@
 
 package org.attribyte.api.http;
 
-import com.google.common.base.Joiner;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.concurrent.CompletableFuture;

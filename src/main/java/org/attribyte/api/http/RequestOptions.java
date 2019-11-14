@@ -28,9 +28,9 @@ public class RequestOptions {
    public static final boolean DEFAULT_FOLLOW_REDIRECTS = true;
 
    /**
-    * The maximum response size (1 MB).
+    * The maximum response size (10 MB).
     */
-   public static final int DEFAULT_MAX_RESPONSE_BYTES = 1024 * 1024;
+   public static final int DEFAULT_MAX_RESPONSE_BYTES = 1024 * 1024 * 10;
 
    /**
     * The maximum time to wait for a response (5 seconds).

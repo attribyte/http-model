@@ -42,12 +42,7 @@ public final class Header {
    /**
     * Compare headers by name. Safe for use by many threads.
     */
-   public static final Comparator<Header> nameComparator = new Comparator<Header>() {
-      @Override
-      public int compare(final Header h1, final Header h2) {
-         return h1.name.compareToIgnoreCase(h2.name);
-      }
-   };
+   public static final Comparator<Header> nameComparator = (h1, h2) -> h1.name.compareToIgnoreCase(h2.name);
 
    /**
     * Creates a single-valued header.

@@ -95,7 +95,7 @@ public class ResponseBuilder {
    }
 
    /**
-    * Sets the response body as a string.
+    * Sets the response body as a UTF-8 string.
     * @param body The body.
     * @return A self-reference.
     */
@@ -119,13 +119,8 @@ public class ResponseBuilder {
     * @return The response.
     */
    public Response create() {
-      if(stats != null) {
-         return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, stats, timing, cookies) :
-                 new StreamedResponse(statusCode, headers, bodySource, attributes, stats, timing, cookies);
-      } else {
-         return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, timing, cookies) :
-                 new StreamedResponse(statusCode, headers, bodySource, attributes, timing, cookies);
-      }
+      return bodySource == null ? new BodyResponse(statusCode, headers, body, attributes, stats, cookies) :
+              new StreamedResponse(statusCode, headers, bodySource, attributes, stats, cookies);
    }
 
    /**
@@ -133,15 +128,9 @@ public class ResponseBuilder {
     * @return The response.
     */
    public StreamedResponse createStreamed() {
-      if(stats != null) {
-         final ByteSource bodySource =
-                 this.bodySource != null ? this.bodySource : body != null ? ByteSource.wrap(body.toByteArray()) : null;
-         return new StreamedResponse(statusCode, headers, bodySource, attributes, stats, timing, cookies);
-      } else {
-         final ByteSource bodySource =
-                 this.bodySource != null ? this.bodySource : body != null ? ByteSource.wrap(body.toByteArray()) : null;
-         return new StreamedResponse(statusCode, headers, bodySource, attributes, stats, cookies);
-      }
+      final ByteSource bodySource =
+              this.bodySource != null ? this.bodySource : body != null ? ByteSource.wrap(body.toByteArray()) : null;
+      return new StreamedResponse(statusCode, headers, bodySource, attributes, stats, cookies);
    }
 
    /**
@@ -211,24 +200,12 @@ public class ResponseBuilder {
    }
 
    /**
-    * Sets request/response timing.
-    * @param timing The timing.
-    * @return A self-reference.
-    */
-   public ResponseBuilder setTiming(final Timing timing) {
-      this.timing = timing;
-      this.stats = null;
-      return this;
-   }
-
-   /**
     * Sets request/response stats.
     * @param stats The stats.
     * @return A self-reference.
     */
    public ResponseBuilder setStats(final Stats stats) {
       this.stats = stats;
-      this.timing = null;
       return this;
    }
 
@@ -255,15 +232,11 @@ public class ResponseBuilder {
       return this.attributes;
    }
 
-   //Every response is going to have headers...
    final Map<String, Header> headers = Maps.newHashMapWithExpectedSize(8);
-   //...but maybe will have attributes...
    Map<String, Object> attributes = null;
    ByteString body = null;
    ByteSource bodySource = null;
-   //Constructors force this to be initialized to something...
    int statusCode;
-   Timing timing = null;
    Stats stats = null;
    List<Cookie> cookies = null;
 }

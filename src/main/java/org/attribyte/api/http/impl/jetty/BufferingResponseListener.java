@@ -37,6 +37,11 @@ abstract class BufferingResponseListener extends BaseResponseListener {
    @Override
    public void onContent(Response response, ByteBuffer content) {
       super.onContent(response, content);
+
+      /*
+         https://github.com/eclipse/jetty.project/blob/jetty-9.4.x/jetty-client/src/main/java/org/eclipse/jetty/client/util/BufferingResponseListener.java#L116
+       */
+
       int length = content.remaining();
       if(length > BufferUtil.space(buffer)) {
          int requiredCapacity = buffer == null ? length : buffer.capacity() + length;
