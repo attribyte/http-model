@@ -30,7 +30,7 @@ class TestResponseListener extends BaseResponseListener {
    public TestResponseListener(final CompletableFuture<org.attribyte.api.http.Response> fut) {
        super(Integer.MAX_VALUE, false);
        this.fut = fut;
-       this.hasher = hashFuction.newHasher();
+       this.hasher = hashFunction.newHasher();
    }
 
    @Override
@@ -39,6 +39,7 @@ class TestResponseListener extends BaseResponseListener {
       this.length += content.remaining();
       hasher.putBytes(content);
    }
+
 
    protected void completed(final org.attribyte.api.http.Response response) {
       fut.complete(response);
@@ -86,11 +87,10 @@ class TestResponseListener extends BaseResponseListener {
     */
    private final CompletableFuture<org.attribyte.api.http.Response> fut;
 
-
    /**
     * The hash function.
     */
-   private static final HashFunction hashFuction = Hashing.sha256();
+   private static final HashFunction hashFunction = Hashing.sha256();
 
 
    private int length = 0;
