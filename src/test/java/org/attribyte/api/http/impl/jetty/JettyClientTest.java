@@ -1,6 +1,7 @@
 package org.attribyte.api.http.impl.jetty;
 
 import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 import org.attribyte.api.http.ClientOptions;
 import org.attribyte.api.http.GetRequestBuilder;
@@ -13,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
@@ -35,31 +37,34 @@ public class JettyClientTest {
    }
 
    @Test
-   public void testGetMulti() throws Exception {
+   public void getMultiTest() throws Exception {
       for(int i = 0; i < 10; i++) {
-         testGet();
+         getTest();
       }
    }
 
    @Test
-   public void testGet() throws Exception {
+   public void getTest() throws Exception {
       Request request = new GetRequestBuilder("https://attribyte.com")
               .create();
       Response response = client.send(request, RequestOptions.DEFAULT.truncateOnLimit());
       assertEquals(200, response.statusCode);
       assertNotNull(response.stats);
       System.out.println(response.stats.toString());
+      System.out.println(response.getBody().size());
+      System.out.println("HASH: " + Hashing.sha256().hashBytes(response.getBody().toByteArray()));
+
    }
 
    @Test
    public void testGetStreamMulti() throws Exception {
       for(int i = 0; i < 10; i++) {
-         testGetStream();
+         getStreamTest();
       }
    }
 
    @Test
-   public void testGetStream() throws Exception {
+   public void getStreamTest() throws Exception {
       Request request = new GetRequestBuilder("https://attribyte.com")
               .create();
       StreamedResponse response = client.stream(request, 20L, TimeUnit.SECONDS);
@@ -67,5 +72,16 @@ public class JettyClientTest {
          System.out.println(new String(ByteStreams.toByteArray(is), Charsets.UTF_8));
       }
       assertEquals(200, response.statusCode);
+   }
+
+   @Test
+   public void testTest() throws Exception {
+      Request request = new GetRequestBuilder("https://attribyte.com")
+              .create();
+      Response response = client.test(request, RequestOptions.DEFAULT).get(10, TimeUnit.SECONDS);
+      assertEquals(200, response.statusCode);
+      System.out.println(response.toString());
+      assertNotNull(response.stats);
+      System.out.println(response.stats.toString());
    }
 }

@@ -168,6 +168,23 @@ public class JettyClient implements AsyncClient {
    }
 
    /**
+    * Run a test, hashing the content and accumulating the length, but not buffering.
+    * @param request The request.
+    * @param options The request options.
+    * @return The response.
+    */
+   public CompletableFuture<Response> test(org.attribyte.api.http.Request request, RequestOptions options) {
+      final CompletableFuture<org.attribyte.api.http.Response> fut = new CompletableFuture<>();
+      final TestResponseListener listener =
+              new TestResponseListener(fut);
+      toJettyRequest(request)
+              .followRedirects(options.followRedirects)
+              .listener(listener)
+              .send(listener);
+      return fut;
+   }
+
+   /**
     * Sends a request and allows the response to be streamed when it is available.
     * @param request The request.
     * @param timeout The time to wait for the response to return status and headers.
