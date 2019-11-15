@@ -87,11 +87,6 @@ public class DebugListener implements Listener {
    }
 
    @Override
-   public void onContent(final Response response, final LongConsumer longConsumer, final ByteBuffer byteBuffer, final Callback callback) {
-      println(String.format("Response Content (%d)", byteBuffer.remaining()));
-   }
-
-   @Override
    public boolean onHeader(final Response response, final HttpField httpField) {
       println(String.format("Response Header %s: %s", httpField.getName(), httpField.getValue()));
       return true;

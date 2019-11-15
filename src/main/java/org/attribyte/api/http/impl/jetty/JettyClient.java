@@ -14,7 +14,6 @@
  */
 package org.attribyte.api.http.impl.jetty;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
@@ -187,13 +186,9 @@ public class JettyClient implements AsyncClient {
 
 
       InputStreamResponseListener inputStreamListener = new InputStreamResponseListener();
-      StatsListener statsListener = new StatsListener();
-      ListenerChain listenerChain = new ListenerChain(ImmutableList.of(statsListener),
-              ImmutableList.of(statsListener, inputStreamListener));
 
       toJettyRequest(request)
-              .listener(listenerChain)
-              .send(listenerChain);
+              .send(inputStreamListener);
 
       org.eclipse.jetty.client.api.Response response =
               inputStreamListener.get(timeout, timeoutUnits);
@@ -212,7 +207,6 @@ public class JettyClient implements AsyncClient {
          }
       });
 
-      responseBuilder.setStats(statsListener.stats());
       return responseBuilder.createStreamed();
    }
 

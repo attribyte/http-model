@@ -41,6 +41,14 @@ public class ListenerChain implements Listener {
       this.responseListeners = responseListeners != null ? ImmutableList.copyOf(responseListeners) : ImmutableList.of();
    }
 
+   /**
+    * Reverse the order.
+    * @return The chain with order reversed.
+    */
+   public ListenerChain reverse() {
+      return new ListenerChain(this.requestListeners.reverse(), this.responseListeners.reverse());
+   }
+
    @Override
    public void onQueued(Request request) {
       requestListeners.forEach(l -> l.onQueued(request));
@@ -94,11 +102,6 @@ public class ListenerChain implements Listener {
    @Override
    public void onContent(final Response response, final ByteBuffer byteBuffer) {
       responseListeners.forEach(l -> l.onContent(response, byteBuffer));
-   }
-
-   @Override
-   public void onContent(final Response response, final LongConsumer longConsumer, final ByteBuffer byteBuffer, final Callback callback) {
-      responseListeners.forEach(l -> l.onContent(response, longConsumer, byteBuffer, callback));
    }
 
    @Override

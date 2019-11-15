@@ -116,14 +116,6 @@ public class StatsListener implements Listener {
    }
 
    @Override
-   public void onContent(Response response, LongConsumer demand, ByteBuffer content, Callback callback) {
-      onContent(response, content, Callback.from(() -> {
-         callback.succeeded();
-         demand.accept(1);
-      }, callback::failed));
-   }
-
-   @Override
    public void onSuccess(Response response) {
       responseCompleteTick = getTick();
    }
