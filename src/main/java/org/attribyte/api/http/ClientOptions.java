@@ -15,6 +15,7 @@
 
 package org.attribyte.api.http;
 
+import com.google.common.base.MoreObjects;
 import org.attribyte.api.InitializationException;
 import org.attribyte.util.InitUtil;
 
@@ -94,6 +95,24 @@ public class ClientOptions {
     * Arbitrary, implementation-specific properties.
     */
    private final Properties props;
+
+   @Override
+   public String toString() {
+      return MoreObjects.toStringHelper(this)
+              .add("userAgent", userAgent)
+              .add("connectionTimeoutMillis", connectionTimeoutMillis)
+              .add("requestTimeoutMillis", requestTimeoutMillis)
+              .add("socketTimeoutMillis", socketTimeoutMillis)
+              .add("proxyHost", proxyHost)
+              .add("proxyPort", proxyPort)
+              .add("followRedirects", followRedirects)
+              .add("maxConnectionsPerDestination", maxConnectionsPerDestination)
+              .add("maxConnectionsTotal", maxConnectionsTotal)
+              .add("requestBufferSize", requestBufferSize)
+              .add("responseBufferSize", responseBufferSize)
+              .add("trustAllCertificates", trustAllCertificates)
+              .toString();
+   }
 
    /**
     * Gets a property.
