@@ -242,6 +242,30 @@ public class ClientOptions {
    public static class Builder {
 
       /**
+       * Create an empty builder.
+       */
+      public Builder() {
+      }
+
+      /**
+       * Create a builder with defaults from options.
+       * @param options The options.
+       */
+      public Builder(final ClientOptions options) {
+         this.userAgent = options.userAgent;
+         this.connectionTimeoutMillis = options.connectionTimeoutMillis;
+         this.requestTimeoutMillis = options.requestTimeoutMillis;
+         this.proxyHost = options.proxyHost;
+         this.proxyPort = options.proxyPort;
+         this.followRedirects = options.followRedirects;
+         this.maxConnectionsPerDestination = options.maxConnectionsPerDestination;
+         this.maxConnectionsTotal = options.maxConnectionsTotal;
+         this.requestBufferSize = options.requestBufferSize;
+         this.responseBufferSize = options.responseBufferSize;
+         this.trustAllCertificates = options.trustAllCertificates;
+      }
+
+      /**
        * Gets the user agent.
        * @return The user agent.
        */
