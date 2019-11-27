@@ -102,6 +102,11 @@ public class JettyClient implements AsyncClient {
          httpClient.setAddressResolutionTimeout(options.getIntProperty("addressResolutionTimeout", 15000));
          httpClient.setMaxRedirects(options.getIntProperty("maxRedirects", 8));
          httpClient.setMaxRequestsQueuedPerDestination(options.getIntProperty("maxRequestsQueuedPerDestination", 1024));
+         if(options.cookieStore == null) {
+            httpClient.setCookieStore(new HttpCookieStore.Empty());
+         } else {
+            httpClient.setCookieStore(options.cookieStore);
+         }
          return httpClient;
       } else {
          SslContextFactory sslContextFactory = new SslContextFactory.Client();

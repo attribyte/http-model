@@ -19,6 +19,7 @@ import com.google.common.base.MoreObjects;
 import org.attribyte.api.InitializationException;
 import org.attribyte.util.InitUtil;
 
+import java.net.CookieStore;
 import java.util.Properties;
 
 /**
@@ -90,6 +91,9 @@ public class ClientOptions {
     * Should SSL certificates be trusted even if invalid ({code false}).
     */
    public final boolean trustAllCertificates;
+
+
+   public final CookieStore cookieStore;
 
    /**
     * Arbitrary, implementation-specific properties.
@@ -212,6 +216,7 @@ public class ClientOptions {
       this.responseBufferSize = init.getIntProperty(RESPONSE_BUFFER_SIZE[KEY], Integer.parseInt(RESPONSE_BUFFER_SIZE[DEFAULT_VALUE]));
       this.trustAllCertificates = init.getProperty(TRUST_ALL_CERTIFICATES[KEY], TRUST_ALL_CERTIFICATES[DEFAULT_VALUE]).equalsIgnoreCase("true");
       this.props = init.getProperties();
+      this.cookieStore = null;
 
    }
 
@@ -223,6 +228,7 @@ public class ClientOptions {
                  final int maxConnectionsTotal,
                  final int requestBufferSize, final int responseBufferSize,
                  final boolean trustAllCertificates,
+                 final CookieStore cookieStore,
                  final Properties props) {
       this.userAgent = userAgent;
       this.connectionTimeoutMillis = connectionTimeoutMillis;
@@ -236,6 +242,7 @@ public class ClientOptions {
       this.requestBufferSize = requestBufferSize;
       this.responseBufferSize = responseBufferSize;
       this.trustAllCertificates = trustAllCertificates;
+      this.cookieStore = cookieStore;
       this.props = props;
    }
 
@@ -253,6 +260,7 @@ public class ClientOptions {
       this.responseBufferSize = 0;
       this.trustAllCertificates = false;
       this.props = null;
+      this.cookieStore = null;
    }
 
    /**
@@ -282,6 +290,7 @@ public class ClientOptions {
          this.requestBufferSize = options.requestBufferSize;
          this.responseBufferSize = options.responseBufferSize;
          this.trustAllCertificates = options.trustAllCertificates;
+         this.cookieStore = options.cookieStore;
       }
 
       /**
@@ -519,6 +528,24 @@ public class ClientOptions {
       }
 
       /**
+       * Gets the cookie store.
+       * @return The cookie store.
+       */
+      public CookieStore getCookieStore() {
+         return cookieStore;
+      }
+
+      /**
+       * Sets the cookie store.
+       * @param cookieStore The cookie store.
+       * @return A self-reference.
+       */
+      public Builder setCookieStore(final CookieStore cookieStore) {
+         this.cookieStore = cookieStore;
+         return this;
+      }
+
+      /**
        * Creates the options.
        * @return The options.
        */
@@ -527,7 +554,7 @@ public class ClientOptions {
                  proxyHost, proxyPort,
                  followRedirects,
                  maxConnectionsPerDestination, maxConnectionsTotal,
-                 requestBufferSize, responseBufferSize, trustAllCertificates, props);
+                 requestBufferSize, responseBufferSize, trustAllCertificates, cookieStore, props);
       }
 
       /**
@@ -553,5 +580,6 @@ public class ClientOptions {
       int responseBufferSize = Integer.parseInt(RESPONSE_BUFFER_SIZE[DEFAULT_VALUE]);
       boolean trustAllCertificates = false;
       Properties props = new Properties();
+      CookieStore cookieStore;
    }
 }
