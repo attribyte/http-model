@@ -6,10 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="attribyte-http" />
         <module name="http-model" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
+      <module name="attribyte-http" target="1.8" />
       <module name="http-model" target="1.8" />
     </bytecodeTargetLevel>
   </component>
