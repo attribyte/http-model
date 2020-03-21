@@ -3,12 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <distributionManagement>
+        <snapshotRepository>
+            <id>attribyte-private-snapshot</id>
+            <name>Attribyte Private Snapshot</name>
+            <url>https://maven.pkg.github.com/attribyte/private-repo/</url>
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
         <repository>
-            <id>github-attribyte</id>
-            <name>GitHub Attribyte Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/attribyte/private-repo</url>
+            <id>attribyte-private-release</id>
+            <name>Attribyte Private Release</name>
+            <url>https://maven.pkg.github.com/attribyte/private-repo/</url>
+            <uniqueVersion>false</uniqueVersion>
         </repository>
     </distributionManagement>
+    <repositories>
+        <repository>
+            <id>attribyte-private-repo</id>
+            <name>Attribyte Private Repo</name>
+            <url>https://maven.pkg.github.com/attribyte/private-repo/</url>
+        </repository>
+    </repositories>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.attribyte</groupId>
     <artifactId>attribyte-http</artifactId>
@@ -48,7 +62,7 @@
         <dependency>
             <groupId>org.attribyte</groupId>
             <artifactId>attribyte-shared-base</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <version>1.0.3-snapshot</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
