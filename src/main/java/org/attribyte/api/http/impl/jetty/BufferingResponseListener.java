@@ -44,10 +44,11 @@ abstract class BufferingResponseListener extends BaseResponseListener {
 
       int length = content.remaining();
       if(length > BufferUtil.space(buffer)) {
-         int requiredCapacity = buffer == null ? length : buffer.capacity() + length;
-         if(requiredCapacity > maxLength) {
+         int remaining = buffer == null ? 0 : buffer.remaining();
+         if(remaining + length > maxLength) {
             response.abort(new CapacityReached("Buffering capacity " + maxLength + " exceeded"));
          }
+         int requiredCapacity = buffer == null ? length : buffer.capacity() + length;
          int newCapacity = Math.min(Integer.highestOneBit(requiredCapacity) << 1, maxLength);
          buffer = BufferUtil.ensureCapacity(buffer, newCapacity);
       }
