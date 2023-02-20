@@ -84,9 +84,7 @@ public class JettyClient implements AsyncClient {
    public static HttpClient jettyClientFromOptions(final ClientOptions options) {
 
       if(options != ClientOptions.IMPLEMENTATION_DEFAULT) {
-         SslContextFactory sslContextFactory = new SslContextFactory.Client(options.trustAllCertificates);
-         sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
-         HttpClient httpClient = new HttpClient(sslContextFactory);
+         HttpClient httpClient = new HttpClient();
          httpClient.setFollowRedirects(options.followRedirects);
          httpClient.setConnectTimeout(options.connectionTimeoutMillis);
          httpClient.setMaxConnectionsPerDestination(options.maxConnectionsPerDestination);
@@ -109,9 +107,7 @@ public class JettyClient implements AsyncClient {
          }
          return httpClient;
       } else {
-         SslContextFactory sslContextFactory = new SslContextFactory.Client();
-         sslContextFactory.setExcludeCipherSuites("^.*_(MD5)$");
-         return new HttpClient(sslContextFactory);
+         return new HttpClient();
       }
    }
 
