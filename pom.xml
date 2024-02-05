@@ -26,11 +26,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.attribyte</groupId>
     <artifactId>attribyte-http</artifactId>
-    <version>0.5.9</version>
+    <version>0.6.0</version>
     <packaging>jar</packaging>
     <name>Attribyte HTTP model</name>
     <properties>
-        <jettyVersion>10.0.13</jettyVersion>
+        <jettyVersion>10.0.20</jettyVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <exclude.tests>**/*Test*.java</exclude.tests>
     </properties>
