@@ -1,0 +1,8 @@
+org.attribyte.api.http
+org.attribyte.api.http.impl
+org.attribyte.api.http.impl.jakarta
+org.attribyte.api.http.impl.jdk
+org.attribyte.api.http.impl.jetty
+org.attribyte.api.http.impl.servlet
+org.attribyte.api.http.test
+org.attribyte.api.http.util

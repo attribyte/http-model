@@ -102,7 +102,7 @@ org.attribyte.api.http.impl.jakarta.Bridge.sendServletResponse(response, servlet
 
 ### Documentation
 
-* [Javadoc](https://attribyte.com/projects/http-model/javadoc/index.html)
+* [Javadoc](https://attribyte.github.io/http-model/)
 
 ### License
 
