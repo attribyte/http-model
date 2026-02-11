@@ -1,5 +1,5 @@
 /*
- * Copyright 2010,2014 Attribyte, LLC
+ * Copyright 2026 Attribyte Labs, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -55,7 +55,7 @@ public class Response {
       public static final int BAD_REQUEST = 400;
 
       /**
-       * Request request requires authorization (401).
+       * Request requires authorization (401).
        */
       public static final int UNAUTHORIZED = 401;
 

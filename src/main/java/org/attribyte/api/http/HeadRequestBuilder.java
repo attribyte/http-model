@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Attribyte, LLC 
+ * Copyright 2026 Attribyte Labs, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -40,7 +40,7 @@ public class HeadRequestBuilder extends RequestBuilderWithParameters {
    /**
     * Creates a {@code HEAD} request builder with URI parsed from a string with parameter case-sensitivity specified.
     * @param uri The URI string to be parsed.
-    * @param caseSensitiveParameters Should case be preserved URI parameter names?
+    * @param caseSensitiveParameters Should case be preserved for URI parameter names?
     * @throws InvalidURIException if URI is invalid.
     */
    public HeadRequestBuilder(final String uri, final boolean caseSensitiveParameters) throws InvalidURIException {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Attribyte, LLC
+ * Copyright 2026 Attribyte Labs, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class ClientOptions {
    public static final ClientOptions IMPLEMENTATION_DEFAULT = new ClientOptions();
 
    /**
-    * The user agent ('Attribyte/1.0').
+    * The user agent ({@code 'AttribyteHttp/1.0'}).
     */
    public final String userAgent;
 
@@ -88,11 +88,13 @@ public class ClientOptions {
    public final int responseBufferSize;
 
    /**
-    * Should SSL certificates be trusted even if invalid ({code false}).
+    * Should SSL certificates be trusted even if invalid ({@code false}).
     */
    public final boolean trustAllCertificates;
 
-
+   /**
+    * The cookie store, if any.
+    */
    public final CookieStore cookieStore;
 
    /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2014 Attribyte, LLC
+ * Copyright 2026 Attribyte Labs, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public interface AsyncClient extends Client {
     * @param request The request.
     * @return The (completable) response future.
     */
-   public CompletableFuture<Response> completableSend(org.attribyte.api.http.Request request);
+   public CompletableFuture<Response> completableSend(Request request);
 
    /**
     * Sends a request with specified options that completes with a {@code CompletableFuture}.
@@ -53,5 +53,5 @@ public interface AsyncClient extends Client {
     * @param options The request options.
     * @return The (completable) response future.
     */
-   public CompletableFuture<Response> completableSend(org.attribyte.api.http.Request request, RequestOptions options);
+   public CompletableFuture<Response> completableSend(Request request, RequestOptions options);
 }

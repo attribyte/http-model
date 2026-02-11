@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2014 Attribyte, LLC
+ * Copyright 2026 Attribyte Labs, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -101,7 +101,7 @@ public final class Header {
 
    /**
     * Gets all the values.
-    * @return The values or an zero-length array if none.
+    * @return The values or a zero-length array if none.
     */
    public String[] getValues() {
       return values.toArray(new String[values.size()]);

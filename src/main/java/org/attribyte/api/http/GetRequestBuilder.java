@@ -1,5 +1,5 @@
 /*
- * Copyright 2010, 2014 Attribyte, LLC
+ * Copyright 2026 Attribyte Labs, LLC
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -85,7 +85,7 @@ public class GetRequestBuilder extends RequestBuilderWithParameters {
     * <p>
     * Case is preserved for parameter names.
     * </p>
-    * @param uri The URI string to be parsed.
+    * @param uri The URI.
     */
    public GetRequestBuilder(final URI uri) {
       super(uri, true);

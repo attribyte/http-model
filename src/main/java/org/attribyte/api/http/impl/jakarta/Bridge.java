@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2016 Attribyte, LLC  All Rights Reserved.
+ * Copyright 2026 Attribyte Labs, LLC
  *
  * This software is the confidential and proprietary information of Attribyte, LLC.
  * ("Confidential Information").  You shall not
