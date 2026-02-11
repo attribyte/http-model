@@ -18,8 +18,8 @@ package org.attribyte.api.http.impl.jetty;
 import java.nio.ByteBuffer;
 
 import org.attribyte.api.http.ResponseBuilder;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.util.BufferUtil;
 
 abstract class BufferingResponseListener extends BaseResponseListener {
@@ -37,10 +37,6 @@ abstract class BufferingResponseListener extends BaseResponseListener {
    @Override
    public void onContent(Response response, ByteBuffer content) {
       super.onContent(response, content);
-
-      /*
-         https://github.com/eclipse/jetty.project/blob/jetty-9.4.x/jetty-client/src/main/java/org/eclipse/jetty/client/util/BufferingResponseListener.java#L116
-       */
 
       int length = content.remaining();
       if(length > BufferUtil.space(buffer)) {

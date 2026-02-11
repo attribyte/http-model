@@ -15,8 +15,7 @@
 
 package org.attribyte.api.http.impl.jetty;
 
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.client.Response;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
@@ -50,11 +49,10 @@ abstract class BaseResponseListener extends StatsListener {
    @Override
    public void onHeaders(Response response) {
       super.onHeaders(response);
-      Request request = response.getRequest();
       HttpFields headers = response.getHeaders();
 
       long length = headers.getLongField(HttpHeader.CONTENT_LENGTH.asString());
-      if(truncateOnLimit || HttpMethod.HEAD.is(request.getMethod())) {
+      if(truncateOnLimit || HttpMethod.HEAD.is(response.getRequest().getMethod())) {
          length = 0;
       }
 

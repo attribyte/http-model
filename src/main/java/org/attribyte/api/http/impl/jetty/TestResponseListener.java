@@ -19,8 +19,8 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 import org.attribyte.api.http.ResponseBuilder;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.client.Result;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.CompletableFuture;

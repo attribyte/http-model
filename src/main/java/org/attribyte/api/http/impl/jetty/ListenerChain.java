@@ -16,15 +16,13 @@
 package org.attribyte.api.http.impl.jetty;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.http.HttpField;
-import org.eclipse.jetty.util.Callback;
 
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.function.LongConsumer;
 
 /**
  * A chain of listeners.
@@ -82,11 +80,6 @@ public class ListenerChain implements Listener {
    @Override
    public void onFailure(Request request, Throwable failure) {
       requestListeners.forEach(l -> l.onFailure(request, failure));
-   }
-
-   @Override
-   public void onContent(final Response response, final ByteBuffer byteBuffer, final Callback callback) {
-      responseListeners.forEach(l -> l.onContent(response, byteBuffer, callback));
    }
 
    @Override

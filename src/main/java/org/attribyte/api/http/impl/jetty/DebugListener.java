@@ -15,15 +15,13 @@
 
 package org.attribyte.api.http.impl.jetty;
 
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.http.HttpField;
-import org.eclipse.jetty.util.Callback;
 
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
-import java.util.function.LongConsumer;
 
 public class DebugListener implements Listener {
 
@@ -67,11 +65,6 @@ public class DebugListener implements Listener {
    }
 
    @Override
-   public void onContent(final Response response, final ByteBuffer byteBuffer, final Callback callback) {
-      println(String.format("Response Content (%d)", byteBuffer.remaining()));
-   }
-
-   @Override
    public void onBegin(final Response response) {
       println("Response Begin");
    }
@@ -83,7 +76,7 @@ public class DebugListener implements Listener {
 
    @Override
    public void onContent(final Response response, final ByteBuffer byteBuffer) {
-      println(String.format("onContent - %d bytes", byteBuffer.remaining()));
+      println(String.format("Response Content (%d)", byteBuffer.remaining()));
    }
 
    @Override

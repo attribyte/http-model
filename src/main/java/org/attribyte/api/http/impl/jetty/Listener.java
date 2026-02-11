@@ -15,8 +15,8 @@
 
 package org.attribyte.api.http.impl.jetty;
 
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
 
 /**
  * Listens for both request and response events.

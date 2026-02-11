@@ -19,17 +19,15 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import org.attribyte.api.http.Stats;
 import org.attribyte.api.http.Timing;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
-import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.client.Response;
+import org.eclipse.jetty.client.Result;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpFields;
-import org.eclipse.jetty.util.Callback;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.LongConsumer;
 
 public class StatsListener implements Listener {
 
@@ -102,16 +100,6 @@ public class StatsListener implements Listener {
       responseBodySize.addAndGet(content.remaining());
       if(responseContentStartedTick == 0L) {
          responseContentStartedTick = getTick();
-      }
-   }
-
-   @Override
-   public void onContent(Response response, ByteBuffer content, Callback callback) {
-      try {
-         onContent(response, content);
-         callback.succeeded();
-      } catch(Throwable x) {
-         callback.failed(x);
       }
    }
 

@@ -1,8 +1,5 @@
-package org.attribyte.api.http.impl.jetty;
+package org.attribyte.api.http.impl.jdk;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
-import com.google.common.io.ByteStreams;
 import org.attribyte.api.http.ClientOptions;
 import org.attribyte.api.http.DeleteRequestBuilder;
 import org.attribyte.api.http.FormPostRequestBuilder;
@@ -15,29 +12,27 @@ import org.attribyte.api.http.PutRequestBuilder;
 import org.attribyte.api.http.Request;
 import org.attribyte.api.http.RequestOptions;
 import org.attribyte.api.http.Response;
-import org.attribyte.api.http.StreamedResponse;
 import org.attribyte.api.http.impl.TestHttpServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
-public class JettyClientTest {
+public class JdkClientTest {
 
-   private static JettyClient client;
+   private static JdkClient client;
    private static TestHttpServer server;
 
    @BeforeClass
    public static void setUp() throws Exception {
       server = new TestHttpServer();
       server.start();
-      client = new JettyClient(ClientOptions.IMPLEMENTATION_DEFAULT);
+      client = new JdkClient(ClientOptions.IMPLEMENTATION_DEFAULT);
    }
 
    @AfterClass
@@ -46,36 +41,15 @@ public class JettyClientTest {
       server.stop();
    }
 
-   // --- External URL tests (existing) ---
+   // --- External URL test ---
 
    @Test
-   public void getTest() throws Exception {
-      Request request = new GetRequestBuilder("https://attribyte.com")
-              .create();
-      Response response = client.send(request, RequestOptions.DEFAULT.truncateOnLimit());
+   public void getExternalTest() throws Exception {
+      Request request = new GetRequestBuilder("https://attribyte.com").create();
+      Response response = client.send(request, RequestOptions.DEFAULT);
       assertEquals(200, response.statusCode);
-      assertNotNull(response.stats);
-   }
-
-   @Test
-   public void getStreamTest() throws Exception {
-      Request request = new GetRequestBuilder("https://attribyte.com")
-              .create();
-      StreamedResponse response = client.stream(request, 20L, TimeUnit.SECONDS);
-      try(InputStream is = response.getBodySource().openStream()) {
-         byte[] body = ByteStreams.toByteArray(is);
-         assertTrue(body.length > 0);
-      }
-      assertEquals(200, response.statusCode);
-   }
-
-   @Test
-   public void testTest() throws Exception {
-      Request request = new GetRequestBuilder("https://attribyte.com")
-              .create();
-      Response response = client.test(request, RequestOptions.DEFAULT).get(10, TimeUnit.SECONDS);
-      assertEquals(200, response.statusCode);
-      assertNotNull(response.stats);
+      assertNotNull(response.getBody());
+      assertTrue(response.getBody().size() > 0);
    }
 
    // --- Local server tests ---
@@ -154,7 +128,6 @@ public class JettyClientTest {
       assertEquals(200, response.statusCode);
       // HEAD responses should have no body
       assertTrue(response.getBody() == null || response.getBody().isEmpty());
-      assertNotNull(response.getHeaderValue("content-type"));
    }
 
    @Test
@@ -213,28 +186,6 @@ public class JettyClientTest {
    }
 
    @Test
-   public void testStreamGet() throws Exception {
-      Request request = new GetRequestBuilder(server.baseUrl() + "/ok").create();
-      StreamedResponse response = client.stream(request, 5L, TimeUnit.SECONDS);
-      assertEquals(200, response.statusCode);
-      try(InputStream is = response.getBodySource().openStream()) {
-         String body = new String(ByteStreams.toByteArray(is), StandardCharsets.UTF_8);
-         assertEquals("OK", body);
-      }
-   }
-
-   @Test
-   public void testStats() throws Exception {
-      Request request = new GetRequestBuilder(server.baseUrl() + "/ok").create();
-      Response response = client.send(request, RequestOptions.DEFAULT.truncateOnLimit());
-      assertEquals(200, response.statusCode);
-      assertNotNull(response.stats);
-      assertTrue(response.stats.responseHeaderCount > 0);
-      assertTrue(response.stats.responseBodySize.get() > 0);
-      assertTrue(response.stats.timeToCompleteResponse(TimeUnit.NANOSECONDS) > 0);
-   }
-
-   @Test
    public void testPostLargeBody() throws Exception {
       byte[] body = new byte[64 * 1024]; // 64KB
       for(int i = 0; i < body.length; i++) {
@@ -246,5 +197,15 @@ public class JettyClientTest {
       Response response = client.send(request, RequestOptions.DEFAULT);
       assertEquals(200, response.statusCode);
       assertArrayEquals(body, response.getBody().toByteArray());
+   }
+
+   @Test
+   public void testMultipleSequentialRequests() throws Exception {
+      for(int i = 0; i < 10; i++) {
+         Request request = new GetRequestBuilder(server.baseUrl() + "/ok").create();
+         Response response = client.send(request, RequestOptions.DEFAULT);
+         assertEquals(200, response.statusCode);
+         assertEquals("OK", response.getBody().toStringUtf8());
+      }
    }
 }

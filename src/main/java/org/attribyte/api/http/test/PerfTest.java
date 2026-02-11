@@ -27,10 +27,7 @@ import org.attribyte.api.http.GetRequestBuilder;
 import org.attribyte.api.http.PostRequestBuilder;
 import org.attribyte.api.http.Request;
 import org.attribyte.api.http.Response;
-import org.attribyte.api.http.impl.commons.Commons3Client;
-import org.attribyte.api.http.impl.commons.Commons4Client;
 import org.attribyte.api.http.impl.jetty.JettyClient;
-import org.attribyte.api.http.impl.ning.NingClient;
 import org.attribyte.util.InitUtil;
 
 import java.io.File;
@@ -53,14 +50,8 @@ public class PerfTest {
          String clientName = init.getProperty("client", "");
          if(clientName.equalsIgnoreCase("jetty")) {
             client = new JettyClient(ClientOptions.IMPLEMENTATION_DEFAULT);
-         } else if(clientName.equalsIgnoreCase("ning")) {
-            client = new NingClient(ClientOptions.IMPLEMENTATION_DEFAULT);
-         } else if(clientName.equalsIgnoreCase("commons3")) {
-            client = new Commons3Client(ClientOptions.IMPLEMENTATION_DEFAULT);
-         } else if(clientName.equalsIgnoreCase("commons4")) {
-            client = new Commons4Client(ClientOptions.IMPLEMENTATION_DEFAULT);
          } else {
-            System.err.println("A 'client' must be specified");
+            System.err.println("A 'client' must be specified (jetty)");
             return;
          }
 

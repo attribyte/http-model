@@ -26,22 +26,20 @@ import org.attribyte.api.http.RequestOptions;
 import org.attribyte.api.http.Response;
 import org.attribyte.api.http.ResponseBuilder;
 import org.attribyte.api.http.StreamedResponse;
+import org.eclipse.jetty.client.ByteBufferRequestContent;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpProxy;
+import org.eclipse.jetty.client.InputStreamResponseListener;
 import org.eclipse.jetty.client.ProxyConfiguration;
-import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.util.ByteBufferContentProvider;
-import org.eclipse.jetty.client.util.InputStreamResponseListener;
+import org.eclipse.jetty.client.Request;
+import org.eclipse.jetty.http.HttpCookieStore;
 import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.util.HttpCookieStore;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.client.HttpProxy;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpCookie;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
@@ -88,10 +86,10 @@ public class JettyClient implements AsyncClient {
          httpClient.setFollowRedirects(options.followRedirects);
          httpClient.setConnectTimeout(options.connectionTimeoutMillis);
          httpClient.setMaxConnectionsPerDestination(options.maxConnectionsPerDestination);
-         httpClient.setCookieStore(new HttpCookieStore.Empty());
+         httpClient.setHttpCookieStore(new HttpCookieStore.Empty());
          if(options.proxyHost != null) {
             ProxyConfiguration proxyConfig = httpClient.getProxyConfiguration();
-            proxyConfig.getProxies().add(new HttpProxy(options.proxyHost, options.proxyPort));
+            proxyConfig.addProxy(new HttpProxy(options.proxyHost, options.proxyPort));
          }
          httpClient.setUserAgentField(new HttpField(HttpHeader.USER_AGENT, options.userAgent));
          httpClient.setRequestBufferSize(options.requestBufferSize);
@@ -100,11 +98,8 @@ public class JettyClient implements AsyncClient {
          httpClient.setAddressResolutionTimeout(options.getIntProperty("addressResolutionTimeout", 15000));
          httpClient.setMaxRedirects(options.getIntProperty("maxRedirects", 8));
          httpClient.setMaxRequestsQueuedPerDestination(options.getIntProperty("maxRequestsQueuedPerDestination", 1024));
-         if(options.cookieStore == null) {
-            httpClient.setCookieStore(new HttpCookieStore.Empty());
-         } else {
-            httpClient.setCookieStore(options.cookieStore);
-         }
+         // Note: java.net.CookieStore from ClientOptions is not directly
+         // supported by Jetty 12. Use setHttpCookieStore() for Jetty-native cookie handling.
          return httpClient;
       } else {
          return new HttpClient();
@@ -146,7 +141,13 @@ public class JettyClient implements AsyncClient {
               new ListenableFutureResponseListener(fut, options.maxResponseBytes, options.truncateOnLimit);
       toJettyRequest(request)
               .followRedirects(options.followRedirects)
-              .listener(listener)
+              .onRequestQueued(listener)
+              .onRequestBegin(listener)
+              .onRequestHeaders(listener)
+              .onRequestCommit(listener)
+              .onRequestContent(listener)
+              .onRequestSuccess(listener)
+              .onRequestFailure(listener)
               .send(listener);
       return fut;
    }
@@ -163,7 +164,13 @@ public class JettyClient implements AsyncClient {
               new CompletableFutureResponseListener(fut, options.maxResponseBytes, options.truncateOnLimit);
       toJettyRequest(request)
               .followRedirects(options.followRedirects)
-              .listener(listener)
+              .onRequestQueued(listener)
+              .onRequestBegin(listener)
+              .onRequestHeaders(listener)
+              .onRequestCommit(listener)
+              .onRequestContent(listener)
+              .onRequestSuccess(listener)
+              .onRequestFailure(listener)
               .send(listener);
       return fut;
    }
@@ -180,7 +187,13 @@ public class JettyClient implements AsyncClient {
               new TestResponseListener(fut);
       toJettyRequest(request)
               .followRedirects(options.followRedirects)
-              .listener(listener)
+              .onRequestQueued(listener)
+              .onRequestBegin(listener)
+              .onRequestHeaders(listener)
+              .onRequestCommit(listener)
+              .onRequestContent(listener)
+              .onRequestSuccess(listener)
+              .onRequestFailure(listener)
               .send(listener);
       return fut;
    }
@@ -208,7 +221,7 @@ public class JettyClient implements AsyncClient {
       toJettyRequest(request)
               .send(inputStreamListener);
 
-      org.eclipse.jetty.client.api.Response response =
+      org.eclipse.jetty.client.Response response =
               inputStreamListener.get(timeout, timeoutUnits);
 
       responseBuilder.setStatusCode(response.getStatus());
@@ -252,19 +265,19 @@ public class JettyClient implements AsyncClient {
                   jettyRequest.param(parameter.getName(), parameter.getValue());
                }
             } else if(request.getBody() != null) {
-               jettyRequest.content(new ByteBufferContentProvider(request.getBody().asReadOnlyByteBuffer()));
+               jettyRequest.body(new ByteBufferRequestContent(request.getBody().asReadOnlyByteBuffer()));
             }
             break;
          case PUT:
             jettyRequest.method(HttpMethod.PUT);
             if(request.getBody() != null) {
-               jettyRequest.content(new ByteBufferContentProvider(request.getBody().asReadOnlyByteBuffer()));
+               jettyRequest.body(new ByteBufferRequestContent(request.getBody().asReadOnlyByteBuffer()));
             }
             break;
          case PATCH:
             jettyRequest.method("PATCH");
             if(request.getBody() != null) {
-               jettyRequest.content(new ByteBufferContentProvider(request.getBody().asReadOnlyByteBuffer()));
+               jettyRequest.body(new ByteBufferRequestContent(request.getBody().asReadOnlyByteBuffer()));
             }
             break;
          case DELETE:
@@ -276,9 +289,10 @@ public class JettyClient implements AsyncClient {
       }
 
       request.getHeaders().forEach(header ->
-              header.getValueList().forEach(value -> jettyRequest.header(header.getName(), value)));
+              header.getValueList().forEach(value -> jettyRequest.headers(mutable -> mutable.add(header.getName(), value))));
 
-      request.cookies.forEach(cookie -> jettyRequest.cookie(new HttpCookie(cookie.name, cookie.value)));
+      request.cookies.forEach(cookie ->
+              jettyRequest.cookie(org.eclipse.jetty.http.HttpCookie.build(cookie.name, cookie.value).build()));
 
       return jettyRequest;
    }

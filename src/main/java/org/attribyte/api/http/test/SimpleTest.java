@@ -20,10 +20,7 @@ import org.attribyte.api.http.Client;
 import org.attribyte.api.http.ClientOptions;
 import org.attribyte.api.http.GetRequestBuilder;
 import org.attribyte.api.http.Response;
-import org.attribyte.api.http.impl.commons.Commons3Client;
-import org.attribyte.api.http.impl.commons.Commons4Client;
 import org.attribyte.api.http.impl.jetty.JettyClient;
-import org.attribyte.api.http.impl.ning.NingClient;
 import org.attribyte.util.InitUtil;
 
 import java.util.Properties;
@@ -49,29 +46,8 @@ public class SimpleTest {
                client = new JettyClient();
                client.init("", props, new ConsoleLogger());
             }
-         } else if(clientName.equalsIgnoreCase("ning")) {
-            if(implementationDefaults) {
-               client = new NingClient(ClientOptions.IMPLEMENTATION_DEFAULT);
-            } else {
-               client = new NingClient();
-               client.init("", props, new ConsoleLogger());
-            }
-         } else if(clientName.equalsIgnoreCase("commons3")) {
-            if(implementationDefaults) {
-               client = new Commons3Client(ClientOptions.IMPLEMENTATION_DEFAULT);
-            } else {
-               client = new Commons3Client();
-               client.init("", props, new ConsoleLogger());
-            }
-         } else if(clientName.equalsIgnoreCase("commons4")) {
-            if(implementationDefaults) {
-               client = new Commons4Client(ClientOptions.IMPLEMENTATION_DEFAULT);
-            } else {
-               client = new Commons4Client();
-               client.init("", props, new ConsoleLogger());
-            }
          } else {
-            System.err.println("A 'client' must be specified");
+            System.err.println("A 'client' must be specified (jetty)");
             return;
          }
 

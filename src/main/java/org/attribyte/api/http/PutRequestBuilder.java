@@ -71,7 +71,7 @@ public class PutRequestBuilder extends RequestBuilder {
 
    @Override
    public Request create() {
-      return new Request(Request.Method.POST, uri, headers, null, false, body, attributes, cookies);
+      return new Request(Request.Method.PUT, uri, headers, null, false, body, attributes, cookies);
    }
 
    private final ByteString body;
