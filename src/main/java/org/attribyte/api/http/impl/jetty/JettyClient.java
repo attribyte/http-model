@@ -146,11 +146,24 @@ public class JettyClient implements AsyncClient {
    public org.attribyte.api.http.Response send(org.attribyte.api.http.Request request, RequestOptions options) throws IOException {
       try {
          return asyncSend(request, options).get(options.timeoutSeconds, TimeUnit.SECONDS);
-      } catch(TimeoutException | ExecutionException e) {
+      } catch(TimeoutException e) {
+         // Said plainly: the raw message names a future and its nanoseconds.
+         throw new IOException("No response from " + host(request) + " in " + options.timeoutSeconds + " seconds", e);
+      } catch(ExecutionException e) {
          throw new IOException(e);
       } catch(InterruptedException ie) {
          Thread.currentThread().interrupt();
          throw new IOException(ie);
+      }
+   }
+
+   /** A request's host, for a message; the whole address when it has none. */
+   private static String host(final org.attribyte.api.http.Request request) {
+      try {
+         String host = request.getURI().getHost();
+         return host != null ? host : String.valueOf(request.getURI());
+      } catch(Exception e) {
+         return "the server";
       }
    }
 
