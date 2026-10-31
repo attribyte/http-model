@@ -33,6 +33,23 @@ JettyClient client = new JettyClient(ClientOptions.builder().build());
 Both implement `AsyncClient`, which provides `asyncSend` (returns `ListenableFuture<Response>`)
 and `completableSend` (returns `CompletableFuture<Response>`) in addition to synchronous `send`.
 
+#### Public addresses only
+
+A client fetching URLs someone else chose (feeds, links, pages to save) shouldn't be aimed at the
+machine it runs on or the network around it. Set `publicAddressesOnly=true` in the client's properties
+and a `JettyClient` connects only to public addresses, checked on every connection, including each
+redirect hop, at the moment it connects. A configured proxy is trusted.
+
+```java
+Properties props = new Properties();
+props.setProperty("crawler.publicAddressesOnly", "true");
+JettyClient client = new JettyClient(new ClientOptions("crawler.", props));
+```
+
+`PublicAddresses.isPublic(InetAddress)` is the check itself, and `PublicAddresses.checkUrl(String)`
+checks a URL before a fetch. To configure the Jetty client yourself, set a `PublicAddressResolver` on it
+and pass it to `new JettyClient(httpClient)`.
+
 ### Usage
 
 #### Building and Sending Requests

@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -65,8 +66,26 @@ public class JettyClient implements AsyncClient {
       initFromOptions(options);
    }
 
+   /**
+    * Creates a client that sends through a Jetty client configured elsewhere.
+    * @param httpClient The Jetty client; started here if it hasn't been.
+    * @throws InitializationException if it can't be started.
+    */
+   public JettyClient(final HttpClient httpClient) throws InitializationException {
+      this.httpClient = httpClient;
+      isInit.set(true);
+      start();
+   }
+
    private void initFromOptions(final ClientOptions options) throws InitializationException {
       this.httpClient = jettyClientFromOptions(options);
+      start();
+   }
+
+   private void start() throws InitializationException {
+      if(this.httpClient.isStarted()) {
+         return;
+      }
       try {
          this.httpClient.start();
       } catch(Exception e) {
@@ -98,6 +117,12 @@ public class JettyClient implements AsyncClient {
          httpClient.setAddressResolutionTimeout(options.getIntProperty("addressResolutionTimeout", 15000));
          httpClient.setMaxRedirects(options.getIntProperty("maxRedirects", 8));
          httpClient.setMaxRequestsQueuedPerDestination(options.getIntProperty("maxRequestsQueuedPerDestination", 1024));
+         if(options.getBooleanProperty("publicAddressesOnly", false)) {
+            // Connect only to public addresses, checked on every connection (PublicAddressResolver);
+            // the proxy, if there is one, is trusted.
+            httpClient.setSocketAddressResolver(new PublicAddressResolver(httpClient,
+                    options.proxyHost != null ? Set.of(options.proxyHost) : Set.of()));
+         }
          // Note: java.net.CookieStore from ClientOptions is not directly
          // supported by Jetty 12. Use setHttpCookieStore() for Jetty-native cookie handling.
          return httpClient;

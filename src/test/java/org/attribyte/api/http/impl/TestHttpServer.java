@@ -44,6 +44,15 @@ public class TestHttpServer {
       server.createContext("/server-error", this::handleServerError);
       server.createContext("/headers", this::handleHeaders);
       server.createContext("/form", this::handleForm);
+      server.createContext("/redirect", this::handleRedirect);
+   }
+
+   /** A 302 to the URL in the query string ({@code /redirect?http://…}). */
+   private void handleRedirect(HttpExchange exchange) throws IOException {
+      exchange.getRequestBody().readAllBytes(); // drain
+      exchange.getResponseHeaders().add("Location", exchange.getRequestURI().getRawQuery());
+      exchange.sendResponseHeaders(302, -1);
+      exchange.close();
    }
 
    public void start() {
